@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.common.code.mapper.CodeMgmtMapper">
+
+
+	<!-- 그룹 코드 트리 구조 -->
+	<resultMap id="groupCodeTree" type="com.qnpeople.rnd.pms.apis.common.code.model.GroupCodeTreeDto">
+		<id property="grpCd" column="GRP_CD" />
+		<result property="grpCdLvl" column="GRP_CD_LVL" />
+		<result property="grpCdOrd" column="GRP_CD_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="grpCdNm" column="GRP_CD_NM" />
+		<result property="grpCdTreeNm" column="GRP_CD_TREE_NM" />
+		<result property="vrnt1" column="VRNT1" />
+		<result property="vrnt2" column="VRNT2" />
+		<result property="vrnt3" column="VRNT3" />
+		<result property="vrnt4" column="VRNT4" />
+		<result property="vrnt5" column="VRNT5" />
+		<result property="prntGrpCd" column="PRNT_GRP_CD" />
+		<result property="grpCdSortPath" column="GRP_CD_SORT_PATH" />
+	</resultMap>	
+	<!--공통 그룹 코드 정보 -->
+	<resultMap id="groupCode" type="com.qnpeople.rnd.pms.apis.common.code.model.GroupCodeDto">
+		<id property="grpCd" column="GRP_CD" />
+		<result property="grpCdLvl" column="GRP_CD_LVL" />
+		<result property="grpCdOrd" column="GRP_CD_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="grpCdNm" column="GRP_CD_NM" />
+		<result property="prntGrpCd" column="PRNT_GRP_CD" />
+		<result property="prntGrpCdNm" column="PRNT_GRP_CD_NM" />
+		<result property="vrnt1" column="VRNT1" />
+		<result property="vrnt2" column="VRNT2" />
+		<result property="vrnt3" column="VRNT3" />
+		<result property="vrnt4" column="VRNT4" />
+		<result property="vrnt5" column="VRNT5" />
+		<result property="grpCdDesc" column="GRP_CD_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	<!--공통 코드 정보 -->
+	<resultMap id="code" type="com.qnpeople.rnd.pms.apis.common.code.model.CodeDto">
+		<id property="grpCd" column="GRP_CD" />
+		<id property="cd" column="CD" />
+		<result property="cdOrd" column="CD_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="cdNm" column="CD_NM" />
+		<result property="vrnt1" column="VRNT1" />
+		<result property="vrnt2" column="VRNT2" />
+		<result property="vrnt3" column="VRNT3" />
+		<result property="vrnt4" column="VRNT4" />
+		<result property="vrnt5" column="VRNT5" />
+		<result property="cdDesc" column="CD_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	
+	<!--	관리를 위한 모듈 -->
+
+	<!--	서비스를 위한 모듈 -->
+	<!-- 02.공통_사용 가능 그룹 코드 코드 트리 목록 정보 추출 쿼리 -->
+	<select id="selectAvailableGroupCodeTreeList"  parameterType="com.qnpeople.rnd.pms.apis.common.code.model.GroupCodeSC" resultMap="groupCodeTree">
+		SELECT 	GRP_CD
+				  , GRP_CD_LVL
+				  , GRP_CD_ORD
+				  , USE_YN
+				  , GRP_CD_NM
+				  , GRP_CD_TREE_NM
+				  , VRNT1
+				  , VRNT2
+				  , VRNT3
+				  , VRNT4
+				  , VRNT5
+				  , PRNT_GRP_CD
+				  , GRP_CD_SORT_PATH
+		FROM 	CMN_GRP_CD_TREE_VIEW
+		ORDER BY GRP_CD_SORT_PATH;
+	</select>
+	
+	<!--03.공통_공통 코드 그룹 상세 정보 추출 쿼리 -->
+	<select id="selectGroupCodeDetail"  parameterType="com.qnpeople.rnd.pms.apis.common.code.model.GroupCodeSC" resultMap="groupCode">
+		SELECT 	CMN_GRP_CD.GRP_CD
+				  , CMN_GRP_CD.GRP_CD_LVL
+				  , CMN_GRP_CD.GRP_CD_ORD
+				  , CMN_GRP_CD.USE_YN
+				  , CMN_GRP_CD.GRP_CD_NM
+				  , CMN_GRP_CD.PRNT_GRP_CD
+				  , (
+						SELECT 	GRP_CD_NM
+						FROM 	CMN_GRP_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD = CMN_GRP_CD.PRNT_GRP_CD
+				    )		AS PRNT_GRP_CD_NM
+				  , CMN_GRP_CD.VRNT1
+				  , CMN_GRP_CD.VRNT2
+				  , CMN_GRP_CD.VRNT3
+				  , CMN_GRP_CD.VRNT4
+				  , CMN_GRP_CD.VRNT5
+				  , CMN_GRP_CD.GRP_CD_DESC
+				  , TO_CHAR(CMN_GRP_CD.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+				  , CMN_GRP_CD.RGST_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_GRP_CD.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(CMN_GRP_CD.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+				  , CMN_GRP_CD.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_GRP_CD.UPDT_SEQ		
+				  	)		AS 	UPDT_NM
+		FROM 	CMN_GRP_CD_INFO_TBL	CMN_GRP_CD
+		WHERE 	1	=	1
+		AND 		(((#{grpCd, jdbcType=VARCHAR} IS NULL) OR (#{grpCd, jdbcType=VARCHAR} = '')) OR (CMN_GRP_CD.GRP_CD = #{grpCd, jdbcType=VARCHAR}))
+		AND 		(((#{prntGrpCd, jdbcType=VARCHAR} IS NULL) OR (#{prntGrpCd, jdbcType=VARCHAR} = '')) OR (CMN_GRP_CD.PRNT_GRP_CD = #{prntGrpCd, jdbcType=VARCHAR}))
+	</select>
+	
+	<!--04.공통_코드 그룹 별 코드 목록 정보 추출 쿼리 -->
+	<select id="selectAvailableCodeList" parameterType="com.qnpeople.rnd.pms.apis.common.code.model.CodeSC" resultMap="code">
+		SELECT 	CMN_CD.GRP_CD
+				  , CMN_CD.CD
+				  , CMN_CD.CD_ORD
+				  , CMN_CD.USE_YN
+				  , CMN_CD.CD_NM
+				  , CMN_CD.VRNT1
+				  , CMN_CD.VRNT2
+				  , CMN_CD.VRNT3
+				  , CMN_CD.VRNT4
+				  , CMN_CD.VRNT5
+				  , CMN_CD.CD_DESC
+				  , TO_CHAR(CMN_CD.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , CMN_CD.RGST_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CD.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(CMN_CD.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT	
+				  , CMN_CD.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CD.UPDT_SEQ		
+				  	)		AS 	UPDT_NM
+		FROM 	CMN_CD_INFO_TBL 	CMN_CD
+		WHERE 	1 	=	1
+		AND 		CMN_CD.USE_YN  = 'Y'
+		AND 		(((#{grpCd, jdbcType=VARCHAR} IS NULL) OR (#{grpCd, jdbcType=VARCHAR} = '')) OR (CMN_CD.GRP_CD = #{grpCd, jdbcType=VARCHAR}))
+		AND 		(((#{cd, jdbcType=VARCHAR} IS NULL) OR (#{cd, jdbcType=VARCHAR} = '')) OR (CMN_CD.CD = #{cd, jdbcType=VARCHAR}))
+	</select>
+	
+	<!-- 05.공통_공통 코드 상세 정보 추출 쿼리 -->
+	<select id="selectCodeDetail" parameterType="com.qnpeople.rnd.pms.apis.common.code.model.CodeSC" resultMap="code">
+		SELECT 	CMN_CD.GRP_CD
+				  , CMN_CD.CD
+				  , CMN_CD.CD_ORD
+				  , CMN_CD.USE_YN
+				  , CMN_CD.CD_NM
+				  , CMN_CD.VRNT1
+				  , CMN_CD.VRNT2
+				  , CMN_CD.VRNT3
+				  , CMN_CD.VRNT4
+				  , CMN_CD.VRNT5
+				  , CMN_CD.CD_DESC
+				  , TO_CHAR(CMN_CD.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , CMN_CD.RGST_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CD.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(CMN_CD.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT	
+				  , CMN_CD.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CD.UPDT_SEQ		
+				  	)		AS 	UPDT_NM
+		FROM 	CMN_CD_INFO_TBL 	CMN_CD
+		WHERE 	1 	=	1
+		AND  	CMN_CD.GRP_CD 	= #{grpCd, jdbcType=VARCHAR}
+		AND 		CMN_CD.CD 			= #{cd, jdbcType=VARCHAR}
+	</select>
+</mapper>

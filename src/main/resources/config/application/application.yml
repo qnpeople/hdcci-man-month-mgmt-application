@@ -1,0 +1,77 @@
+spring:
+  application:
+    name:  hdcci-man-month-mgmt
+  mvc:
+    throw-exception-if-no-ha	ndler-found: true
+  cloud:
+    config:
+      label: config-client
+      profile:
+      url: http://localhost:8080
+  profiles:
+    group:
+      lcl: lcl, core, securities, databases
+      dev: dev, core, securities, databases
+      stg: stg, core, securities, databases
+      prd: prd, core, securities, databases
+
+# Bean 중복 시 오버라이드 허용 여부 설정
+  main:
+    allow-bean-definition-overriding: true
+
+---
+################################################
+# LOCAL
+################################################
+server:
+  port: 8080
+  tomcat:
+    max-connections: 100
+    accesslog:
+      pattern: '%h %l %u %t "%r" %s %b %T'
+      enabled: true
+      directory: log/access
+    basedir: C://SBN/data/hdcci-man-month-application/lcl
+    additional-tld-skip-patterns: "*.jar"
+
+spring:
+  config:
+   activate:
+     on-profile: lcl
+
+ # MVC 및 JSP 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+
+   # 서블릿 업로드 파일 사이즈 설정    
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+logging:
+  config: classpath:config/logback/logback-spring-lcl.xml # src/main/resources/config/logback/logback-spring-lcl.xml :
+
+
+---
+################################################
+# DEV
+################################################
+
+
+
+---
+################################################
+# STG
+################################################
+
+
+
+---
+################################################
+# PRD
+################################################

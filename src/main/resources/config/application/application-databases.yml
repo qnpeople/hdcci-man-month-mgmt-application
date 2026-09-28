@@ -1,0 +1,88 @@
+---
+################################################
+# LOCAL
+################################################
+spring:
+  config:
+    activate:
+      on-profile: lcl
+
+  datasource:
+    datasource-postgresql-master:
+      hikari:
+        pool-name: postgresqlMaster
+        driver-class-name: org.postgresql.Driver
+        jdbc-url: jdbc:postgresql://localhost:5432/SBN_PMS_PROJECT?sslmode=disable&client_encoding=UTF8
+        maximum-pool-size: 10
+        connection-timeout: 5000
+        validation-timeout: 3000
+        username: postgres
+        password: 'tjqjatjr1970!'
+        connection-init-sql: SET TIME ZONE 'Asia/Seoul'; SET LC_MESSAGES TO 'en_US.UTF-8'
+
+---
+################################################
+# DEV
+################################################
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    datasource-postgresql-master:
+      hikari:
+        pool-name: postgresqlMaster
+        driver-class-name: org.postgresql.Driver
+        jdbc-url: jdbc:postgresql://192.168.219.90:5432/postgres?sslmode=disable&client_encoding=UTF8
+        maximum-pool-size: 10
+        connection-timeout: 5000
+        validation-timeout: 3000
+        username: postgres
+        password: anrghs0013
+        connection-init-sql: SET TIME ZONE 'Asia/Seoul'; SET LC_MESSAGES TO 'en_US.UTF-8'
+
+---
+################################################
+# STG
+################################################
+spring:
+  config:
+    activate:
+      on-profile: stg
+
+  datasource:
+    datasource-postgresql-master:
+      hikari:
+        pool-name: postgresqlMaster
+        driver-class-name: org.postgresql.Driver
+        jdbc-url: jdbc:postgresql://localhost:5432/SBN_PMS_PROJECT?sslmode=disable&client_encoding=UTF8
+        maximum-pool-size: 10
+        connection-timeout: 5000
+        validation-timeout: 3000
+        username: postgres
+        password: 'tjqjatjr1970!'
+        connection-init-sql: SET TIME ZONE 'Asia/Seoul'; SET LC_MESSAGES TO 'en_US.UTF-8'
+
+---
+################################################
+# PRD
+################################################
+spring:
+  config:
+    activate:
+      on-profile: prd
+
+  datasource:
+    datasource-postgresql-master:
+      hikari:
+        pool-name: postgresqlMaster
+        driver-class-name: org.postgresql.Driver
+        jdbc-url: jdbc:postgresql://localhost:5432/SBN_PMS_PROJECT?sslmode=disable&client_encoding=UTF8
+        maximum-pool-size: 10
+        connection-timeout: 5000
+        validation-timeout: 3000
+        username: postgres
+        password: 'tjqjatjr1970!'
+        connection-init-sql: SET TIME ZONE 'Asia/Seoul'; SET LC_MESSAGES TO 'en_US.UTF-8'
+

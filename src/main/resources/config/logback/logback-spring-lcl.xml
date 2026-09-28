@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="1 seconds" encoding="UTF-8">
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>	
+	<property name="LOG_HOME" value="C:/SBN/05.QNP_PROJECT/HDCCI/WORK_LOGS/hdcci-man-month-application/lcl/logs" />
+	
+	<!-- 표준 출력을 위한 Appender 설정 영역 -->
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+<!--				%d{yyyy-MM-dd HH:mm:ss} %highlight([%-5level]) [%t] %logger{36} - %msg%n -->
+				%d{yyyy-MM-dd HH:mm:ss} %clr([%-5level]) [%t] %logger{36} - %msg%n
+			</Pattern>
+		</encoder>
+	</appender>
+
+	<!-- 파일 로그 작성을 위한 Appender 설정 영역 -->
+	<appender name="FILE-AUDIT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/was/api-debug.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%t] %logger{80} - %msg%n
+			</Pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_HOME}/was/api-debug.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<!-- 오류 로그 작성을 위한 Appender 설정 영역 -->
+	<appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${LOG_HOME}/was/api-error.log</file>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<Pattern>
+				%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%t] %logger{80} - %msg%n
+			</Pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- rollover daily -->
+			<fileNamePattern>${LOG_HOME}/was/api-error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+			<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>100MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+	</appender>
+
+	<!-- Root Basic Logging Setting -->
+	<root level="INFO">
+	    <appender-ref ref="CONSOLE"/>
+	</root>
+	
+	<!-- Framework Logging Setting -->
+	<logger name="org.springframework" level="ERROR" additivity="false" >
+		<appender-ref ref="CONSOLE"/>		
+	</logger>
+	<logger name="org.springframework.security" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
+	<logger name="org.springframework.data" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+	</logger>
+	
+	<!-- Database/Hikari Logging Setting -->
+	<logger name="kr.co.sbn.platformhub.framework" level="DEBUG" additivity="false">
+	    <appender-ref ref="CONSOLE"/>
+	</logger>
+<!--	<logger name="org.springframework.boot.context.properties" level="DEBUG" additivity="false">-->
+<!--	    <appender-ref ref="CONSOLE"/>-->
+<!--	</logger>-->
+<!--	<logger name="com.zaxxer.hikari.HikariConfig" level="DEBUG" additivity="false">-->
+<!--	    <appender-ref ref="CONSOLE"/>-->
+<!--	</logger>-->
+<!--	<logger name="com.zaxxer.hikari" level="TRACE" additivity="false">-->
+<!--	    <appender-ref ref="CONSOLE"/>-->
+<!--	</logger>-->
+	<logger name="jdbc.connection" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	<logger name="jdbc.audit" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	<logger name="jdbc.sqlonly" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	<logger name="jdbc.sqltiming" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	<logger name="jdbc.resultset" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	<logger name="jdbc.resultsettable" level="WARN" additivity="false">
+		<appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT"/>
+	</logger>
+	
+	<!-- Application Logging Setting -->
+	<logger name="com.qnpeople.rnd.pms" level="DEBUG" additivity="false">
+	    <appender-ref ref="CONSOLE"/>
+		<appender-ref ref="FILE-AUDIT" />
+	</logger>
+	
+</configuration>

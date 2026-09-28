@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.common.channel.mapper.ChannelMgmtMapper">
+
+
+	<!-- 채널 정보 -->
+	<resultMap id="channel" type="com.qnpeople.rnd.pms.apis.common.channel.model.ChannelDto">
+		<id property="chnlSeq" column="CHNL_SEQ" />
+		<result property="chnlCd" column="CHNL_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="chnlNm" column="CHNL_NM" />
+		<result property="chnlIp" column="CHNL_IP" />
+		<result property="chnlPort" column="CHNL_PORT" />
+		<result property="chnlDmn" column="CHNL_DMN" />
+		<result property="chnlBscUri" column="CHNL_BSC_URI" />
+		<result property="chnlDesc" column="CHNL_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<select id="selectAvailableChannelList" parameterType="com.qnpeople.rnd.pms.apis.common.channel.model.ChannelSC" resultMap="channel">
+		SELECT 	CMN_CHNL.CHNL_SEQ
+				  , CMN_CHNL.CHNL_CD
+				  , CMN_CHNL.USE_YN
+				  , CMN_CHNL.CHNL_NM
+				  , CMN_CHNL.CHNL_IP
+  				  , CMN_CHNL.CHNL_PORT
+  				  , CMN_CHNL.CHNL_DMN
+  				  , CMN_CHNL.CHNL_BSC_URI
+  				  , CMN_CHNL.CHNL_DESC
+  				  , TO_CHAR(CMN_CHNL.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+  				  , CMN_CHNL.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CHNL.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(CMN_CHNL.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+  				  , CMN_CHNL.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CHNL.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	CMN_CHNL_INFO_TBL	CMN_CHNL
+		WHERE 	1	=	1
+		AND 		CMN_CHNL.USE_YN = 'Y'
+		AND 		(((#{chnlSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSeq, jdbcType=NUMERIC} = 0)) OR (CMN_CHNL.CHNL_SEQ = #{chnlSeq, jdbcType=NUMERIC}))
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (CMN_CHNL.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		(((#{chnlNm, jdbcType=VARCHAR} IS NULL) OR (#{chnlNm, jdbcType=VARCHAR} = '')) OR (CMN_CHNL.CHNL_NM LIKE '%' || #{chnlNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<select id="selectChannelDetail" parameterType="com.qnpeople.rnd.pms.apis.common.channel.model.ChannelSC" resultMap="channel">
+		SELECT 	CMN_CHNL.CHNL_SEQ
+				  , CMN_CHNL.CHNL_CD
+				  , CMN_CHNL.USE_YN
+				  , CMN_CHNL.CHNL_NM
+				  , CMN_CHNL.CHNL_IP
+  				  , CMN_CHNL.CHNL_PORT
+  				  , CMN_CHNL.CHNL_DMN
+  				  , CMN_CHNL.CHNL_BSC_URI
+  				  , CMN_CHNL.CHNL_DESC
+  				  , TO_CHAR(CMN_CHNL.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+  				  , CMN_CHNL.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CHNL.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(CMN_CHNL.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+  				  , CMN_CHNL.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CMN_CHNL.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	CMN_CHNL_INFO_TBL	CMN_CHNL
+		WHERE 	1	=	1
+		AND 		(((#{chnlSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSeq, jdbcType=NUMERIC} = 0)) OR (CMN_CHNL.CHNL_SEQ = #{chnlSeq, jdbcType=NUMERIC}))
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (CMN_CHNL.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+	</select>
+</mapper>
