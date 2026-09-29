@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.service.category.mapper.SrvcCategoryMgmtMapper">
+	<!-- 서비스 카테고리 트리 구조 -->
+	<resultMap id="serviceCategoryTree" type="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategoryTreeDto">
+		<id property="srvcCtgryCd" column="SRVC_CTGRY_CD" />
+		<result property="srvcCtgryLvl" column="SRVC_CTGRY_LVL" />
+		<result property="srvcCtgryOrd" column="SRVC_CTGRY_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="srvcCtgryNm" column="SRVC_CTGRY_NM" />
+		<result property="srvcCtgryTreeNm" column="SRVC_CTGRY_TREE_NM" />
+		<result property="srvcCtgryDesc" column="SRVC_CTGRY_DESC" />
+		<result property="prntSrvcCtgryCd" column="PRNT_SRVC_CTGRY_CD" />
+		<result property="srvcCtgrySortPath" column="SRVC_CTGRY_SORT_PATH" />
+	</resultMap>
+	<resultMap id="serviceCategory" type="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategoryDto">
+		<id property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+	</resultMap>
+	
+	<!-- 01.서비스_사용 가능 카테고리 트리 목록 추출 쿼리 -->
+	<select id="selectAvailableServiceCategoryTreeList" parameterType="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategorySC" resultMap="serviceCategoryTree">
+		SELECT 	SRVC_CTGRY_CD
+		 		  , SRVC_CTGRY_LVL
+		 		  , SRVC_CTGRY_ORD
+		 		  , USE_YN
+		 		  , SRVC_CTGRY_NM
+		 		  , SRVC_CTGRY_TREE_NM
+	  			  , SRVC_CTGRY_DESC
+	  			  , PRNT_SRVC_CTGRY_CD
+	  			  , SRVC_CTGRY_SORT_PATH
+		FROM 	SVC_SRVC_CTGRY_TREE_VIEW
+		ORDER BY SRVC_CTGRY_SORT_PATH;
+	</select>
+	
+	<!-- 02.서비스_카테고리 상세 정보 추출 쿼리 -->
+	<select id="selectServiceCategoryDetail" parameterType="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategorySC" resultMap="serviceCategory">
+	
+	</select>
+</mapper>
