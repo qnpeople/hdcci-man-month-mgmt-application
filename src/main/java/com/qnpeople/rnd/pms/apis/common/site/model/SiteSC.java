@@ -1,4 +1,4 @@
-package com.qnpeople.rnd.pms.apis.common.channel.model;
+package com.qnpeople.rnd.pms.apis.common.site.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,33 +12,39 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(value = Include.NON_NULL)
 @Data
-public class ChannelSC extends QNPWebBaseModel {
+public class SiteSC extends QNPWebBaseModel {
 
-	/* 채널 식별자 */
-	private Long chnlSeq;
-	/* 채널 코드 */
-	private String chnlCd;
-	/* 채널 명 */
-	private String chnlNm;
+	/* 사이트 식별자 */
+	private Long siteSeq;
+	/* 사이트 코드 */
+	private String siteCd;
+	/* 사이트 유형(공통코드: CMN_SITE_INFO_001) 01:전체, 02:지역, 03:분야, 04:업무, 99:기타 */
+	private String siteTp;
 	/* 사용 여부 */
 	private String useYn;
-		
+	/* 사이트 명 */
+	private String siteNm;
+	
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();
 		info.append(className).append("{ ");
-		info.append("chnlSeq= ").append(chnlSeq);
-		if(!SBNUtils.isNull(chnlCd)) {
-			info.append(",");
-			info.append("chnlCd=").append(chnlCd);
+		info.append("siteSeq= ").append(siteSeq);
+		if(!SBNUtils.isNull(siteCd)) {
+			info.append(", ");
+			info.append("siteCd=").append(siteCd);
 		}
-		if(!SBNUtils.isNull(chnlNm)) {
-			info.append(",");
-			info.append("chnlNm=").append(chnlNm);
+		if(!SBNUtils.isNull(siteTp)) {
+			info.append(", ");
+			info.append("siteTp=").append(siteTp);
 		}
 		if(!SBNUtils.isNull(useYn)) {
 			info.append(",");
 			info.append("useYn=").append(useYn);
+		}
+		if(!SBNUtils.isNull(siteNm)) {
+			info.append(", ");
+			info.append("siteNm=").append(siteNm);
 		}
 		info.append(" }");
 		return info.toString();

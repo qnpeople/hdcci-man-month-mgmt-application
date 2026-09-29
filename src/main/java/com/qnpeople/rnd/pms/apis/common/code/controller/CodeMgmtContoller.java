@@ -155,7 +155,7 @@ public class CodeMgmtContoller extends QNPWebBaseController {
 	 * @date 		2026.09.21
 	 * @param 	httpRequest				클라이언트의 요청 정보를 전달하는 HttpServletRequest 인터페이스 객체
 	 * @param 	httpResponse				클라이언트의 요청 수행 결과 응답 정보를 전달하는 HttpServletResponse 인터페이스 객체
-	 * @param 	codeMgmtRequest		클라이언트의 JSON 요청에 대한 정보를 전달하는 객체
+	 * @param 	codeMgmtRequest		클라이언트의 사용 가능 그룹 코드 Tree 목록 조회 요청 수행 결과에 대한 JSON 결과 정보를 전달하는 객체
 	 * @return		클라이언트 요청에 대한 수행 결과 응답 ResponseEntity 객체
 	 * @throws 	QNPWebException		클라이언트의 요청 작업 수행 중 오류 발생 시 예외 처리 작업을 수행하는 Exception 객체
 	 */

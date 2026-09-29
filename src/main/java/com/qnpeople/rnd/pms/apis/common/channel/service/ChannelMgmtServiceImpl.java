@@ -10,9 +10,12 @@ import com.qnpeople.rnd.pms.apis.common.channel.mapper.ChannelMgmtMapper;
 import com.qnpeople.rnd.pms.apis.common.channel.model.ChannelDto;
 import com.qnpeople.rnd.pms.apis.common.channel.model.ChannelSC;
 import com.qnpeople.rnd.pms.common.domain.executor.service.QNPWebBaseServiceImpl;
+import com.qnpeople.rnd.pms.common.reason.QNPReasonCode;
+import com.qnpeople.rnd.pms.common.reason.QNPReasonInterface;
 import com.qnpeople.rnd.pms.exceptions.QNPWebException;
 
 import kr.co.sbn.platformhub.framework.core.common.web.exceptions.SBNWebException;
+import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -55,10 +58,10 @@ public class ChannelMgmtServiceImpl extends QNPWebBaseServiceImpl implements Cha
 	 * @return		전달된 채널 목록 조회 조건 정보 대한 전체 사용 가능 채널 목록 객체
 	 * @throws 	SBNWebException	클라이언트의 요청 작업 수행 중 오류 발생 시 예외 처리 작업 Exception 객체
 	 */
-	public List<ChannelDto> getAvailableChannelList(ChannelSC channelSC) throws QNPWebException {
+	public List<ChannelDto> getChannelList(ChannelSC channelSC) throws QNPWebException {
 		List<ChannelDto> availableChannelList = new ArrayList<ChannelDto>();
 		try {
-			availableChannelList = channelMgmtMapper.selectAvailableChannelList(channelSC);
+			availableChannelList = channelMgmtMapper.selectChannelList(channelSC);
 			return availableChannelList;
 		} catch(Exception exception) {
 			throw new QNPWebException(exception);
@@ -75,8 +78,17 @@ public class ChannelMgmtServiceImpl extends QNPWebBaseServiceImpl implements Cha
 	 * @throws 	SBNWebException	클라이언트의 요청 작업 수행 중 오류 발생 시 예외 처리 작업 Exception 객체
 	 */
 	public ChannelDto getChannelDetail(ChannelSC channelSC) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
 		ChannelDto channelDetail = null;
-		try {			
+		try {
+			if(SBNUtils.isNull(channelSC.getChnlSeq()) && SBNUtils.isNull(channelSC.getChnlCd())) {
+				reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "공통 채널 상세 조회 요청 키 조건 정보 미 전달 오류.";
+				throw new QNPWebException(reason, errorCode, errorMessage);
+			}
 			channelDetail = channelMgmtMapper.selectChannelDetail(channelSC);
 			return channelDetail;
 		} catch(Exception exception) {

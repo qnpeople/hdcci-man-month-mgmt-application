@@ -1,4 +1,4 @@
-package com.qnpeople.rnd.pms.apis.common.channel.model;
+package com.qnpeople.rnd.pms.apis.common.site.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,76 +12,70 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(value = Include.NON_NULL)
 @Data
-public class ChannelDto extends QNPWebBaseModel {
+public class SiteDto extends QNPWebBaseModel {
 
-	/* 채널 식별자 */
-	private Long chnlSeq;
-	/* 채널 코드 */
-	private String chnlCd;
+	/* 사이트 식별자 */
+	private Long siteSeq;
+	/* 사이트 코드 */
+	private String siteCd;
+	/* 사이트 유형(공통코드: CMN_SITE_INFO_001) 01:전체, 02:지역, 03:분야, 04:업무, 99:기타 */
+	private String siteTp;
+	/* 사이트 유형 명 */
+	private String siteTpNm;
 	/* 사용 여부 */
 	private String useYn;
-	/* 채널 명 */
-	private String chnlNm;
-	/* 채널 IP */
-	private String chnlIp;
-	/* 채널 PORT */
-	private Integer chnlPort;
-	/* 채널 도메인 */
-	private String chnlDmn;
-	/* 채널 기본 URI 정보 */
-	private String chnlBscUri;
-	/* 채널 설명 */
-	private String chnlDesc;
+	/* 사이트 명 */
+	private String siteNm;
+	/* 사이트 기본 URI 정보 */
+	private String siteBscUri;
+	/* 사이트 설명 */
+	private String siteDesc;
 	
-	/* 채널 최초 등록 일시 */
+	/* 사이트 최초 등록 일시 */
 	private String rgstDt;
-	/* 채널 최초 등록자 식별자 */
+	/* 사이트 최초 등록자 식별자 */
 	private Long rgstSeq;
-	/* 채널 최초 등록자 명 */
+	/* 사이트 최초 등록자 명 */
 	private String rgstNm;
-	/* 채널 최종 수정 일시 */
+	/* 사이트 최종 수정 일시 */
 	private String updtDt;
-	/* 채널 최종 수정자 식별자 */
+	/* 사이트 최종 수정자 식별자 */
 	private Long updtSeq;
-	/* 채널 최종 수정자 명 */
+	/* 사이트 최종 수정자 명 */
 	private String updtNm;
 	
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();
 		info.append(className).append("{ ");
-		info.append("chnlSeq= ").append(chnlSeq);
-		if(!SBNUtils.isNull(chnlCd)) {
+		info.append("siteSeq= ").append(siteSeq);
+		if(!SBNUtils.isNull(siteCd)) {
 			info.append(",");
-			info.append("chnlCd=").append(chnlCd);
+			info.append("siteCd=").append(siteCd);
+		}
+		if(!SBNUtils.isNull(siteTp)) {
+			info.append(",");
+			info.append("siteTp=").append(siteTp);
 		}
 		if(!SBNUtils.isNull(useYn)) {
 			info.append(",");
 			info.append("useYn=").append(useYn);
 		}
-		if(!SBNUtils.isNull(chnlNm)) {
+		if(!SBNUtils.isNull(siteTpNm)) {
 			info.append(",");
-			info.append("chnlNm=").append(chnlNm);
+			info.append("siteTpNm=").append(siteTpNm);
+		}	
+		if(!SBNUtils.isNull(siteNm)) {
+			info.append(",");
+			info.append("siteNm=").append(siteNm);
+		}		
+		if(!SBNUtils.isNull(siteBscUri)) {
+			info.append(",");
+			info.append("siteBscUri=").append(siteBscUri);
 		}
-		if(!SBNUtils.isNull(chnlIp)) {
+		if(!SBNUtils.isNull(siteDesc)) {
 			info.append(",");
-			info.append("chnlIp=").append(chnlIp);
-		}
-		if(!SBNUtils.isNull(chnlPort)) {
-			info.append(",");
-			info.append("chnlPort=").append(chnlPort);
-		}
-		if(!SBNUtils.isNull(chnlDmn)) {
-			info.append(",");
-			info.append("chnlDmn=").append(chnlDmn);
-		}
-		if(!SBNUtils.isNull(chnlBscUri)) {
-			info.append(",");
-			info.append("chnlBscUri=").append(chnlBscUri);
-		}
-		if(!SBNUtils.isNull(chnlDesc)) {
-			info.append(",");
-			info.append("chnlDesc=").append(chnlDesc);
+			info.append("siteDesc=").append(siteDesc);
 		}
 		if(!SBNUtils.isNull(rgstDt)) {
 			info.append(",");

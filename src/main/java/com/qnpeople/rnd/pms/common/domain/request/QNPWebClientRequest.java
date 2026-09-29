@@ -37,4 +37,22 @@ public interface QNPWebClientRequest extends SBNClientRequest {
 	 * @return		클라이언트로부터 전달된 JWT 토큰 접근 객체
 	 */
 	public SBNJwtAccessToken getClientJwtAccessToken();
+	
+	/**
+	 * 목록 조회 요청 페이지 번호 정보를 설정하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.08.20
+	 * @param 	pageNo		목록 조회 요청 페이지 번호 정보
+	 */
+	public void setPageNo(Integer pageNo);
+	
+	/**
+	 * 목록 조회 요청 페이지 번호 정보를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.08.20
+	 * @return		목록 조회 요청 페이지 번호 정보
+	 */
+	public Integer getPageNo();
 }

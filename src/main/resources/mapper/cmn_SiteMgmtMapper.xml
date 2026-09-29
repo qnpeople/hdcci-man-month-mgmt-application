@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.common.site.mapper.SiteMgmtMapper">
+	<!-- 사이트 정보 -->
+	<resultMap id="site" type="com.qnpeople.rnd.pms.apis.common.site.model.SiteDto">
+		<id property="siteSeq" column="SITE_SEQ" />
+		<result property="siteCd" column="SITE_CD" />
+		<result property="siteTp" column="SITE_TP" />
+		<result property="siteTpNm" column="SITE_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="siteNm" column="SITE_NM" />
+		<result property="siteBscUri" column="SITE_BSC_URI" />
+		<result property="siteDesc" column="SITE_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<select id="selectSiteList" parameterType="com.qnpeople.rnd.pms.apis.common.site.model.SiteSC" resultMap="site">
+		SELECT 	SITE_INFO.SITE_SEQ
+			      , SITE_INFO.SITE_CD
+			      , SITE_INFO.SITE_TP
+			      , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMN_SITE_INFO_001'
+						AND 		CD 			= 	SITE_INFO.SITE_TP
+				    ) 	AS 	SITE_TP_NM
+			      , SITE_INFO.USE_YN
+			      , SITE_INFO.SITE_NM
+			      , SITE_INFO.SITE_BSC_URI
+			      , SITE_INFO.SITE_DESC
+			      , TO_CHAR(SITE_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+			      , SITE_INFO.RGST_SEQ
+			      , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SITE_INFO.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+			      , TO_CHAR(SITE_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+			      , SITE_INFO.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SITE_INFO.UPDT_SEQ		
+				  	)		AS 	UPDT_NM
+		FROM 	CMN_SITE_INFO_TBL	SITE_INFO
+		WHERE 	1	=	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SITE_INFO.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		(((#{siteTp, jdbcType=VARCHAR} IS NULL) OR (#{siteTp, jdbcType=VARCHAR} = '')) OR (SITE_INFO.SITE_TP = #{siteTp, jdbcType=VARCHAR}))
+		AND 		(((#{siteNm, jdbcType=VARCHAR} IS NULL) OR (#{siteNm, jdbcType=VARCHAR} = '')) OR (SITE_INFO.SITE_NM LIKE  '%' || #{siteNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<select id="selectSiteDetail" parameterType="com.qnpeople.rnd.pms.apis.common.channel.model.ChannelSC" resultMap="site">
+		SELECT 	SITE_INFO.SITE_SEQ
+			      , SITE_INFO.SITE_CD
+			      , SITE_INFO.SITE_TP
+			      , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMN_SITE_INFO_001'
+						AND 		CD 			= 	SITE_INFO.SITE_TP
+				    ) 	AS 	SITE_TP_NM
+			      , SITE_INFO.USE_YN
+			      , SITE_INFO.SITE_NM
+			      , SITE_INFO.SITE_BSC_URI
+			      , SITE_INFO.SITE_DESC
+			      , TO_CHAR(SITE_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+			      , SITE_INFO.RGST_SEQ
+			      , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SITE_INFO.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+			      , TO_CHAR(SITE_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+			      , SITE_INFO.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SITE_INFO.UPDT_SEQ		
+				  	)		AS 	UPDT_NM
+		FROM 	CMN_SITE_INFO_TBL	SITE_INFO
+		WHERE 	1	=	1
+		AND 		(((#{siteSeq, jdbcType=NUMERIC} IS NULL) OR (#{siteSeq, jdbcType=NUMERIC} = 0)) OR (SITE_INFO.SITE_SEQ = #{siteSeq, jdbcType=NUMERIC}))
+		AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (SITE_INFO.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+	</select>
+</mapper>

@@ -113,7 +113,7 @@ public class CodeMgmtServiceImpl extends QNPWebBaseServiceImpl implements CodeMg
 		GroupCodeDto groupCodeDetail = null;
 		try {
 			if(SBNUtils.isNull(groupCodeSC)) {
-				 reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+				reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
 				errorCode = reason.getReasonCode();
 				errorMessage = "공통 코드 그룹 상세 조회 요청 조건 정보 미 전달 오류.";
 				throw new QNPWebException(reason, errorCode, errorMessage);

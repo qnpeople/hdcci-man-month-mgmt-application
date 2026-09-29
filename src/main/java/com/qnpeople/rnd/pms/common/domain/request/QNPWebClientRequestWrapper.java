@@ -33,6 +33,8 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 
 	/** 클라이언트로부터 전달된 JWT 토큰 접근 객체 */ 
 	protected SBNJwtAccessToken clientJwtAccessToken;
+	/** 목록 조회 요청 페이지 번호 정보 */
+	protected Integer pageNo;
 	
 	/**
 	 * QNP 어플리케이션 웹 클라이언트 수행 요청 정보를 전달하는 작업을 수행하는 객체를 생성하는 기본 객체 생성자
@@ -93,6 +95,30 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 	}
 	
 	/**
+	 * 목록 조회 요청 페이지 번호 정보를 설정하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.08.20
+	 * @param 	pageNo		목록 조회 요청 페이지 번호 정보
+	 */
+	public void setPageNo(Integer pageNo) {
+		if(!SBNUtils.isNull(pageNo) && (pageNo > 0)) {
+			this.pageNo = pageNo;
+		}
+	}
+	
+	/**
+	 * 목록 조회 요청 페이지 번호 정보를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.08.20
+	 * @return		목록 조회 요청 페이지 번호 정보
+	 */
+	public Integer getPageNo() {
+		return pageNo;
+	}
+	
+	/**
 	 * 프레임워크 내부 기본 제공 요청 정보의 데이터 속성 객체의 세부 정보에 대한 문자열 정보를 구성하여 전달하는 메소드
 	 * 
 	 * @author		BeomSeok.Seo
@@ -120,6 +146,10 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 			info.append(", ");
 			info.append("clientJwtAccessToken=").append(clientJwtAccessToken.toStringInfo());
 		}
+		if(!SBNUtils.isNull(pageNo) && (pageNo > 0)) {
+			info.append(", ");
+			info.append("pageNo=").append(pageNo);
+		}		
 		if(!SBNUtils.isNull(getRequestStartDateTime())) {
 			info.append(", ");
 			info.append("requestStartTime=").append(SBNDateUtils.dateToString(getRequestStartDateTime()));

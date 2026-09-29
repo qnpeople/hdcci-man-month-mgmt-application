@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.common.channelsite.mapper.ChannelSiteMgmtMapper">
+	<!-- 채널별 사이트 정보 -->
+	<resultMap id="channelSite" type="com.qnpeople.rnd.pms.apis.common.channelsite.model.ChannelSiteDto">
+		<id property="chnlSiteSeq" column="CHNL_SITE_SEQ" />
+		<result property="chnlSeq" column="CHNL_SEQ" />
+		<result property="siteSeq" column="SITE_SEQ" />
+		<result property="chnlCd" column="CHNL_CD" />
+		<result property="siteCd" column="SITE_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="chnlNm" column="CHNL_NM" />
+		<result property="chnlIp" column="CHNL_IP" />
+		<result property="chnlPort" column="CHNL_PORT" />
+		<result property="chnlDmn" column="CHNL_DMN" />
+		<result property="chnlBscUri" column="CHNL_BSC_URI" />		
+		<result property="siteTp" column="SITE_TP" />
+		<result property="siteTpNm" column="SITE_TP_NM" />
+		<result property="siteNm" column="SITE_NM" />
+		<result property="siteBscUri" column="SITE_BSC_URI" />		
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	<!-- 채널별 사이트 목록 정보 추출 쿼리 -->
+	<select id="selectChannelSiteList" parameterType="com.qnpeople.rnd.pms.apis.common.channelsite.model.ChannelSiteSC" resultMap="channelSite">
+		SELECT 	CHNL_SITE.CHNL_SITE_SEQ
+				  , CHNL_SITE.CHNL_SEQ
+				  , CHNL_SITE.SITE_SEQ
+				  , CHNL_SITE.CHNL_CD
+				  , CHNL_SITE.SITE_CD
+				  , CHNL_SITE.USE_YN
+				  , CHNL.CHNL_NM
+				  , CHNL.CHNL_IP
+				  , CHNL.CHNL_PORT
+				  , CHNL.CHNL_DMN
+				  , CHNL.CHNL_BSC_URI
+				  , SITE.SITE_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMN_SITE_INFO_001'
+						AND 		CD 	=	SITE.SITE_TP
+					
+				    ) 	AS 	SITE_TP_NM
+				  , SITE.SITE_NM
+				  , SITE.SITE_BSC_URI
+  				  , TO_CHAR(CHNL_SITE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+  				  , CHNL_SITE.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CHNL_SITE.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(CHNL_SITE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+  				  , CHNL_SITE.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CHNL_SITE.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	CMN_CHNL_SITE_MAP	CHNL_SITE
+					LEFT OUTER JOIN CMN_CHNL_INFO_TBL CHNL ON CHNL_SITE.CHNL_SEQ = CHNL.CHNL_SEQ
+					LEFT OUTER JOIN CMN_SITE_INFO_TBL SITE ON CHNL_SITE.SITE_SEQ = SITE.SITE_SEQ
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND     (((#{chnlSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE.CHNL_SEQ = #{chnlSeq, jdbcType=NUMERIC}))
+		AND     (((#{siteSeq, jdbcType=NUMERIC} IS NULL) OR (#{siteSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE.SITE_SEQ = #{siteSeq, jdbcType=NUMERIC}))
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+		ORDER BY CHNL_SITE.CHNL_SITE_SEQ ASC
+	</select>
+	
+	<!-- 채널별 사이트 상세 정보 추출 쿼리 -->
+	<select id="selectChannelSiteDetail" parameterType="com.qnpeople.rnd.pms.apis.common.channelsite.model.ChannelSiteSC" resultMap="channelSite">
+		SELECT 	CHNL_SITE.CHNL_SITE_SEQ
+				  , CHNL_SITE.CHNL_SEQ
+				  , CHNL_SITE.SITE_SEQ
+				  , CHNL_SITE.CHNL_CD
+				  , CHNL_SITE.SITE_CD
+				  , CHNL_SITE.USE_YN
+				  , CHNL.CHNL_NM
+				  , CHNL.CHNL_IP
+				  , CHNL.CHNL_PORT
+				  , CHNL.CHNL_DMN
+				  , CHNL.CHNL_BSC_URI
+				  , SITE.SITE_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMN_SITE_INFO_001'
+						AND 		CD 	=	SITE.SITE_TP
+					
+				    ) 	AS 	SITE_TP_NM
+				  , SITE.SITE_NM
+				  , SITE.SITE_BSC_URI
+  				  , TO_CHAR(CHNL_SITE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+  				  , CHNL_SITE.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CHNL_SITE.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(CHNL_SITE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+  				  , CHNL_SITE.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = CHNL_SITE.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	CMN_CHNL_SITE_MAP	CHNL_SITE
+					LEFT OUTER JOIN CMN_CHNL_INFO_TBL CHNL ON CHNL_SITE.CHNL_SEQ = CHNL.CHNL_SEQ
+					LEFT OUTER JOIN CMN_SITE_INFO_TBL SITE ON CHNL_SITE.SITE_SEQ = SITE.SITE_SEQ
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND     (((#{chnlSiteSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSiteSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE.CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}))
+		AND     (((#{chnlSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE.CHNL_SEQ = #{chnlSeq, jdbcType=NUMERIC}))
+		AND     (((#{siteSeq, jdbcType=NUMERIC} IS NULL) OR (#{siteSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE.SITE_SEQ = #{siteSeq, jdbcType=NUMERIC}))
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (CHNL_SITE.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+	</select>
+</mapper>

@@ -22,11 +22,7 @@ public class CodeMgmtRequest extends QNPWebClientRequestWrapper {
 	private String grpCd;
 	/* 공통 코드 정보 */
 	private String cd;
-	
-	public CodeMgmtRequest() {
-		super();
-	}
-	
+		
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();

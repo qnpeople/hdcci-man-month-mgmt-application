@@ -61,7 +61,38 @@ logging:
 ################################################
 # DEV
 ################################################
+server:
+  port: 8080
+  tomcat:
+    max-connections: 100
+    accesslog:
+      pattern: '%h %l %u %t "%r" %s %b %T'
+      enabled: true
+      directory: log/access
+    basedir: /data/hdcci-man-month-application/lcl
+    additional-tld-skip-patterns: "*.jar"
 
+spring:
+  config:
+   activate:
+     on-profile: dev
+
+ # MVC 및 JSP 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+
+   # 서블릿 업로드 파일 사이즈 설정    
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+logging:
+  config: classpath:config/logback/logback-spring-dev.xml
 
 
 ---

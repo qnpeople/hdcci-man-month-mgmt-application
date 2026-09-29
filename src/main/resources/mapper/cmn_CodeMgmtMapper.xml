@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qnpeople.rnd.pms.apis.common.code.mapper.CodeMgmtMapper">
-
-
 	<!-- 그룹 코드 트리 구조 -->
 	<resultMap id="groupCodeTree" type="com.qnpeople.rnd.pms.apis.common.code.model.GroupCodeTreeDto">
 		<id property="grpCd" column="GRP_CD" />

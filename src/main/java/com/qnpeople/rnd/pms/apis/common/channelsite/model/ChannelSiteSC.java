@@ -1,9 +1,9 @@
-package com.qnpeople.rnd.pms.apis.common.channel.domain.request;
+package com.qnpeople.rnd.pms.apis.common.channelsite.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qnpeople.rnd.pms.common.domain.request.QNPWebClientRequestWrapper;
+import com.qnpeople.rnd.pms.common.domain.executor.model.QNPWebBaseModel;
 
 import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 import lombok.Data;
@@ -14,18 +14,21 @@ import lombok.extern.slf4j.Slf4j;
 @JsonInclude(value = Include.NON_NULL)
 @Slf4j
 @Data
-public class ChannelMgmtRequest extends QNPWebClientRequestWrapper {
+public class ChannelSiteSC extends QNPWebBaseModel {
 
+	/* 채널별 사이트 식별자 */
+	private Long chnlSiteSeq;
 	/* 채널 식별자 */
 	private Long chnlSeq;
-	/* 채널 코드 */
+	/* 사이트 식별자 */
+	private Long siteSeq;
+	/* 채널 기본 정보의 채널 코드 */
 	private String chnlCd;
-	/* 채널 명 */
-	private String chnlNm;
-	/* 사용 여부 */
+	/* 사이트 기본 정보의 사이트 코드 */
+	private String siteCd;
+	/* 채널별 사이트 사용 여부 */
 	private String useYn;
-	
-	
+		
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();
@@ -35,17 +38,25 @@ public class ChannelMgmtRequest extends QNPWebClientRequestWrapper {
 			info.append(", ");
 			info.append("pageNo=").append(pageNo);
 		}
-		if(SBNUtils.isNull(txId)) {
+		if(!SBNUtils.isNull(chnlSiteSeq) && (chnlSiteSeq > 0L)) {
 			info.append(", ");
-			info.append("txId=").append(txId);
+			info.append("chnlSiteSeq=").append(chnlSiteSeq);
 		}
 		if(!SBNUtils.isNull(chnlSeq) && (chnlSeq > 0L)) {
 			info.append(", ");
 			info.append("chnlSeq=").append(chnlSeq);
 		}
+		if(!SBNUtils.isNull(siteSeq) && (siteSeq > 0L)) {
+			info.append(", ");
+			info.append("siteSeq=").append(siteSeq);
+		}
 		if(!SBNUtils.isNull(chnlCd)) {
 			info.append(", ");
 			info.append("chnlCd=").append(chnlCd);
+		}
+		if(!SBNUtils.isNull(siteCd)) {
+			info.append(", ");
+			info.append("siteCd=").append(siteCd);
 		}
 		if(!SBNUtils.isNull(useYn)) {
 			info.append(", ");

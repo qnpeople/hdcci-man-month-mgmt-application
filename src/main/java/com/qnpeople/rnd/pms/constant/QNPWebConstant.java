@@ -89,4 +89,13 @@ public class QNPWebConstant {
 	
 	/** 클라이언트 요청 Body 내용 노출 기본 길이 */
 	public static final Integer DEFAULT_REQUEST_BODY_DISPLAY_LENGTH = 100;
+	
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	//	WEB Client 의 목록 조회 요청 시 패이징 처리 수행 정보 정의 부분
+	/////////////////////////////////////////////////////////////////////////////////////////////////
+	/** */
+	public static final Integer DEFAULT_ROW_DATA_CNT = 30;
+	/** */
+	public static final Integer DEFAULT_PAGE_NO = 1;
+	
 }

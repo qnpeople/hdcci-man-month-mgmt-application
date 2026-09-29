@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="1 seconds" encoding="UTF-8">
 	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>	
-	<property name="LOG_HOME" value="/HDCCI/WORK_LOGS/hdcci-man-month-application/lcl/logs" />
+	<property name="LOG_HOME" value="/HDCCI/WORK_LOGS/hdcci-man-month-application/dev/logs" />
 	
 	<!-- 표준 출력을 위한 Appender 설정 영역 -->
 	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -93,11 +93,11 @@
 	</logger>
 	
 	<!-- Application Logging Setting -->
-	<logger name="kr.co.sbn.platformhub.framework.core" level="DEBUG" additivity="false">
+	<logger name="kr.co.sbn.platformhub.framework" level="DEBUG" additivity="false">
 	    <appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE-AUDIT" />
 	</logger>	
-	<logger name="com.qnpeople.rnd.product.pmp" level="DEBUG" additivity="false">
+	<logger name="com.qnpeople.rnd.pms" level="DEBUG" additivity="false">
 	    <appender-ref ref="CONSOLE"/>
 		<appender-ref ref="FILE-AUDIT" />
 	</logger>
