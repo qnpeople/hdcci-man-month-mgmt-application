@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.service.service.mapper.ServiceMgmtMapper">
+
+	<!-- 서비스 정보 -->
+	<resultMap id="service" type="com.qnpeople.rnd.pms.apis.service.service.model.ServiceDto">
+		<id property="srvcSeq" column="SRVC_SEQ" />
+		<result property="srvcCd" column="SRVC_CD" />
+		<result property="srvcCtgryCd" column="SRVC_CTGRY_CD" />
+		<result property="srvcTp" column="SRVC_TP" />
+		<result property="srvcTpNm" column="SRVC_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="srvcNm" column="SRVC_NM" />
+		<result property="srvcBscUri" column="SRVC_BSC_URI" />
+		<result property="srvcDesc" column="SRVC_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+
+	<!-- 서비스 목록 추출 쿼리 -->
+	<select id="selectServiceList" parameterType="com.qnpeople.rnd.pms.apis.service.service.model.ServiceSC" resultMap="service">
+		SELECT 	SRVC_INFO.SRVC_SEQ
+				  , SRVC_INFO.SRVC_CD
+				  , SRVC_INFO.SRVC_CTGRY_CD
+ 				  , SRVC_INFO.SRVC_TP
+ 				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SVC_SRVC_INFO_001'
+						AND 		CD 	=	SRVC_INFO.SRVC_TP					
+				    ) 	AS 	SRVC_TP_NM
+ 				  , SRVC_INFO.USE_YN
+ 				  , SRVC_INFO.SRVC_NM
+ 				  , SRVC_INFO.SRVC_BSC_URI
+ 				  , SRVC_INFO.SRVC_DESC
+ 				  , TO_CHAR(SRVC_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+ 				  , SRVC_INFO.RGST_SEQ
+ 				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_INFO.RGST_SEQ				
+				  	) 	AS 	RGST_NM
+ 				  , TO_CHAR(SRVC_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+ 				  , SRVC_INFO.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_INFO.UPDT_SEQ				
+				  	) 	AS 	UPDT_NM
+		FROM 	SVC_SRVC_INFO_TBL 	SRVC_INFO
+		WHERE 	1 	=	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		(((#{srvcCtgryCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCtgryCd, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.SRVC_CTGRY_CD = #{srvcCtgryCd, jdbcType=VARCHAR}))
+		AND 		(((#{srvcTp, jdbcType=VARCHAR} IS NULL) OR (#{srvcTp, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.SRVC_TP = #{srvcTp, jdbcType=VARCHAR}))
+		AND 		(((#{srvcNm, jdbcType=VARCHAR} IS NULL) OR (#{srvcNm, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.SRVC_NM LIKE '%' || #{srvcNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<!-- 서비스 상세 정보 추출 쿼리 -->
+	<select id="selectServiceDetail" parameterType="com.qnpeople.rnd.pms.apis.service.service.model.ServiceSC" resultMap="service">
+		SELECT 	SRVC_INFO.SRVC_SEQ
+				  , SRVC_INFO.SRVC_CD
+				  , SRVC_INFO.SRVC_CTGRY_CD
+ 				  , SRVC_INFO.SRVC_TP
+ 				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SVC_SRVC_INFO_001'
+						AND 		CD 	=	SRVC_INFO.SRVC_TP					
+				    ) 	AS 	SRVC_TP_NM
+ 				  , SRVC_INFO.USE_YN
+ 				  , SRVC_INFO.SRVC_NM
+ 				  , SRVC_INFO.SRVC_BSC_URI
+ 				  , SRVC_INFO.SRVC_DESC
+ 				  , TO_CHAR(SRVC_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+ 				  , SRVC_INFO.RGST_SEQ
+ 				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_INFO.RGST_SEQ				
+				  	) 	AS 	RGST_NM
+ 				  , TO_CHAR(SRVC_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+ 				  , SRVC_INFO.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_INFO.UPDT_SEQ				
+				  	) 	AS 	UPDT_NM
+		FROM 	SVC_SRVC_INFO_TBL 	SRVC_INFO
+		WHERE 	1 	=	1
+		AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SRVC_INFO.SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+		AND 		(((#{srvcCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCd, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
+	</select>
+	
+	<!-- 서비스 코드 중복 체크 여부 추출 쿼리 -->
+	<select id="selectServiceCdDuplicationFlag" parameterType="com.qnpeople.rnd.pms.apis.service.service.model.ServiceDto" resultType="java.lang.Boolean">
+		SELECT 	CASE 
+						WHEN ( COUNT(SRVC_CD) > 0 ) THEN true
+						ELSE false
+					END	
+		FROM 	SVC_SRVC_INFO_TBL 
+		WHERE 	1 	= 	1
+		AND     SRVC_CTGRY_CD 	=	#{srvcCtgryCd, jdbcType=VARCHAR}
+		AND 		SRVC_CD 			= 	#{srvcCd, jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 신규 서비스 정보 등록 쿼리 -->
+	<insert id="insertNewService" parameterType="com.qnpeople.rnd.pms.apis.service.service.model.ServiceDto">
+		INSERT INTO SVC_SRVC_INFO_TBL (
+			SRVC_CD
+		  , SRVC_CTGRY_CD
+		  , SRVC_TP
+		  , USE_YN
+		  , SRVC_NM
+		  , SRVC_BSC_URI	
+		  , SRVC_DESC
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{srvcCd, jdbcType=VARCHAR}
+		  , 	#{srvcCtgryCd, jdbcType=VARCHAR}
+		  , 	#{srvcTp, jdbcType=VARCHAR}
+		  , 	#{useYn, jdbcType=VARCHAR}
+		  , 	#{srvcNm, jdbcType=VARCHAR}
+		  , 	#{srvcBscUri, jdbcType=VARCHAR}
+		  , 	#{srvcDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , 	#{rgstSeq, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 서비스 정보 수정 쿼리 -->
+	<update id="updateService" parameterType="com.qnpeople.rnd.pms.apis.service.service.model.ServiceDto">
+		UPDATE SVC_SRVC_INFO_TBL 
+		SET 		SRVC_CD	= 	(
+							CASE
+								WHEN (#{srvcCd, jdbcType=VARCHAR} IS NULL OR #{srvcCd, jdbcType=VARCHAR} = '') THEN SRVC_CD
+								ELSE #{srvcCd, jdbcType=VARCHAR}
+							END
+					)
+				  , SRVC_TP = (
+							CASE
+								WHEN (#{srvcTp, jdbcType=VARCHAR} IS NULL OR #{srvcTp, jdbcType=VARCHAR} = '') THEN SRVC_TP
+								ELSE #{srvcTp, jdbcType=VARCHAR}
+							END
+				    )
+				  , USE_YN = (
+							CASE
+								WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+								ELSE #{useYn, jdbcType=VARCHAR}
+							END
+				    )
+				  , SRVC_NM = (
+							CASE
+								WHEN (#{srvcNm, jdbcType=VARCHAR} IS NULL OR #{srvcNm, jdbcType=VARCHAR} = '') THEN SRVC_NM
+								ELSE #{srvcNm, jdbcType=VARCHAR}
+							END
+				    )
+				  , SRVC_BSC_URI = (
+							CASE
+								WHEN (#{srvcBscUri, jdbcType=VARCHAR} IS NULL OR #{srvcBscUri, jdbcType=VARCHAR} = '') THEN SRVC_BSC_URI
+								ELSE #{srvcBscUri, jdbcType=VARCHAR}
+							END
+				    )
+				  , SRVC_DESC = (
+							CASE
+								WHEN (#{srvcDesc, jdbcType=VARCHAR} IS NULL OR #{srvcDesc, jdbcType=VARCHAR} = '') THEN SRVC_DESC
+								ELSE #{srvcDesc, jdbcType=VARCHAR}
+							END
+				    )
+				  , UPDT_DT = CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ = (
+							CASE
+								WHEN (#{updtSeq, jdbcType=NUMERIC} IS NULL OR #{updtSeq, jdbcType=NUMERIC} = 0) THEN UPDT_SEQ
+								ELSE #{updtSeq, jdbcType=NUMERIC}
+							END						
+				    )
+		WHERE 	1 	= 	1
+		AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+	</update>
+	
+	<!-- 서비스 정보 삭제 쿼리 -->
+	<delete id="deleteService" parameterType="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategorySC">
+		UPDATE SVC_SRVC_INFO_TBL
+		SET 		USE_YN = #{useYn, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+	</delete>
+</mapper>

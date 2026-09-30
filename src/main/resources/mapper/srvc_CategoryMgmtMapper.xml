@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qnpeople.rnd.pms.apis.service.category.mapper.SrvcCategoryMgmtMapper">
-	<!-- 서비스 카테고리 트리 구조 -->
+
+	<!-- 서비스 카테고리 트리 정보-->
 	<resultMap id="serviceCategoryTree" type="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategoryTreeDto">
 		<id property="srvcCtgryCd" column="SRVC_CTGRY_CD" />
 		<result property="srvcCtgryLvl" column="SRVC_CTGRY_LVL" />
@@ -13,20 +14,21 @@
 		<result property="prntSrvcCtgryCd" column="PRNT_SRVC_CTGRY_CD" />
 		<result property="srvcCtgrySortPath" column="SRVC_CTGRY_SORT_PATH" />
 	</resultMap>
+	<!-- 서비스 카테고리 정보 -->
 	<resultMap id="serviceCategory" type="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategoryDto">
-		<id property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
-		<result property="" column="" />
+		<id property="srvcCtgryCd" column="SRVC_CTGRY_CD" />
+		<result property="srvcCtgryLvl" column="SRVC_CTGRY_LVL" />
+		<result property="srvcCtgryOrd" column="SRVC_CTGRY_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="prntSrvcCtgryCd" column="PRNT_SRVC_CTGRY_CD" />
+		<result property="srvcCtgryNm" column="SRVC_CTGRY_NM" />
+		<result property="srvcCtgryDesc" column="SRVC_CTGRY_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
 	</resultMap>
 	
 	<!-- 01.서비스_사용 가능 카테고리 트리 목록 추출 쿼리 -->
@@ -46,6 +48,33 @@
 	
 	<!-- 02.서비스_카테고리 상세 정보 추출 쿼리 -->
 	<select id="selectServiceCategoryDetail" parameterType="com.qnpeople.rnd.pms.apis.service.category.model.SrvcCategorySC" resultMap="serviceCategory">
-	
+		SELECT 	SRVC_CTGRY.SRVC_CTGRY_CD
+				  , SRVC_CTGRY.SRVC_CTGRY_LVL
+				  , SRVC_CTGRY.SRVC_CTGRY_ORD
+				  , SRVC_CTGRY.USE_YN
+				  , SRVC_CTGRY.PRNT_SRVC_CTGRY_CD
+				  , SRVC_CTGRY.SRVC_CTGRY_NM
+				  , SRVC_CTGRY.SRVC_CTGRY_DESC
+				  , TO_CHAR(SRVC_CTGRY.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+				  , SRVC_CTGRY.RGST_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_CTGRY.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(SRVC_CTGRY.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+				  , SRVC_CTGRY.UPDT_SEQ
+				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_CTGRY.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	SVC_SRVC_CTGRY_INFO_TBL	 SRVC_CTGRY
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SRVC_CTGRY.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		(((#{srvcCtgryCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCtgryCd, jdbcType=VARCHAR} = '')) OR (SRVC_CTGRY.SRVC_CTGRY_CD = #{srvcCtgryCd, jdbcType=VARCHAR}))
+		AND 		(((#{prntSrvcCtgryCd, jdbcType=VARCHAR} IS NULL) OR (#{prntSrvcCtgryCd, jdbcType=VARCHAR} = '')) OR (SRVC_CTGRY.PRNT_SRVC_CTGRY_CD = #{prntSrvcCtgryCd, jdbcType=VARCHAR}))		
 	</select>
 </mapper>

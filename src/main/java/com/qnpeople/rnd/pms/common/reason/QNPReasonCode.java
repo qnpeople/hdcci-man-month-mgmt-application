@@ -194,7 +194,8 @@ public enum QNPReasonCode implements QNPReasonInterface {
 	//	Business Error 		20200 ~  20299
 	FRAMEWORK_BUSINESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20200", "어플리케이션 비즈니스 수행 오류", "어플리케이션 비즈니스 공통 수행 오류", Boolean.TRUE),
 	NONE_REQUEST_CONDITION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20201", "비즈니스 수행 조건 정보 미 전달 오류", "비즈니스 수행 조건 정보 미 전달 오류", Boolean.TRUE),
-	
+	REGISTRATION_EXEC_FAILURE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20202", "등록 요청 수행 실패 오류", "등록 요청 수행 실패 오류", Boolean.TRUE),
+	MODIFICATION_EXEC_FAILURE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20203", "변경 요청 수행 실패 오류", "변경 요청 수행 실패 오류", Boolean.TRUE),
 	
 	//	공통 오류 사유 정의 ( 99990 ~ 99999 )
 	ETC_ERROR(HttpStatus.INTERNAL_SERVER_ERROR , SBNConstant.ETC_ERR_CODE, SBNConstant.ETC_ERR__MSG, "기타 오류 사유 코드.", Boolean.TRUE),										// 99997
