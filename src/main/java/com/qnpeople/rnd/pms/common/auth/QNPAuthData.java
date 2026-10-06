@@ -3,11 +3,15 @@ package com.qnpeople.rnd.pms.common.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qnpeople.rnd.pms.types.QNPAuthGrpupType;
 import com.qnpeople.rnd.pms.types.QNPUserType;
 
 import kr.co.sbn.platformhub.framework.core.common.data.auth.SBNAuthData;
 import kr.co.sbn.platformhub.framework.securities.domains.jwt.data.SBNJwtAccessTokenData;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * ================================================================================
@@ -26,6 +30,9 @@ import kr.co.sbn.platformhub.framework.securities.domains.jwt.data.SBNJwtAccessT
  *  를 구현한 구현 클래스
  * =================================================================================
  */
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(value = Include.NON_NULL)
+@Data
 public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 
 	/** 클라이언트의 권한 및 인증 수행을 위한 JWT 접근 토큰 데이터 객체 */

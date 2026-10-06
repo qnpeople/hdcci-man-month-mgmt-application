@@ -97,6 +97,7 @@
 				  	) 	AS 	UPDT_NM
 		FROM 	SVC_SRVC_INFO_TBL 	SRVC_INFO
 		WHERE 	1 	=	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.USE_YN = #{useYn, jdbcType=VARCHAR}))
 		AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SRVC_INFO.SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
 		AND 		(((#{srvcCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCd, jdbcType=VARCHAR} = '')) OR (SRVC_INFO.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
 	</select>

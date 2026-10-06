@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.system.menu.mapper.MenuMgmtMapper">
+	<!-- 메뉴 트리 정보 -->
+	<resultMap id="menu" type="com.qnpeople.rnd.pms.apis.system.menu.model.MenuDto">
+		<id property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="" column="" />
+		<result property="useYn" column="USE_YN" />
+		<result property="" column="" />
+		<result property="" column="" />		
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	
+	
+</mapper>

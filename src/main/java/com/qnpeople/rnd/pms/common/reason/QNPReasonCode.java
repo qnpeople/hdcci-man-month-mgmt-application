@@ -32,7 +32,8 @@ public enum QNPReasonCode implements QNPReasonInterface {
 	INVALID_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "10006", "유효하지 않은 요청 오류", "유효하지 않은 요청 오류", Boolean.TRUE),
 	PARAMETER_BIND_ERROR(HttpStatus.BAD_REQUEST, "10007", "파라미터 유효성 오류", "파라미터 유효성 오류", Boolean.TRUE),
 	PARAMETER_TYPE_BIND_ERROR(HttpStatus.BAD_REQUEST, "10008", "파라미터 유형 유효성 오류", "파라미터 유형 유효성 오류", Boolean.TRUE),
-
+	SERVICE_PREPARING_ERROR(HttpStatus.NOT_IMPLEMENTED, "10009", "서비스 준비 중", "서비스 준비 중", Boolean.TRUE),
+	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//	Common Error						10100 ~ 10149
 	FRAMEWORK_COMMON_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "10100", "프레임워크 공통 수행 오류", "프레임워크 공통 수행 오류", Boolean.TRUE),

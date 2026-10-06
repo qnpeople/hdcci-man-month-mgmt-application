@@ -1,23 +1,22 @@
-package com.qnpeople.rnd.pms.apis.company.model;
+package com.qnpeople.rnd.pms.apis.company.domain.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qnpeople.rnd.pms.common.domain.executor.model.QNPWebBaseModel;
+import com.qnpeople.rnd.pms.apis.company.model.CompanyDto;
+import com.qnpeople.rnd.pms.common.domain.request.QNPWebClientRequestWrapper;
 
 import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(value = Include.NON_NULL)
+@Slf4j
 @Data
-public class CompanySC extends QNPWebBaseModel {
+public class CompanyMgmtRequest extends QNPWebClientRequestWrapper {
 
-	/* 업체 식별자 */
-	private Long compSeq;
-	/* 업체 식별 코드 */
-	private String compCd;
 	/* 업체 유형(공통코드: CMP_COMP_INFO_001) 01:일반, 02:법인, 03:개인, 99:기타  */
 	private String compTp;
 	/* 업체 청약 상태 유형(공통코드: CMP_COMP_SUBSCR_STAT_001) 01:청약 신청, 02:청약 진행, 03:청약 승인, 04:청약 완료, 05:청약 반려. 06:청약 취소, 07:청약 보류, 99:기타 */
@@ -26,16 +25,28 @@ public class CompanySC extends QNPWebBaseModel {
 	private String cntrctStatTp;
 	/* 업체 사용 여부(Y: 사용(기본), N: 미사용) */
 	private String useYn;
-	/* 업체 사업자 번호 */
-	private String brn;
 	/* 업체 명 */
 	private String compNm;
 	
+	/* 업체 식별자 */
+	private Long compSeq;
+	/* 업체 식별 코드 */
+	private String compCd;
+	/* 업체 사업자 번호 */
+	private String brn;
+	
+	/* 업체 등록/변경 작업을 위한 업체 정보 객체 */
+	private CompanyDto company;
+		
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();
 		info.append(className).append("{ ");
-		info.append("compSeq= ").append(compSeq);
+		info.append("txId= ").append(txId);
+		if(!SBNUtils.isNull(compSeq)) {
+			info.append(", ");
+			info.append("compSeq=").append(compSeq);
+		}
 		if(!SBNUtils.isNull(compCd)) {
 			info.append(", ");
 			info.append("compCd=").append(compCd);
@@ -63,6 +74,10 @@ public class CompanySC extends QNPWebBaseModel {
 		if(!SBNUtils.isNull(compNm)) {
 			info.append(", ");
 			info.append("compNm=").append(compNm);
+		}
+		if(!SBNUtils.isNull(company)) {
+			info.append(", ");
+			info.append("company=").append(company.toStringInfo());
 		}
 		info.append(" }");
 		return info.toString();

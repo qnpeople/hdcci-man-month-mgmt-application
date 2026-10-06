@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.company.mapper.CompanyMgmtMapper">
+	<!-- 업체 정보 -->
+	<resultMap id="company" type="com.qnpeople.rnd.pms.apis.company.model.CompanyDto">
+		<id property="compSeq" column="COMP_SEQ" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="compTp" column="COMP_TP" />
+		<result property="compTpNm" column="COMP_TP_NM" />
+		<result property="subscrStatTp" column="SUBSCR_STAT_TP" />
+		<result property="subscrStatTpNm" column="SUBSCR_STAT_TP_NM" />
+		<result property="cntrctStatTp" column="CNTRCT_STAT_TP" />
+		<result property="cntrctStatTpNm" column="CNTRCT_STAT_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="brn" column="BRN" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="compDispNm" column="COMP_DISP_NM" />
+		<result property="compDesc" column="COMP_DESC" />
+		<result property="compTelNo" column="COMP_TEL_NO" />
+		<result property="compZipCd" column="COMP_ZIP_CD" />
+		<result property="compAddr" column="COMP_ADDR" />
+		<result property="compDtlAddr" column="COMP_DTL_ADDR" />
+		<result property="compLoc" column="COMP_LOC" />
+		<result property="rprsntvNm" column="RPRSNTV_NM" />
+		<result property="rprsntvEmalAddr" column="RPRSNTV_EMAL_ADDR" />
+		<result property="rprsntvMblNo" column="RPRSNTV_MBL_NO" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	<!-- 서비스 업체 매핑 정보 -->
+	<resultMap id="serviceCompany" type="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanyDto">
+		<id property="chnlSiteSeq" column="CHNL_SITE_SEQ" />
+		<id property="srvcSeq" column="SRVC_SEQ" />
+		<id property="compSeq" column="COMP_SEQ" />
+		<result property="chnlCd" column="CHNL_CD" />
+		<result property="siteCd" column="SITE_CD" />
+		<result property="srvcCd" column="SRVC_CD" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="chnlNm" column="CHNL_NM" />
+		<result property="siteNm" column="SITE_NM" />
+		<result property="srvcNm" column="SRVC_NM" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 업체 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 업체 코드 중복 여부 체크 수행 쿼리 -->
+    <select id="selectCompnayCodeDuplication" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC" resultType="java.lang.Boolean">
+    	SELECT 	(
+						CASE
+							WHEN (COUNT(COMP_SEQ) > 0) THEN true
+							ELSE   false
+						END
+					) 	AS 	DUPL_FLAG
+    	FROM 	CMP_COMP_INFO_TBL	COMP
+    	WHERE 	1 	= 	1
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP.COMP_CD = #{compCd, jdbcType=VARCHAR}))
+    </select>
+    
+	<!-- 신규 업체 정보 등록 수행 쿼리 -->
+	<insert id="insertNewCompany" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanyDto">
+		INSERT INTO CMP_COMP_INFO_TBL (
+			COMP_CD
+		  , COMP_TP
+		  , SUBSCR_STAT_TP
+		  , CNTRCT_STAT_TP
+		  , USE_YN
+		  , BRN
+		  , COMP_NM
+		  , COMP_DISP_NM
+		  , COMP_DESC
+		  , COMP_TEL_NO
+		  , COMP_ZIP_CD
+		  , COMP_ADDR
+		  , COMP_DTL_ADDR
+		  , COMP_LOC 
+		  , RPRSNTV_NM
+		  , RPRSNTV_EMAL_ADDR
+		  , RPRSNTV_MBL_NO
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{compCd, jdbcType=VARCHAR}
+		  , 	#{compTp, jdbcType=VARCHAR}			
+		  , 	#{subscrStatTp, jdbcType=VARCHAR}
+		  , 	#{cntrctStatTp, jdbcType=VARCHAR}
+		  , 	#{useYn, jdbcType=VARCHAR}
+		  , 	#{brn, jdbcType=VARCHAR}
+		  , 	#{compNm, jdbcType=VARCHAR}
+		  , 	#{compDispNm, jdbcType=VARCHAR}
+		  , 	#{compDesc, jdbcType=VARCHAR}
+		  , 	#{compTelNo, jdbcType=VARCHAR}
+		  , 	#{compZipCd, jdbcType=VARCHAR}
+		  , 	#{compAddr, jdbcType=VARCHAR}
+		  , 	#{compDtlAddr, jdbcType=VARCHAR}
+		  , #{compLoc, jdbcType=VARCHAR}
+		  , 	#{rprsntvNm, jdbcType=VARCHAR}
+		  , 	#{rprsntvEmalAddr, jdbcType=VARCHAR}
+		  , 	#{rprsntvMblNo, jdbcType=VARCHAR}
+		  , 	CURRENT_TIMESTAMP(3)
+		  , 	#{rgstSeq, jdbcType=NUMERIC}
+		)
+	</insert>
+	
+	<!-- 업체 정보 변경 수행 쿼리 -->
+	<update id="updateCompany" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanyDto">
+		UPDATE CMP_COMP_INFO_TBL
+		SET 	COMP_TP  = (
+					CASE
+						WHEN (#{compTp, jdbcType=VARCHAR} IS NULL OR #{compTp, jdbcType=VARCHAR} = '') THEN COMP_TP
+						ELSE   #{compTp, jdbcType=VARCHAR}
+					END
+				)
+			  , SUBSCR_STAT_TP = (
+					CASE
+						WHEN (#{subscrStatTp, jdbcType=VARCHAR} IS NULL OR #{subscrStatTp, jdbcType=VARCHAR} = '') THEN SUBSCR_STAT_TP
+						ELSE   #{subscrStatTp, jdbcType=VARCHAR}
+					END 
+			  	)
+			  , CNTRCT_STAT_TP = (
+					CASE
+						WHEN (#{cntrctStatTp, jdbcType=VARCHAR} IS NULL OR #{cntrctStatTp, jdbcType=VARCHAR} = '') THEN CNTRCT_STAT_TP
+						ELSE   #{cntrctStatTp, jdbcType=VARCHAR}
+					END 
+			  	)
+			  , USE_YN = (
+					CASE
+						WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+						ELSE   #{useYn, jdbcType=VARCHAR}
+					END 
+			  	)
+			  , COMP_NM = (
+					CASE
+						WHEN (#{compNm, jdbcType=VARCHAR} IS NULL OR #{compNm, jdbcType=VARCHAR} = '') THEN COMP_NM
+						ELSE   #{compNm, jdbcType=VARCHAR}
+					END
+			  	)
+			  , COMP_DISP_NM = (
+					CASE
+						WHEN (#{compDispNm, jdbcType=VARCHAR} IS NULL OR #{compDispNm, jdbcType=VARCHAR} = '') THEN COMP_DISP_NM
+						ELSE   #{compDispNm, jdbcType=VARCHAR}
+					END
+			  	)
+			  , COMP_DESC = (
+					CASE
+						WHEN (#{compDesc, jdbcType=VARCHAR} IS NULL OR #{compDesc, jdbcType=VARCHAR} = '') THEN COMP_DESC
+						ELSE   #{compDesc, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , COMP_TEL_NO = (
+					CASE
+						WHEN (#{compTelNo, jdbcType=VARCHAR} IS NULL OR #{compTelNo, jdbcType=VARCHAR} = '') THEN COMP_TEL_NO
+						ELSE   #{compTelNo, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , COMP_ZIP_CD = (
+				 	CASE
+						WHEN (#{compZipCd, jdbcType=VARCHAR} IS NULL OR #{compZipCd, jdbcType=VARCHAR} = '') THEN COMP_ZIP_CD
+						ELSE   #{compZipCd, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , COMP_ADDR = (
+					CASE
+						WHEN (#{compAddr, jdbcType=VARCHAR} IS NULL OR #{compAddr, jdbcType=VARCHAR} = '') THEN COMP_ADDR
+						ELSE   #{compAddr, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , COMP_DTL_ADDR = (
+					CASE
+						WHEN (#{compDtlAddr, jdbcType=VARCHAR} IS NULL OR #{compDtlAddr, jdbcType=VARCHAR} = '') THEN COMP_DTL_ADDR
+						ELSE   #{compDtlAddr, jdbcType=VARCHAR}
+					END
+			  	)
+			  , COMP_LOC = (
+					CASE
+						WHEN (#{compLoc, jdbcType=VARCHAR} IS NULL OR #{compLoc, jdbcType=VARCHAR} = '') THEN COMP_LOC
+						ELSE   #{compLoc, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , RPRSNTV_NM = (
+					CASE	
+						WHEN (#{rprsntvNm, jdbcType=VARCHAR} IS NULL OR #{rprsntvNm, jdbcType=VARCHAR} = '') THEN RPRSNTV_NM
+						ELSE   #{rprsntvNm, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , RPRSNTV_EMAL_ADDR = (
+					CASE
+						WHEN (#{rprsntvEmalAddr, jdbcType=VARCHAR} IS NULL OR #{rprsntvEmalAddr, jdbcType=VARCHAR} = '') THEN RPRSNTV_EMAL_ADDR
+						ELSE   #{rprsntvEmalAddr, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , RPRSNTV_MBL_NO = (
+					CASE
+						WHEN (#{rprsntvMblNo, jdbcType=VARCHAR} IS NULL OR #{rprsntvMblNo, jdbcType=VARCHAR} = '') THEN RPRSNTV_MBL_NO
+						ELSE   #{rprsntvMblNo, jdbcType=VARCHAR}
+					END	
+			  	)
+			  , UPDT_DT = CURRENT_TIMESTAMP(3)
+			  , UPDT_SEQ = #{updtSeq, jdbcType=NUMERIC}
+		WHERE 	1 	= 	1
+		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP_CD = #{compCd, jdbcType=VARCHAR}))
+	</update>
+	
+	<!-- 업체 정보 삭제 수행 쿼리 -->
+	<delete id="deleteCompany" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC">
+		DELETE 
+		FROM 	CMP_COMP_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP_CD = #{compCd, jdbcType=VARCHAR}))
+	</delete>
+	
+	<!-- 업체 서비스 일괄 삭제 수행 쿼리 -->
+	<delete id="deleteAllServiceCompanyMapping" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC">
+		DELETE 
+		FROM 	CMP_SRVC_COMP_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+	</delete>
+	
+	<!-- 업체 목록 정보 추출 쿼리 -->
+	<select id="selectCompanyList" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC" resultMap="company">
+		SELECT 	COMP.COMP_CD
+				  , COMP.COMP_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_INFO_001'
+						AND 		CD 	=	COMP.COMP_TP
+				   ) 	AS 	COMP_TP_NM
+				  , COMP.SUBSCR_STAT_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_SUBSCR_STAT'
+						AND 		CD 	=	COMP.SUBSCR_STAT_TP
+				   ) 	AS 	SUBSCR_STAT_TP_NM
+				  , COMP.CNTRCT_STAT_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_CNTRCT_STAT'
+						AND 		CD 	=	COMP.CNTRCT_STAT_TP
+				   ) 	AS 	CNTRCT_STAT_TP_NM
+				  , COMP.USE_YN
+				  , COMP.BRN
+				  , COMP.COMP_NM
+				  , COMP.COMP_DISP_NM
+				  , COMP.COMP_DESC
+				  , COMP.COMP_TEL_NO
+				  , COMP.COMP_ZIP_CD
+				  , COMP.COMP_ADDR
+				  , COMP.COMP_DTL_ADDR
+				  , COMP.COMP_LOC 
+				  , COMP.RPRSNTV_NM
+				  , COMP.RPRSNTV_EMAL_ADDR
+				  , COMP.RPRSNTV_MBL_NO
+				  , TO_CHAR(COMP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , COMP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(COMP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+				  , COMP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.UPDT_SEQ					
+				  	) 		AS 	RGST_NM
+		FROM 	CMP_COMP_INFO_TBL	COMP
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		(((#{compTp, jdbcType=VARCHAR} IS NULL) OR (#{compTp, jdbcType=VARCHAR} = '')) OR (COMP.COMP_TP = #{compTp, jdbcType=VARCHAR}))
+		AND 		(((#{subscrStatTp, jdbcType=VARCHAR} IS NULL) OR (#{subscrStatTp, jdbcType=VARCHAR} = '')) OR (COMP.SUBSCR_STAT_TP = #{subscrStatTp, jdbcType=VARCHAR}))
+		AND 		(((#{cntrctStatTp, jdbcType=VARCHAR} IS NULL) OR (#{cntrctStatTp, jdbcType=VARCHAR} = '')) OR (COMP.CNTRCT_STAT_TP = #{cntrctStatTp, jdbcType=VARCHAR}))
+		AND 		(((#{brn, jdbcType=VARCHAR} IS NULL) OR (#{brn, jdbcType=VARCHAR} = '')) OR (COMP.BRN LIKE '%' || #{brn, jdbcType=VARCHAR} || '%'))
+		AND 		(((#{compNm, jdbcType=VARCHAR} IS NULL) OR (#{compNm, jdbcType=VARCHAR} = '')) OR (COMP.COMP_NM LIKE '%' || #{compNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<!-- 업체 상세 정보 추출 쿼리 -->
+	<select id="selectCompanyDetail" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC" resultMap="company">
+		SELECT 	COMP.COMP_SEQ
+				  , COMP.COMP_CD
+				  , COMP.COMP_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_INFO_001'
+						AND 		CD 	=	COMP.COMP_TP
+				   ) 	AS 	COMP_TP_NM
+				  , COMP.SUBSCR_STAT_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_SUBSCR_STAT'
+						AND 		CD 	=	COMP.SUBSCR_STAT_TP
+				   ) 	AS 	SUBSCR_STAT_TP_NM
+				  , COMP.CNTRCT_STAT_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'CMP_COMP_CNTRCT_STAT'
+						AND 		CD 	=	COMP.CNTRCT_STAT_TP
+				   ) 	AS 	CNTRCT_STAT_TP_NM
+				  , COMP.USE_YN
+				  , COMP.BRN
+				  , COMP.COMP_NM
+				  , COMP.COMP_DISP_NM
+				  , COMP.COMP_DESC
+				  , COMP.COMP_TEL_NO
+				  , COMP.COMP_ZIP_CD
+				  , COMP.COMP_ADDR
+				  , COMP.COMP_DTL_ADDR
+				  , COMP.COMP_LOC 
+				  , COMP.RPRSNTV_NM
+				  , COMP.RPRSNTV_EMAL_ADDR
+				  , COMP.RPRSNTV_MBL_NO
+				  , TO_CHAR(COMP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , COMP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(COMP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+				  , COMP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.UPDT_SEQ					
+				  	) 		AS 	RGST_NM
+		FROM 	CMP_COMP_INFO_TBL	COMP
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP.COMP_CD = #{compCd, jdbcType=VARCHAR}))
+	</select>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 서비스 업체 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 서비스 업체 매핑 목록 정보 추출 쿼리 -->
+	<select id="selectServiceCompanyList" parameterType="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanySC" resultMap="serviceCompany">
+		SELECT 	SRVC_COMP.CHNL_SITE_SEQ
+				  , SRVC_COMP.SRVC_SEQ
+				  , SRVC_COMP.COMP_SEQ
+				  , CHNL.CHNL_CD
+				  , SITE.SITE_CD
+				  , SRVC.SRVC_CD
+				  , COMP.COMP_CD
+				  , CHNL.CHNL_NM
+				  , SITE.SITE_NM
+				  , SRVC.SRVC_NM
+				  , COMP.COMP_NM
+				  , SRVC_COMP.USE_YN
+				  , TO_CHAR(SRVC_COMP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , SRVC_COMP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_COMP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(SRVC_COMP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+				  , SRVC_COMP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_COMP.UPDT_SEQ					
+				  	) 		AS 	RGST_NM
+		FROM 	CMP_SRVC_COMP_INFO_TBL 			SRVC_COMP
+					LEFT JOIN CMN_CHNL_SITE_MAP 		CHNL_SITE ON CHNL_SITE.CHNL_SITE_SEQ 	= 	SRVC_COMP.CHNL_SITE_SEQ
+					LEFT JOIN CMN_CHNL_INFO_TBL  		CHNL ON CHNL.CHNL_SEQ 	= 	CHNL_SITE.CHNL_SEQ 	AND CHNL.USE_YN = 'Y'
+					LEFT JOIN CMN_SITE_INFO_TBL    		SITE ON SITE.SITE_SEQ 	= 	CHNL_SITE.SITE_SEQ 	AND SITE.USE_YN = 'Y'
+					LEFT JOIN SVC_SRVC_INFO_TBL 		SRVC ON SRVC.SRVC_SEQ 	= 	SRVC_COMP.SRVC_SEQ 	AND SRVC.USE_YN = 'Y'
+					LEFT JOIN CMP_COMP_INFO_TBL 		COMP ON COMP.COMP_SEQ 	=	SRVC_COMP.COMP_SEQ 	AND COMP.USE_YN = 'Y'
+		WHERE 	1 	= 	1
+		AND 		((#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') OR (SRVC_COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		((#{chnlSiteSeq, jdbcType=NUMERIC} IS NULL OR #{chnlSiteSeq, jdbcType=NUMERIC} = 0) OR (SRVC_COMP.CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}))
+		AND 		((#{srvcSeq, jdbcType=NUMERIC} IS NULL OR #{srvcSeq, jdbcType=NUMERIC} = 0) OR (SRVC_COMP.SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+		AND 		((#{compSeq, jdbcType=NUMERIC} IS NULL OR #{compSeq, jdbcType=NUMERIC} = 0) OR (SRVC_COMP.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))		
+		AND 		((#{chnlCd, jdbcType=VARCHAR} IS NULL OR #{chnlCd, jdbcType=VARCHAR} = '') OR (CHNL.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		((#{siteCd, jdbcType=VARCHAR} IS NULL OR #{siteCd, jdbcType=VARCHAR} = '') OR (SITE.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+		AND 		((#{srvcCd, jdbcType=VARCHAR} IS NULL OR #{srvcCd, jdbcType=VARCHAR} = '') OR (SRVC.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
+		AND 		((#{compCd, jdbcType=VARCHAR} IS NULL OR #{compCd, jdbcType=VARCHAR} = '') OR (COMP.COMP_CD = #{compCd, jdbcType=VARCHAR}))		
+		AND 		((#{chnlNm, jdbcType=VARCHAR} IS NULL OR #{chnlNm, jdbcType=VARCHAR} = '') OR (CHNL.CHNL_NM LIKE '%' || #{chnlNm, jdbcType=VARCHAR} || '%'))
+		AND 		((#{siteNm, jdbcType=VARCHAR} IS NULL OR #{siteNm, jdbcType=VARCHAR} = '') OR (SITE.SITE_NM LIKE '%' || #{siteNm, jdbcType=VARCHAR} || '%'))
+		AND 		((#{srvcNm, jdbcType=VARCHAR} IS NULL OR #{srvcNm, jdbcType=VARCHAR} = '') OR (SRVC.SRVC_NM LIKE '%' || #{srvcNm, jdbcType=VARCHAR} || '%'))
+		AND 		((#{compNm, jdbcType=VARCHAR} IS NULL OR #{compNm, jdbcType=VARCHAR} = '') OR (COMP.COMP_NM LIKE '%' || #{compNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<!-- 서비스 업체 매핑 상세 정보 추출 쿼리 -->
+	<select id="selectServiceCompanyDetail" parameterType="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanySC" resultMap="serviceCompany">
+		SELECT 	SRVC_COMP.CHNL_SITE_SEQ
+				  , SRVC_COMP.SRVC_SEQ
+				  , SRVC_COMP.COMP_SEQ
+				  , CHNL.CHNL_CD
+				  , SITE.SITE_CD
+				  , SRVC.SRVC_CD
+				  , COMP.COMP_CD
+				  , CHNL.CHNL_NM
+				  , SITE.SITE_NM
+				  , SRVC.SRVC_NM
+				  , COMP.COMP_NM
+				  , SRVC_COMP.USE_YN
+				  , TO_CHAR(SRVC_COMP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+				  , SRVC_COMP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_COMP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+				  , TO_CHAR(SRVC_COMP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+				  , SRVC_COMP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = SRVC_COMP.UPDT_SEQ					
+				  	) 		AS 	RGST_NM
+		FROM 	CMP_SRVC_COMP_INFO_TBL 			SRVC_COMP
+					LEFT JOIN CMN_CHNL_SITE_MAP 		CHNL_SITE ON CHNL_SITE.CHNL_SITE_SEQ 	= 	SRVC_COMP.CHNL_SITE_SEQ
+					LEFT JOIN CMN_CHNL_INFO_TBL  		CHNL ON CHNL.CHNL_SEQ 	= 	CHNL_SITE.CHNL_SEQ 	AND CHNL.USE_YN = 'Y'
+					LEFT JOIN CMN_SITE_INFO_TBL    		SITE ON SITE.SITE_SEQ 	= 	CHNL_SITE.SITE_SEQ 	AND SITE.USE_YN = 'Y'
+					LEFT JOIN SVC_SRVC_INFO_TBL 		SRVC ON SRVC.SRVC_SEQ 	= 	SRVC_COMP.SRVC_SEQ 	AND SRVC.USE_YN = 'Y'
+					LEFT JOIN CMP_COMP_INFO_TBL 		COMP ON COMP.COMP_SEQ 	=	SRVC_COMP.COMP_SEQ 	AND COMP.USE_YN = 'Y'
+		WHERE 	1 	= 	1
+		AND 		SRVC_COMP.CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}
+		AND 		SRVC_COMP.SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}
+		AND 		SRVC_COMP.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+	</select>
+	
+    <!-- 서비스 업체 지정 수행 쿼리 -->
+    <insert id="insertServiceCompanyMapping" parameterType="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanyDto">
+    	INSERT INTO CMP_SRVC_COMP_INFO_TBL (
+			CHNL_SITE_SEQ
+		  , SRVC_SEQ
+		  , COMP_SEQ
+		  , USE_YN
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{chnlSiteSeq, jdbcType=NUMERIC}
+		  , 	#{srvcSeq, jdbcType=NUMERIC}
+		  , 	#{compSeq, jdbcType=NUMERIC}
+		  , ( 	
+				CASE
+		  			WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+		  			ELSE   #{useYn, jdbcType=VARCHAR}
+		  		END
+		    )
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}			
+		)
+    </insert>
+    
+    <!--- 서비스 업체 지정 해제 수행 쿼리 -->
+    <delete id="deleteServiceCompanyMapping" parameterType="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanySC">
+    	DELETE 
+    	FROM 	CMP_SRVC_COMP_INFO_TBL
+    	WHERE 	1 	= 	1
+		AND 		CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}
+		AND 		SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}
+		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+    </delete>
+</mapper>

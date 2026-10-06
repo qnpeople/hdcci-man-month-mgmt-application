@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.company.mapper.CompanyEmployeeMgmtMapper">
+	<!-- 업체 근무자 정보 -->
+	<resultMap id="employee" type="com.qnpeople.rnd.pms.apis.company.model.EmployeeDto">
+		<id property="compSeq" column="COMP_SEQ" />
+		<result property="empleSeq" column="EMPLE_SEQ" />
+		<result property="empleTp" column="EMPLE_TP" />
+		<result property="empleTpNm" column="EMPLE_TP_NM" />
+		<result property="empleStatTp" column="EMPLE_STAT_TP" />
+		<result property="empleStatTpNm" column="EMPLE_STAT_TP_NM" />
+		<result property="empleDgrTp" column="EMPLE_DGR_TP" />
+		<result property="empleDgrTpNm" column="EMPLE_DGR_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="empleNm" column="EMPLE_NM" />
+		<result property="empleLognId" column="EMPLE_LOGN_ID" />
+		<result property="empleLognPwd" column="EMPLE_LOGN_PWD" />
+		<result property="authCid" column="AITH_CID" />
+		<result property="empleDeptNm" column="EMPLE_DEPT_NM" />
+		<result property="emplePstnNm" column="EMPLE_PSTN_NM" />
+		<result property="empleMblNo" column="EMPLE_MBL_NO" />
+		<result property="initPwdChngYn" column="INIT_PWD_CHNG_YN" />
+		<result property="initPwdChngDt" column="INIT_PWD_CHNG_DT" />
+		<result property="lstLognDt" column="LST_LOGN_DT" />
+		<result property="adtnDesc" column="ADTN_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 업체 근무자 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<delete id="deleteAllCompanyEmployees" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC">
+		DELETE 
+		FROM	 CMP_COMP_EMPLE_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+	</delete>
+
+
+
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 업체 근무자 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+</mapper>

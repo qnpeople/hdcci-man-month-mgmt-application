@@ -1,9 +1,9 @@
-package com.qnpeople.rnd.pms.apis.service.service.domain.request;
+package com.qnpeople.rnd.pms.apis.service.siteservice.domain.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qnpeople.rnd.pms.apis.service.service.model.ServiceDto;
+import com.qnpeople.rnd.pms.apis.service.siteservice.model.SiteServiceDto;
 import com.qnpeople.rnd.pms.common.domain.request.QNPWebClientRequestWrapper;
 
 import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
@@ -15,23 +15,25 @@ import lombok.extern.slf4j.Slf4j;
 @JsonInclude(value = Include.NON_NULL)
 @Slf4j
 @Data
-public class ServiceMgmtRequest extends QNPWebClientRequestWrapper {
+public class SiteServiceMgmtRequest extends QNPWebClientRequestWrapper {
 
-	/* 서비스 카테고리 코드 */
-	private String srvcCtgryCd;
-	/* 서비스 사용 여부(Y: 사용(기본), N: 미사용) */
-	private String useYn;
-	/* 서비스 유형(공통코드: SVC_SRVC_INFO_001) 01:기본, 02:실버, 03:골드, 04:VIP, 05:VVIP, 06:개별, 99:기타 */
-	private String srvcTp;
-	/* 서비스 명 */
-	private String srvcNm;
-	
+	/* 채널별 사이트 식별자 */
+	private Long chnlSiteSeq;
 	/* 서비스 식별자 */
 	private Long srvcSeq;
+	/* 채널 코드 */
+	private String chnlCd;
+	/* 사이트 코드 */
+	private String siteCd;
 	/* 서비스 코드 */
 	private String srvcCd;
+	/* 사이트 서비스 사용 여부(Y: 사용(기본), N: 미사용) */
+	private String useYn;
+	/* 사이트 서비스 명 */
+	private String siteSrvcNm;
 	
-	private ServiceDto serviceDto;
+	//	등록/변경 시 사용 데이터 정보 객체
+	private SiteServiceDto siteService;
 	
 	@JsonIgnore
 	public String toStringInfo() {
@@ -42,14 +44,22 @@ public class ServiceMgmtRequest extends QNPWebClientRequestWrapper {
 			info.append(", ");
 			info.append("txId= ").append(txId);
 		}
-		if(!SBNUtils.isNull(srvcCtgryCd)) {
+		if(!SBNUtils.isNull(chnlSiteSeq) && (chnlSiteSeq > 0L)) {
 			info.append(", ");
-			info.append("srvcCtgryCd= ").append(srvcCtgryCd);
+			info.append("chnlSiteSeq= ").append(chnlSiteSeq);
 		}
 		if(!SBNUtils.isNull(srvcSeq) && (srvcSeq > 0L)) {
 			info.append(", ");
 			info.append("srvcSeq=").append(srvcSeq);
 		}
+		if(!SBNUtils.isNull(chnlCd)) {
+			info.append(", ");
+			info.append("chnlCd=").append(chnlCd);
+		}
+		if(!SBNUtils.isNull(siteCd)) {
+			info.append(", ");
+			info.append("siteCd=").append(siteCd);
+		}		
 		if(!SBNUtils.isNull(srvcCd)) {
 			info.append(", ");
 			info.append("srvcCd=").append(srvcCd);
@@ -58,18 +68,14 @@ public class ServiceMgmtRequest extends QNPWebClientRequestWrapper {
 			info.append(", ");
 			info.append("useYn=").append(useYn);
 		}
-		if(!SBNUtils.isNull(srvcTp)) {
+		if(!SBNUtils.isNull(siteSrvcNm)) {
 			info.append(", ");
-			info.append("srvcTp=").append(srvcTp);
+			info.append("siteSrvcNm=").append(siteSrvcNm);
 		}
-		if(!SBNUtils.isNull(srvcNm)) {
+		if(!SBNUtils.isNull(siteService)) {
 			info.append(", ");
-			info.append("srvcNm=").append(srvcNm);
+			info.append("siteService=").append(siteService.toStringInfo());
 		}
-		if(!SBNUtils.isNull(serviceDto)) {
-			info.append(", ");
-			info.append("serviceDto=").append(serviceDto.toStringInfo());
-		}		
 		info.append(" }");
 		return info.toString();
 	}

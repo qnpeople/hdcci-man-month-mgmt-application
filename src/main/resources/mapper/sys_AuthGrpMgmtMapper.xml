@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.system.authgrp.mapper.AuthGrpMgmtMapper">
+	<!-- 권한 그룹 정보 -->
+	<resultMap id="authGrp" type="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpDto">
+		<id property="authGrpSeq" column="AUTH_GRP_SEQ" />
+		<result property="authGrpCd" column="AUTH_GRP_CD" />
+		<result property="authGrpTp" column="AUTH_GRP_TP" />
+		<result property="authGrpTpNm" column="AUTH_GRP_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="authGrpNm" column="AUTH_GRP_NM" />
+		<result property="authGrpDesc" column="AUTH_GRP_DESC" />		
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	<!-- 권한 그룹 매핑 메뉴 정보 -->
+	<resultMap id="authGrpMenu" type="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpMenuDto">
+		<id property="authGrpSeq" column="AUTH_GRP_SEQ" />
+		<id property="menuSeq" column="MENU_SEQ" />
+		<result property="authGrpCd" column="AUTH_GRP_CD" />
+		<result property="menuCd" column="MENU_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="authGrpNm" column="AUTH_GRP_NM" />
+		<result property="menuNm" column="MENU_NM" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 시스템 권한 그룹 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 시스템 권한 그룹 목록 정보 추출 쿼리 -->
+ 	<select id="selectSystemAuthGroupList" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC" resultMap="authGrp">
+ 		SELECT 	AUTH_GRP.AUTH_GRP_SEQ
+ 				  , AUTH_GRP.AUTH_GRP_CD
+ 				  , AUTH_GRP.AUTH_GRP_TP
+ 				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SYS_AUTH_GRP_001'
+						AND 		CD 	=	AUTH_GRP.AUTH_GRP_TP
+				    ) 																										AS 	AUTH_GRP_TP_NM
+ 				  , AUTH_GRP.USE_YN
+ 				  , AUTH_GRP.AUTH_GRP_NM
+ 				  , AUTH_GRP.AUTH_GRP_DESC
+				  , TO_CHAR(AUTH_GRP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	RGST_DT
+  				  , AUTH_GRP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = AUTH_GRP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(AUTH_GRP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 				AS 	UPDT_DT
+  				  , AUTH_GRP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = AUTH_GRP.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+ 		FROM 	SYS_AUTH_GRP_INFO_TBL	AUTH_GRP
+ 		WHERE 	1 	= 	1
+ 		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (AUTH_GRP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+ 		AND 		(((#{authGrpTp, jdbcType=VARCHAR} IS NULL) OR (#{authGrpTp, jdbcType=VARCHAR} = '')) OR (AUTH_GRP.AUTH_GRP_TP = #{authGrpTp, jdbcType=VARCHAR}))
+ 		AND 		(((#{authGrpNm, jdbcType=VARCHAR} IS NULL) OR (#{authGrpNm, jdbcType=VARCHAR} = '')) OR (AUTH_GRP.AUTH_GRP_NM LIKE '%' || #{authGrpNm, jdbcType=VARCHAR} || '%'))
+ 		ORDER BY AUTH_GRP.AUTH_GRP_SEQ ASC
+ 	</select>
+ 	<!-- 시스템 권한 그룹 상세 정보 추출 쿼리 -->
+ 	<select id="selectSystemAuthGroupDetail" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC" resultMap="authGrp">
+ 		SELECT 	AUTH_GRP.AUTH_GRP_SEQ
+ 				  , AUTH_GRP.AUTH_GRP_CD
+ 				  , AUTH_GRP.AUTH_GRP_TP
+ 				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SYS_AUTH_GRP_001'
+						AND 		CD 	=	AUTH_GRP.AUTH_GRP_TP
+				    ) 																										AS 	AUTH_GRP_TP_NM
+ 				  , AUTH_GRP.USE_YN
+ 				  , AUTH_GRP.AUTH_GRP_NM
+ 				  , AUTH_GRP.AUTH_GRP_DESC
+				  , TO_CHAR(AUTH_GRP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	RGST_DT
+  				  , AUTH_GRP.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = AUTH_GRP.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(AUTH_GRP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 				AS 	UPDT_DT
+  				  , AUTH_GRP.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = AUTH_GRP.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+ 		FROM 	SYS_AUTH_GRP_INFO_TBL	AUTH_GRP
+ 		WHERE 	1 	= 	1
+ 		AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC} = 0)) OR (AUTH_GRP.AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))
+ 		AND 		(((#{authGrpCd, jdbcType=VARCHAR} IS NULL) OR (#{authGrpCd, jdbcType=VARCHAR} = '')) OR (AUTH_GRP.AUTH_GRP_CD = #{authGrpCd, jdbcType=VARCHAR}))
+ 	</select>
+ 	<!-- 시스템 신규 권한 그룹  정보 등록 쿼리 -->
+ 	<insert id="insertSystemAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpDto">
+ 		INSERT INTO SYS_AUTH_GRP_INFO_TBL (
+			AUTH_GRP_CD
+		  , AUTH_GRP_TP
+		  , USE_YN
+		  , AUTH_GRP_NM
+		  , AUTH_GRP_DESC	
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{authGrpCd, jdbcType=VARCHAR}
+		  , 	#{authGrpTp, jdbcType=VARCHAR}
+ 		  , 	( 
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE    #{useYn, jdbcType=VARCHAR}
+				END
+			)	
+ 		  , 	#{authGrpNm, jdbcType=VARCHAR}
+ 		  , #{authGrpDesc, jdbcType=VARCHAR}
+ 		  , CURRENT_TIMESTAMP(3)
+ 		  , #{rgstSeq, jdbcType=NUMERIC}
+		)
+ 	</insert>
+ 	<!-- 시스템 권한 그룹  정보 정보 변경 쿼리 -->
+ 	<update id="updateSystemAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpDto">
+ 		UPDATE SYS_AUTH_GRP_INFO_TBL
+ 		SET 	AUTH_GRP_TP = 	(
+					CASE
+						WHEN (#{authGrpTp, jdbcType=VARCHAR} IS NULL OR #{authGrpTp, jdbcType=VARCHAR} = '') THEN AUTH_GRP_TP
+						ELSE   #{authGrpTp, jdbcType=VARCHAR} 
+					END
+				)
+			  , USE_YN  = (
+					CASE
+						WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN 
+						ELSE   #{useYn, jdbcType=VARCHAR}
+					END
+			   )
+			  , AUTH_GRP_NM = (
+					CASE
+						WHEN (#{authGrpNm, jdbcType=VARCHAR} IS NULL OR #{authGrpNm, jdbcType=VARCHAR} = '') THEN AUTH_GRP_NM
+						ELSE   #{authGrpNm, jdbcType=VARCHAR}
+					END
+			   )
+			  , AUTH_GRP_DESC = (
+					CASE
+						WHEN (#{authGrpDesc, jdbcType=VARCHAR} IS NULL OR #{authGrpDesc, jdbcType=VARCHAR} = '') THEN AUTH_GRP_DESC
+						ELSE   #{authGrpDesc, jdbcType=VARCHAR}
+					END
+			   )
+			  , UPDT_DT = CURRENT_TIMESTAMP(3)
+			  , UPDT_SEQ = #{updtSeq, jdbcType=NUMERIC}     	
+ 		WHERE 	1 	= 	1
+ 		AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC} = 0)) OR (AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))
+ 		AND 		(((#{authGrpCd, jdbcType=VARCHAR} IS NULL) OR (#{authGrpCd, jdbcType=VARCHAR} = '')) OR (AUTH_GRP_CD = #{authGrpCd, jdbcType=VARCHAR}))
+ 	</update>
+ 	<!-- 시스템 권한 그룹  정보 삭제 쿼리 -->
+ 	<delete id="deleteSystemAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC">
+ 		DELETE
+ 		FROM 	SYS_AUTH_GRP_INFO_TBL
+ 		WHERE 	1 	= 	1
+ 		AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC} = 0)) OR (AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))
+ 		AND 		(((#{authGrpCd, jdbcType=VARCHAR} IS NULL) OR (#{authGrpCd, jdbcType=VARCHAR} = '')) OR (AUTH_GRP_CD = #{authGrpCd, jdbcType=VARCHAR}))
+ 	</delete>
+ 	
+ 	<!-- 시스템 신규 권한 그룹  지정 메뉴 일괄 삭제 쿼리 -->
+ 	<delete id="deleteSystemAuthGrpAssignedAllMenu" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC">
+ 		DELETE
+ 		FROM 	SYS_AUTH_GRP_MENU_MAP
+ 		WHERE 	1 	= 	1
+ 		AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC} = 0)) OR (AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))
+ 		AND 		(((#{authGrpCd, jdbcType=VARCHAR} IS NULL) OR (#{authGrpCd, jdbcType=VARCHAR} = '')) OR (AUTH_GRP_CD = #{authGrpCd, jdbcType=VARCHAR}))
+ 	</delete>
+ 	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 시스템 권한 그룹 메뉴 매핑 수행 모듈 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 시스템 권한 그룹 코드 중복 여부 체크 수행 쿼리 -->
+    <select id="isSystemAuthGroupCodeDuplcated" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC" resultType="java.lang.Boolean">
+    	SELECT 	(
+						CASE
+							WHEN (COUNT(AUTH_GRP_CD) > 0) THEN true
+							ELSE   false 
+						END
+					) 	AS DUP_FLAG
+    	FROM 	SYS_AUTH_GRP_INFO_TBL
+    	WHERE 	1 	= 	1
+    	AND 		AUTH_GRP_CD = #{authGrpCd, jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 시스템 권한 그룹 지정 사용 메뉴 트리 목록 정보 추출 쿼리 -->
+    <select id="selectSystemAuthGroupMenuTreeList" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpSC" resultMap="authGrpMenu">
+		WITH RECURSIVE TMP_MENU_TREE AS (
+			SELECT 	#{authGrpSeq, jdbcType=NUMERIC} 	AS AUTH_GRP_SEQ
+					  , MENU_SEQ
+					  , MENU_CD
+					  , MENU_TP
+					  , MENU_LVL
+					  , MENU_ORD
+					  , USE_YN
+					  , PRNT_MENU_SEQ
+					  , MENU_NM
+					  , MENU_EXEC_URL
+					  , ARRAY[MENU_SEQ]	AS PATH
+			FROM 	SYS_MENU_INFO_TBL
+			WHERE 	1 	= 	1
+			AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (USE_YN = #{useYn, jdbcType=VARCHAR}))
+			AND 		MENU_SEQ IN (
+							SELECT 	DISTINCT MENU_SEQ
+							FROM 	SYS_AUTH_GRP_MENU_MAP
+							WHERE 	1	=	1
+							AND 		AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}
+						)
+			UNION ALL
+			SELECT 	#{authGrpSeq, jdbcType=NUMERIC} 	AS AUTH_GRP_SEQ
+					  , MENU.MENU_SEQ
+					  , MENU.MENU_CD
+					  , MENU.MENU_TP
+					  , MENU.MENU_LVL
+					  , MENU.MENU_ORD
+					  , MENU.USE_YN
+					  , MENU.PRNT_MENU_SEQ
+					  , MENU.MENU_NM
+					  , MENU.MENU_EXEC_URL
+					  , ARRAY[MENU.MENU_SEQ]	AS PATH
+			FROM 	SYS_MENU_INFO_TBL	MENU
+			INNER JOIN TMP_MENU_TREE MENU_TREE ON MENU.MENU_SEQ 	=	MENU_TREE.PRNT_MENU_SEQ
+			WHERE 	1 	= 	1
+			AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (MENU.USE_YN = #{useYn, jdbcType=VARCHAR}))
+			AND 		NOT (MENU.MENU_SEQ = ANY(MENU_TREE.PATH))
+		),
+		DISTINCT_TREE_NODES AS (
+			SELECT 	AUTH_GRP_SEQ
+					  , MENU_SEQ
+					  , MENU_CD
+					  , MENU_TP
+					  , MENU_LVL
+					  , MENU_ORD
+					  , USE_YN
+					  , PRNT_MENU_SEQ
+					  , MENU_NM
+					  , MENU_EXEC_URL
+			FROM 	TMP_MENU_TREE
+			GROUP BY AUTH_GRP_SEQ, MENU_SEQ, MENU_CD, MENU_TP, MENU_LVL, MENU_ORD, USE_YN, PRNT_MENU_SEQ, MENU_NM, MENU_EXEC_URL
+		),
+		ORDERED_TREE_NODE AS (
+			SELECT 	AUTH_GRP_SEQ
+					  , MENU_SEQ
+					  , MENU_CD
+					  , MENU_TP
+					  , MENU_LVL
+					  , MENU_ORD
+					  , USE_YN
+					  , PRNT_MENU_SEQ
+					  , MENU_NM
+					  , MENU_EXEC_URL
+					  , ARRAY[MENU_SEQ]																						AS 	SORT_PATH
+					  , CAST(MENU_NM AS VARCHAR(500)) 																AS 	MENU_PATH
+			FROM 	DISTINCT_TREE_NODES
+			WHERE 	1 	= 	1
+			AND 		( 
+							PRNT_MENU_SEQ IS NULL 
+							OR 
+							PRNT_MENU_SEQ NOT IN (
+								SELECT 	MENU_SEQ
+								FROM 	DISTINCT_TREE_NODES
+							)	
+						)
+			UNION ALL
+			SELECT 	ORDR_TREE.AUTH_GRP_SEQ
+					  , DSTN_TREE.MENU_SEQ
+					  , DSTN_TREE.MENU_CD
+					  , DSTN_TREE.MENU_TP
+					  , DSTN_TREE.MENU_LVL
+					  , DSTN_TREE.MENU_ORD
+					  , DSTN_TREE.USE_YN
+					  , DSTN_TREE.PRNT_MENU_SEQ
+					  , DSTN_TREE.MENU_NM
+					  , DSTN_TREE.MENU_EXEC_URL
+					  , ORDR_TREE.SORT_PATH || DSTN_TREE.MENU_SEQ 												AS 	SORT_PATH
+					  , CAST(ORDR_TREE.MENU_PATH || ' > ' || DSTN_TREE.MENU_NM  AS VARCHAR(500))	AS 	MENU_PATH
+			FROM 	DISTINCT_TREE_NODES DSTN_TREE
+			INNER JOIN ORDERED_TREE_NODE ORDR_TREE ON DSTN_TREE.PRNT_MENU_SEQ = ORDR_TREE.MENU_SEQ
+		)
+		SELECT 	MENU_TREE.AUTH_GRP_SEQ
+				  , MENU_TREE.MENU_SEQ
+				  , MENU_TREE.MENU_CD
+				  , MENU_TREE.MENU_TP
+				  , MENU_TREE.MENU_LVL
+				  , MENU_TREE.MENU_ORD
+				  , MENU_TREE.USE_YN
+				  , MENU_TREE.PRNT_MENU_SEQ
+				  , MENU_TREE.MENU_NM
+				  , MENU_TREE.MENU_PATH
+				  , MENU_TREE.MENU_EXEC_URL		  
+				  , AUTH_GRP.AUTH_GRP_CD
+				  , AUTH_GRP.AUTH_GRP_NM
+		FROM 	ORDERED_TREE_NODE		MENU_TREE
+					LEFT JOIN SYS_AUTH_GRP_INFO_TBL  AUTH_GRP
+					ON 	MENU_TREE.AUTH_GRP_SEQ = AUTH_GRP.AUTH_GRP_SEQ
+					AND 	AUTH_GRP.USE_YN = 'Y'
+		ORDER BY MENU_TREE.SORT_PATH ASC, MENU_TREE.MENU_ORD ASC
+    </select>
+    
+    <!-- 시스템 권한 그룹 사용 메뉴 매핑 등록 수행 쿼리 -->
+    <insert id="insertSystemAuthGroupMenu" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpMenuDto">
+    </insert>
+    
+    <!-- 시스템 권한 그룹 사용 메뉴 매핑 해제 수행 쿼리 -->
+    <delete id="deleteSystemAuthGroupMenu" parameterType="com.qnpeople.rnd.pms.apis.system.authgrp.model.AuthGrpMenuDto">
+    </delete>    
+</mapper>

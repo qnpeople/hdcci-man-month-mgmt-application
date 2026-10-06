@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.system.admin.mapper.AdminMgmtMapper">
+	<!-- 관리자 정보 -->
+	<resultMap id="admin" type="com.qnpeople.rnd.pms.apis.system.admin.model.AdminDto">
+		<id property="admSeq" column="ADM_SEQ" />
+		<result property="admTp" column="ADM_TP" />
+		<result property="admTpNm" column="ADM_TP_NM" />
+		<result property="admNm" column="ADM_NM" />
+		<result property="authCid" column="AUTH_CID" />
+		<result property="admLognId" column="ADM_LOGN_ID" />
+		<result property="admLognPwd" column="ADM_LOGN_PWD" />
+		<result property="admEmalAddr" column="ADM_EMAL_ADDR" />
+		<result property="admMblNo" column="ADM_MBL_NO" />
+		<result property="admDeptNm" column="ADM_DEPT_NM" />
+		<result property="admPstnNm" column="ADM_PSTN_NM" />
+		<result property="initPwdChngYn" column="INIT_PWD_CHNG_YN" />
+		<result property="initPwdChngDt" column="INIT_PWD_CHNG_DT" />
+		<result property="lstLognDt" column="LST_LOGN_DT" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<!-- 관리자 권한 그룹 정보 -->
+	<resultMap id="adminAuthGrp" type="com.qnpeople.rnd.pms.apis.system.admin.model.AdminAuthGrpDto">
+		<id property="admSeq" column="ADM_SEQ" />
+		<id property="authGrpSeq" column="AUTH_GRP_SEQ" />
+		<result property="useYn" column="USE_YN" />
+		<result property="admTp" column="ADM_TP" />
+		<result property="admTpNm" column="ADM_TP_NM" />
+		<result property="admNm" column="ADM_NM" />
+		<result property="authGrpCd" column="AUTH_GRP_CD" />
+		<result property="authGrpTp" column="AUTH_GRP_TP" />
+		<result property="authGrpTpNm" column="AUTH_GRP_TP_NM" />
+		<result property="authGrpNm" column="AUTH_GRP_NM" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 시스템 관리자 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 시스템 관리자 목록 정보 추출 쿼리 -->
+	<select id="selectSystemAdminList" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminSC" resultMap="admin">
+		SELECT 	ADM_INFO.ADM_SEQ
+				  , ADM_INFO.ADM_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SYS_ADM_INFO_001'
+						AND 		CD 	=	ADM_INFO.ADM_TP
+				  	) 	AS 	ADM_TP_NM
+				  , ADM_INFO.ADM_NM
+				  , ADM_INFO.AUTH_CID
+				  , ADM_INFO.ADM_LOGN_ID
+				  , ADM_INFO.ADM_LOGN_PWD
+				  , ADM_INFO.ADM_EMAL_ADDR
+				  , ADM_INFO.ADM_DEPT_NM
+				  , ADM_INFO.ADM_PSTN_NM
+				  , ADM_INFO.INIT_PWD_CHNG_YN
+				  , TO_CHAR(ADM_INFO.INIT_PWD_CHNG_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	INIT_PWD_CHNG_DT
+				  , TO_CHAR(ADM_INFO.LST_LOGN_DT,  'YYYY-MM-DD HH24:MI:SS.MS') 			AS 	LST_LOGN_DT
+				  , TO_CHAR(ADM_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	RGST_DT
+  				  , ADM_INFO.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = ADM_INFO.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(ADM_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	UPDT_DT
+  				  , ADM_INFO.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = ADM_INFO.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	SYS_ADM_INFO_TBL 	ADM_INFO
+		WHERE 	1 	= 	1
+		AND 		(((#{admTp, jdbcType=VARCHAR} IS NULL) OR (#{admTp, jdbcType=VARCHAR} = '')) OR (ADM_INFO.ADM_TP = #{admTp, jdbcType=VARCHAR}))
+		AND 		(((#{admLognId, jdbcType=VARCHAR} IS NULL) OR (#{admLognId, jdbcType=VARCHAR} = '')) OR (ADM_INFO.ADM_LOGN_ID LIKE '%' || #{admLognId, jdbcType=VARCHAR} || '%'))
+		AND 		(((#{admNm, jdbcType=VARCHAR} IS NULL) OR (#{admNm, jdbcType=VARCHAR} = '')) OR (ADM_INFO.ADM_NM LIKE '%' || #{admNm, jdbcType=VARCHAR} || '%'))
+		AND 		(((#{initPwdChngYn, jdbcType=VARCHAR} IS NULL) OR (#{initPwdChngYn, jdbcType=VARCHAR} = '')) OR (ADM_INFO.INIT_PWD_CHNG_YN = #{initPwdChngYn, jdbcType=VARCHAR}))
+	</select>
+		
+	<!-- 시스템 관리자 상세 정보 추출 쿼리 -->
+	<select id="selectSystemAdminDetail" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminSC" resultMap="admin">
+		SELECT 	ADM_INFO.ADM_SEQ
+				  , ADM_INFO.ADM_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SYS_ADM_INFO_001'
+						AND 		CD 	=	ADM_INFO.ADM_TP
+				  	) 	AS 	ADM_TP_NM
+				  , ADM_INFO.ADM_NM
+				  , ADM_INFO.AUTH_CID
+				  , ADM_INFO.ADM_LOGN_ID
+				  , ADM_INFO.ADM_LOGN_PWD
+				  , ADM_INFO.ADM_EMAL_ADDR
+				  , ADM_INFO.ADM_DEPT_NM
+				  , ADM_INFO.ADM_PSTN_NM
+				  , ADM_INFO.INIT_PWD_CHNG_YN
+				  , TO_CHAR(ADM_INFO.INIT_PWD_CHNG_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	INIT_PWD_CHNG_DT
+				  , TO_CHAR(ADM_INFO.LST_LOGN_DT,  'YYYY-MM-DD HH24:MI:SS.MS') 			AS 	LST_LOGN_DT
+				  , TO_CHAR(ADM_INFO.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	RGST_DT
+  				  , ADM_INFO.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = ADM_INFO.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+  				  , TO_CHAR(ADM_INFO.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	UPDT_DT
+  				  , ADM_INFO.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = ADM_INFO.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+		FROM 	SYS_ADM_INFO_TBL 	ADM_INFO
+		WHERE 	1 	= 	1
+		AND 		(((#{admSeq, jdbcType=NUMERIC} IS NULL) OR (#{admSeq, jdbcType=NUMERIC} = 0)) OR (ADM_INFO.ADM_SEQ = #{admSeq, jdbcType=NUMERIC}))
+		AND 		(((#{admLognId, jdbcType=VARCHAR} IS NULL) OR (#{admLognId, jdbcType=VARCHAR} = '')) OR (ADM_INFO.ADM_LOGN_ID = #{admLognId, jdbcType=VARCHAR}))
+	</select>
+		
+	<!-- 신규 시스템 관리자 정보 등록 수행 쿼리 -->
+	<insert id="insertNewSystemAdmin" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminDto">
+		INSERT INTO SYS_ADM_INFO_TBL (
+		   ADM_TP	
+		 , ADM_NM
+		 , ADM_LOGN_ID
+		 , ADM_LOGN_PWD
+		 , ADM_EMAL_ADDR
+		 , ADM_MBL_NO
+		 , ADM_DEPT_NM
+		 , ADM_PSTN_NM
+		 , RGST_DT
+		 , RGST_SEQ
+		)
+		VALUES (
+			#{admTp, jdbcType=VARCHAR}
+		  , 	#{admNm, jdbcType=VARCHAR}
+		  , 	#{admLognId, jdbcType=VARCHAR}
+		  , 	#{admLognPwd, jdbcType=VARCHAR}
+		  , 	#{admEmalAddr, jdbcType=VARCHAR}
+		  , 	#{admMblNo, jdbcType=VARCHAR}
+		  , 	#{admDeptNm, jdbcType=VARCHAR}
+		  , 	#{admPstnNm, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}			
+		)	
+	</insert>
+	
+	<!-- 시스템 관리자 정보 변경 수행 쿼리 -->
+	<insert id="updateSystemAdmin" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminDto">
+		UPDATE SYS_ADM_INFO_TBL
+		SET 		ADM_TP = (
+							CASE
+								WHEN (#{admTp, jdbcType=VARCHAR} IS NULL OR #{admTp, jdbcType=VARCHAR} = '') THEN ADM_TP
+								ELSE #{admTp, jdbcType=VARCHAR}
+							END
+					)
+				  , 	ADM_NM = (
+							CASE
+								WHEN (#{admNm, jdbcType=VARCHAR} IS NULL OR #{admNm, jdbcType=VARCHAR} = '') THEN ADM_NM
+								ELSE #{admNm, jdbcType=VARCHAR}
+							END
+				   )
+				  , AUTH_CID = (
+							CASE
+								WHEN (#{authCid, jdbcType=VARCHAR} IS NULL OR #{authCid, jdbcType=VARCHAR} = '') THEN AUTH_CID
+								ELSE #{authCid, jdbcType=VARCHAR}
+							END
+				  	)
+				  , ADM_LOGN_ID = (
+							CASE
+								WHEN (#{admLognId, jdbcType=VARCHAR} IS NULL OR #{admLognId, jdbcType=VARCHAR} = '') THEN ADM_LOGN_ID
+								ELSE #{admLognId, jdbcType=VARCHAR}
+							END
+				    )
+				  , ADM_LOGN_PWD = (
+							CASE
+								WHEN (#{admLognPwd, jdbcType=VARCHAR} IS NULL OR #{admLognPwd, jdbcType=VARCHAR} = '') THEN ADM_LOGN_PWD
+								ELSE #{admLognPwd, jdbcType=VARCHAR}
+							END
+				    )
+				  , ADM_EMAL_ADDR = (
+							CASE
+								WHEN (#{admEmalAddr, jdbcType=VARCHAR} IS NULL OR #{admEmalAddr, jdbcType=VARCHAR} = '') THEN ADM_EMAL_ADDR
+								ELSE #{admEmalAddr, jdbcType=VARCHAR}
+							END
+				    )
+				  , ADM_MBL_NO = (
+							CASE
+								WHEN (#{admMblNo, jdbcType=VARCHAR} IS NULL OR #{admMblNo, jdbcType=VARCHAR} = '') THEN ADM_MBL_NO
+								ELSE #{admMblNo, jdbcType=VARCHAR}
+							END
+				    )
+				  , ADM_DEPT_NM = (
+							CASE
+								WHEN (#{admDeptNm, jdbcType=VARCHAR} IS NULL OR #{admDeptNm, jdbcType=VARCHAR} = '') THEN ADM_DEPT_NM
+								ELSE #{admDeptNm, jdbcType=VARCHAR}
+							END
+				   )
+				  , ADM_PSTN_NM = (
+							CASE
+								WHEN (#{admPstnNm, jdbcType=VARCHAR} IS NULL OR #{admPstnNm, jdbcType=VARCHAR} = '') THEN ADM_PSTN_NM
+								ELSE #{admPstnNm, jdbcType=VARCHAR}
+							END
+				   )
+				  , INIT_PWD_CHNG_YN = (
+							CASE
+								WHEN (#{initPwdChngYn, jdbcType=VARCHAR} IS NULL OR #{initPwdChngYn, jdbcType=VARCHAR} = '') THEN INIT_PWD_CHNG_YN
+								ELSE #{initPwdChngYn, jdbcType=VARCHAR}
+							END
+				   )
+				  , INIT_PWD_CHNG_DT = (
+							CASE
+								WHEN (#{initPwdChngDt, jdbcType=VARCHAR} IS NULL OR #{initPwdChngDt, jdbcType=VARCHAR} = '') THEN INIT_PWD_CHNG_DT
+								ELSE TO_TIMESTAMP(#{initPwdChngDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH:MI:SS.MS')::TIMESTAMP(3)
+							END
+				   )
+				  , LST_LOGN_DT = (
+							CASE
+								WHEN (#{lstLognDt, jdbcType=VARCHAR} IS NULL OR #{lstLognDt, jdbcType=VARCHAR} = '') THEN LST_LOGN_DT
+								ELSE TO_TIMESTAMP(#{lstLognDt, jdbcType=VARCHAR}, 'YYYY-MM-DD HH:MI:SS.MS')::TIMESTAMP(3)
+							END
+				   )	
+				  , UPDT_DT  = CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ = (
+							CASE
+								WHEN (#{updtSeq, jdbcType=NUMERIC} IS NULL OR #{updtSeq, jdbcType=NUMERIC} = 0) THEN UPDT_SEQ
+								ELSE #{updtSeq, jdbcType=NUMERIC}
+							END
+				   )  
+		WHERE 	1 	= 	1
+		AND 		ADM_SEQ = #{admSeq, jdbcType=NUMERIC}
+	</insert>
+
+	<!-- 시스템 관리자 정보 삭제 수행 쿼리 -->
+	<insert id="deleteSystemAdmin" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminSC">
+		DELETE 
+		FROM 	SYS_ADM_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		ADM_SEQ = #{admSeq, jdbcType=NUMERIC}
+	</insert>	
+	<!-- 시스템 관리자 지정 모든 권한 그룹 매핑 정보 삭제 수행 쿼리 -->
+	<delete id="deleteSystemAdminAssignedAllAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminSC">
+		DELETE 
+		FROM 	SYS_ADM_AUTH_GRP_MAP
+		WHERE 	1 	= 	1
+		AND 		ADM_SEQ = #{admSeq, jdbcType=NUMERIC}
+	</delete>
+		
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 시스템 관리자 권한 그룹 매핑 수행 모듈 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 시스템 관리자 지정 권한 그룹 목록 정보 추출 쿼리 -->
+	<select id="selectSystemAdminAuthGroupList" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminAuthGrpSC" resultMap="adminAuthGrp">
+		WITH  TMP_ADM_AUTH_GRP_TBL AS (	
+			SELECT 	ADM_AUTH_GRP.ADM_SEQ
+				  	  , ADM_AUTH_GRP.AUTH_GRP_SEQ
+				  	  , ADM_AUTH_GRP.USE_YN
+				  	  , ADM.ADM_TP
+				  	  , (
+							SELECT 	CD_NM
+							FROM 	CMN_CD_INFO_TBL 
+							WHERE 	1 	= 	1
+							AND 		GRP_CD = 'SYS_ADM_INFO_001'
+							AND 		CD 		=	ADM.ADM_TP
+					  	) 	AS 	AMD_TP_NM
+				  	  , ADM.ADM_NM
+				  	  , AUTH_GRP.AUTH_GRP_CD
+				  	  , AUTH_GRP.AUTH_GRP_TP
+				  	  , (
+							SELECT 	CD_NM
+							FROM 	CMN_CD_INFO_TBL 
+							WHERE 	1 	= 	1
+							AND 		GRP_CD = 'SYS_AUTH_GRP_001'
+							AND 		CD 		=	AUTH_GRP.AUTH_GRP_TP
+					  	) 	AS 	AUTH_GRP_TP_NM
+					  , AUTH_GRP.AUTH_GRP_NM
+					  , TO_CHAR(ADM_AUTH_GRP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	RGST_DT
+	  				  , ADM_AUTH_GRP.RGST_SEQ
+	  				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = ADM_AUTH_GRP.RGST_SEQ					
+					  	) 		AS 	RGST_NM
+	  				  , TO_CHAR(ADM_AUTH_GRP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 					AS 	UPDT_DT
+	  				  , ADM_AUTH_GRP.UPDT_SEQ
+	  				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = ADM_AUTH_GRP.UPDT_SEQ					
+					  	) 		AS 	UPDT_NM
+			FROM 	SYS_ADM_AUTH_GRP_MAP	ADM_AUTH_GRP
+			LEFT JOIN SYS_ADM_INFO_TBL  ADM ON ADM_AUTH_GRP.ADM_SEQ = ADM.ADM_SEQ
+			LEFT JOIN SYS_AUTH_GRP_INFO_TBL AUTH_GRP ON ADM_AUTH_GRP.AUTH_GRP_SEQ = AUTH_GRP.AUTH_GRP_SEQ AND AUTH_GRP.USE_YN = 'Y'
+			WHERE 	1 	= 	1
+			AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (ADM_AUTH_GRP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+			AND 		(((#{admSeq, jdbcType=NUMERIC} IS NULL) OR (#{admSeq, jdbcType=NUMERIC} = 0)) OR (ADM_AUTH_GRP.ADM_SEQ = #{admSeq, jdbcType=NUMERIC}))
+			AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC} = 0)) OR (ADM_AUTH_GRP.AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))
+		)
+		SELECT 	ADM_SEQ
+				  , AUTH_GRP_SEQ
+				  , USE_YN
+				  , ADM_TP
+				  , AMD_TP_NM
+				  , ADM_NM
+				  , AUTH_GRP_CD
+				  , AUTH_GRP_TP
+				  , AUTH_GRP_TP_NM
+				  , AUTH_GRP_NM
+				  , RGST_DT
+				  , RGST_SEQ
+				  , RGST_NM
+				  , UPDT_DT
+				  , UPDT_SEQ
+				  , UPDT_NM
+		FROM 	TMP_ADM_AUTH_GRP_TBL
+		WHERE 	1 	= 	1
+		AND  	(((#{admTp, jdbcType=VARCHAR} IS NULL) OR (#{admTp, jdbcType=VARCHAR} = '')) OR (ADM_TP = #{admTp, jdbcType=VARCHAR}))
+		AND  	(((#{authGrpTp, jdbcType=VARCHAR} IS NULL) OR (#{authGrpTp, jdbcType=VARCHAR} = '')) OR (AUTH_GRP_TP = #{authGrpTp, jdbcType=VARCHAR}))		
+	</select>
+        
+	<!-- 시스템 관리자 권한 그룹 매핑 등록 수행 쿼리 -->
+	<insert id="insertSysetmAdminAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminAuthGrpDto">
+		INSERT INTO SYS_ADM_AUTH_GRP_MAP (
+				ADM_SEQ
+			  , AUTH_GRP_SEQ
+			  , 	RGST_DT
+			  , RGST_SEQ			
+		)
+		VALUES (
+				#{admSeq, jdbcType=NUMERIC}
+			  , 	#{authGrpSeq, jdbcType=NUMERIC}
+			  , 	CURRENT_TIMESTAMP(3)
+			  , #{rgstSeq, jdbcType=NUMERIC}
+		)
+	</insert>
+		
+	<!-- 시스템 관리자 권한 그룹 매핑 해제 수행 쿼리 -->
+	<delete id="deleteSystemAdminAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.system.admin.model.AdminAuthGrpDto">
+		DELETE 
+		FROM 	SYS_ADM_AUTH_GRP_MAP
+		WHERE 	1 	= 	1
+		AND  	ADM_SEQ 			=	#{admSeq, jdbcType=NUMERIC}
+		AND  	AUTH_GRP_SEQ 	=	#{authGrpSeq, jdbcType=NUMERIC}
+	</delete>
+</mapper>

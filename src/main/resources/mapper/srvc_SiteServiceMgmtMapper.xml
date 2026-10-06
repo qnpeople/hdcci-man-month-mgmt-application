@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.service.siteservice.mapper.SiteServiceMgmtMapper">
+	<!-- 사이트별 서비스 상세 정보 -->
+	<resultMap id="siteService" type="com.qnpeople.rnd.pms.apis.service.siteservice.model.SiteServiceDto">
+		<id property="chnlSiteSeq" column="CHNL_SITE_SEQ" />
+		<result property="chnlSeq" column="CHNL_SEQ" />
+		<result property="siteSeq" column="SITE_SEQ" />
+		<result property="srvcSeq" column="SRVC_SEQ" />
+		<result property="chnlCd" column="CHNL_CD" />
+		<result property="siteCd" column="SITE_CD" />
+		<result property="srvcCd" column="SRVC_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="siteSrvcNm" column="SITE_SRVC_NM" />
+		<result property="siteSrvcDesc" column="SITE_SRVC_DESC" />
+		<result property="chnlNm" column="CHNL_NM" />
+		<result property="chnlIp" column="CHNL_IP" />
+		<result property="chnlPort" column="CHNL_PORT" />
+		<result property="chnlDmn" column="CHNL_DMN" />
+		<result property="chnlBscUri" column="CHNL_BSC_URI" />
+		<result property="chnlDesc" column="CHNL_DESC" />		
+		<result property="siteTp" column="SITE_TP" />
+		<result property="siteTpNm" column="SITE_TP_NM" />
+		<result property="siteNm" column="SITE_NM" />
+		<result property="siteBscUri" column="SITE_BSC_URI" />
+		<result property="siteDesc" column="SITE_DESC" />
+		<result property="srvcCtgryCd" column="SRVC_CTGRY_CD" />
+		<result property="srvcTp" column="SRVC_TP" />
+		<result property="srvcTpNm" column="SRVC_TP_NM" />
+		<result property="srvcNm" column="SRVC_NM" />
+		<result property="srvcBscUri" column="SRVC_BSC_URI" />
+		<result property="srvcDesc" column="SRVC_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<!-- 사이트 서비스 매핑 목록 추출 쿼리 -->
+	<select id="selectSiteServiceMappingList" parameterType="com.qnpeople.rnd.pms.apis.service.siteservice.model.SiteServiceSC" resultMap="siteService">
+		WITH TMP_SITE_SRVC_TBL AS (
+			SELECT 	SITE_SRVC.CHNL_SITE_SEQ
+			          , CHNL_SITE.CHNL_SEQ
+			          , CHNL_SITE.SITE_SEQ
+					  , SITE_SRVC.SRVC_SEQ
+					  , SITE_SRVC.CHNL_CD
+					  , SITE_SRVC.SITE_CD
+					  , SITE_SRVC.SRVC_CD
+					  , SITE_SRVC.USE_YN
+					  , SITE_SRVC.SITE_SRVC_NM
+					  , SITE_SRVC.SITE_SRVC_DESC
+					  , TO_CHAR(SITE_SRVC.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+	 				  , SITE_SRVC.RGST_SEQ
+	 				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = SITE_SRVC.RGST_SEQ
+					    ) 	AS 	RGST_NM
+	 				  , TO_CHAR(SITE_SRVC.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+	 				  , SITE_SRVC.UPDT_SEQ
+	 				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = SITE_SRVC.UPDT_SEQ
+					    ) 	AS 	UPDT_NM
+			FROM 	SVC_SITE_SRVC_MAP 	SITE_SRVC
+			LEFT JOIN CMN_CHNL_SITE_MAP CHNL_SITE ON SITE_SRVC.CHNL_SITE_SEQ = CHNL_SITE.CHNL_SITE_SEQ
+			WHERE 	1 	= 	1
+			AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.USE_YN = #{useYn, jdbcType=VARCHAR}))
+			AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+			AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+			AND 		(((#{srvcCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
+			AND 		(((#{siteSrvcNm, jdbcType=VARCHAR} IS NULL) OR (#{siteSrvcNm, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.SITE_SRVC_NM LIKE '%' || #{siteSrvcNm, jdbcType=VARCHAR} || '%'))
+		)
+		SELECT 	TMP_SITE_SRVC.CHNL_SITE_SEQ
+				  , TMP_SITE_SRVC.CHNL_SEQ
+				  , TMP_SITE_SRVC.SITE_SEQ
+				  , TMP_SITE_SRVC.SRVC_SEQ
+				  , TMP_SITE_SRVC.CHNL_CD
+				  , TMP_SITE_SRVC.SITE_CD
+				  , TMP_SITE_SRVC.SRVC_CD
+				  , TMP_SITE_SRVC.USE_YN
+				  , TMP_SITE_SRVC.SITE_SRVC_NM
+				  , TMP_SITE_SRVC.SITE_SRVC_DESC
+				  , CHNL.CHNL_NM
+				  , CHNL.CHNL_IP
+				  , CHNL.CHNL_PORT
+				  , CHNL.CHNL_DMN
+				  , CHNL.CHNL_BSC_URI
+				  , CHNL.CHNL_DESC
+				  , SITE.SITE_TP
+				  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMN_SITE_INFO_001'
+						AND 		CD 			= 	SITE.SITE_TP
+					) AS 	SITE_TP_NM
+				  , SITE.SITE_NM
+				  , SITE.SITE_BSC_URI
+				  , SITE.SITE_DESC
+				  , SRVC.SRVC_CTGRY_CD
+				  , SRVC.SRVC_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SVC_SRVC_INFO_001'
+						AND 		CD 	=	SRVC.SRVC_TP				
+					) 	AS SRVC_TP_NM
+				  , SRVC.SRVC_NM
+				  , SRVC.SRVC_BSC_URI
+				  , SRVC.SRVC_DESC
+				  , TMP_SITE_SRVC.RGST_DT
+				  , TMP_SITE_SRVC.RGST_SEQ
+				  , TMP_SITE_SRVC.RGST_NM
+				  , TMP_SITE_SRVC.UPDT_DT
+				  , TMP_SITE_SRVC.UPDT_SEQ
+				  , TMP_SITE_SRVC.UPDT_NM
+		FROM 	TMP_SITE_SRVC_TBL	TMP_SITE_SRVC
+					LEFT OUTER  JOIN CMN_CHNL_INFO_TBL CHNL ON TMP_SITE_SRVC.CHNL_SEQ = CHNL.CHNL_SEQ 	AND 	CHNL.USE_YN = 'Y'
+					LEFT OUTER  JOIN CMN_SITE_INFO_TBL SITE ON TMP_SITE_SRVC.SITE_SEQ = SITE.SITE_SEQ 				AND 	SITE.USE_YN = 'Y'
+					LEFT OUTER  JOIN SVC_SRVC_INFO_TBL SRVC ON TMP_SITE_SRVC.SRVC_SEQ = SRVC.SRVC_SEQ 		AND 	SRVC.USE_YN = 'Y'
+		WHERE 	1	=	1
+	</select>
+	
+	<!-- 사이트 서비스 매핑 상세 정보 추출 쿼리 -->
+	<select id="selectSiteServiceDetail" parameterType="com.qnpeople.rnd.pms.apis.service.siteservice.model.SiteServiceSC" resultMap="siteService">
+		WITH TMP_SITE_SRVC_TBL AS (
+			SELECT 	SITE_SRVC.CHNL_SITE_SEQ
+			          , CHNL_SITE.CHNL_SEQ
+			          , CHNL_SITE.SITE_SEQ
+					  , SITE_SRVC.SRVC_SEQ
+					  , SITE_SRVC.CHNL_CD
+					  , SITE_SRVC.SITE_CD
+					  , SITE_SRVC.SRVC_CD
+					  , SITE_SRVC.USE_YN
+					  , SITE_SRVC.SITE_SRVC_NM
+					  , SITE_SRVC.SITE_SRVC_DESC
+					  , TO_CHAR(SITE_SRVC.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+	 				  , SITE_SRVC.RGST_SEQ
+	 				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = SITE_SRVC.RGST_SEQ
+					    ) 	AS 	RGST_NM
+	 				  , TO_CHAR(SITE_SRVC.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+	 				  , SITE_SRVC.UPDT_SEQ
+	 				  , (
+							SELECT 	ADM_NM
+							FROM 	SYS_ADM_INFO_TBL
+							WHERE 	1	=	1
+							AND 		ADM_SEQ = SITE_SRVC.UPDT_SEQ
+					    ) 	AS 	UPDT_NM
+			FROM 	SVC_SITE_SRVC_MAP 	SITE_SRVC
+			LEFT JOIN CMN_CHNL_SITE_MAP CHNL_SITE ON SITE_SRVC.CHNL_SITE_SEQ = CHNL_SITE.CHNL_SITE_SEQ
+			WHERE 	1 	= 	1
+			AND 		(((#{chnlSiteSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSiteSeq, jdbcType=NUMERIC} = 0)) OR (SITE_SRVC.CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}))
+			AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SITE_SRVC.SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+		)
+		SELECT 	TMP_SITE_SRVC.CHNL_SITE_SEQ
+				  , TMP_SITE_SRVC.CHNL_SEQ
+				  , TMP_SITE_SRVC.SITE_SEQ
+				  , TMP_SITE_SRVC.SRVC_SEQ
+				  , TMP_SITE_SRVC.CHNL_CD
+				  , TMP_SITE_SRVC.SITE_CD
+				  , TMP_SITE_SRVC.SRVC_CD
+				  , TMP_SITE_SRVC.USE_YN
+				  , TMP_SITE_SRVC.SITE_SRVC_NM
+				  , TMP_SITE_SRVC.SITE_SRVC_DESC
+				  , CHNL.CHNL_NM
+				  , CHNL.CHNL_IP
+				  , CHNL.CHNL_PORT
+				  , CHNL.CHNL_DMN
+				  , CHNL.CHNL_BSC_URI
+				  , CHNL.CHNL_DESC
+				  , SITE.SITE_TP
+				  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMN_SITE_INFO_001'
+						AND 		CD 			= 	SITE.SITE_TP
+					) AS 	SITE_TP_NM
+				  , SITE.SITE_NM
+				  , SITE.SITE_BSC_URI
+				  , SITE.SITE_DESC
+				  , SRVC.SRVC_CTGRY_CD
+				  , SRVC.SRVC_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SVC_SRVC_INFO_001'
+						AND 		CD 	=	SRVC.SRVC_TP				
+					) 	AS SRVC_TP_NM
+				  , SRVC.SRVC_NM
+				  , SRVC.SRVC_BSC_URI
+				  , SRVC.SRVC_DESC
+				  , TMP_SITE_SRVC.RGST_DT
+				  , TMP_SITE_SRVC.RGST_SEQ
+				  , TMP_SITE_SRVC.RGST_NM
+				  , TMP_SITE_SRVC.UPDT_DT
+				  , TMP_SITE_SRVC.UPDT_SEQ
+				  , TMP_SITE_SRVC.UPDT_NM
+		FROM 	TMP_SITE_SRVC_TBL	TMP_SITE_SRVC
+					LEFT OUTER  JOIN CMN_CHNL_INFO_TBL CHNL ON TMP_SITE_SRVC.CHNL_SEQ = CHNL.CHNL_SEQ 	AND 	CHNL.USE_YN = 'Y'
+					LEFT OUTER  JOIN CMN_SITE_INFO_TBL SITE ON TMP_SITE_SRVC.SITE_SEQ = SITE.SITE_SEQ 				AND 	SITE.USE_YN = 'Y'
+					LEFT OUTER  JOIN SVC_SRVC_INFO_TBL SRVC ON TMP_SITE_SRVC.SRVC_SEQ = SRVC.SRVC_SEQ 		AND 	SRVC.USE_YN = 'Y'
+		WHERE 	1	=	1
+	</select>
+</mapper>
