@@ -24,46 +24,96 @@ public class EmployeeSC extends QNPWebBaseModel {
 	private String empleStatTp;
 	/* 근무자 등급 유형(공통코드: CMP_EMP_DGR_001) 01.초급, 02:중급, 03:고급, 04:특급, 05:해당없음, 99:기타 */
 	private String empleDgrTp;
+	/* 최초 근무자 비밀번호 변경 여부(N: 미 변경(기본값), Y: 변경) */
+	private String initPwdChngYn;
 	/* 근무자 사용 여부(Y: 사용(기본), N: 미사용) */
 	private String useYn;
+	/* 근무자 삭제 여부(N: 미삭제(기본), Y: 삭제) */
+	private String deltYn;
 	/* 근무자 명 */
 	private String empleNm;	
 	/* 근무자 로그인 ID */
 	private String empleLognId;
+	/* 근무자 로그인 ID */
+	private String empleLognPwd;
+	/* 업체 코드 */
+	private String compCd;
+	
+	/* 근무자 이전 로그인 비밀번호 */
+	private String oldEmpleLognPwd;
+	/* 근무자 변경 로그인 비밀번호 */
+	private String newEmpleLognPwd;
+	
+	/* 근무자 변경자 식별자 */
+	private Long updtSeq;
+	/* 근무자 삭제자 식별자 */
+	private Long deltSeq;
 	
 	@JsonIgnore
 	public String toStringInfo() {
 		StringBuilder info = new StringBuilder();
 		info.append(className).append("{ ");
-		info.append("compSeq= ").append(compSeq);
+		info.append("compSeq=").append(compSeq);
+		if(!SBNUtils.isNull(compCd)) {
+			info.append(", ");
+			info.append("compCd=").append(compCd);
+		}		
 		if(!SBNUtils.isNull(empleSeq)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleSeq=").append(empleSeq);
 		}
 		if(!SBNUtils.isNull(empleTp)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleTp=").append(empleTp);
 		}
 		if(!SBNUtils.isNull(empleStatTp)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleStatTp=").append(empleStatTp);
 		}
 		if(!SBNUtils.isNull(empleDgrTp)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleDgrTp=").append(empleDgrTp);
 		}
+		if(!SBNUtils.isNull(initPwdChngYn)) {
+			info.append(", ");
+			info.append("initPwdChngYn=").append(initPwdChngYn);
+		}	
 		if(!SBNUtils.isNull(useYn)) {
-			info.append(",");
+			info.append(", ");
 			info.append("useYn=").append(useYn);
 		}
+		if(!SBNUtils.isNull(deltYn)) {
+			info.append(", ");
+			info.append("deltYn=").append(deltYn);
+		}
 		if(!SBNUtils.isNull(empleNm)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleNm=").append(empleNm);
 		}
 		if(!SBNUtils.isNull(empleLognId)) {
-			info.append(",");
+			info.append(", ");
 			info.append("empleLognId=").append(empleLognId);
+		}		
+		if(!SBNUtils.isNull(empleLognPwd)) {
+			info.append(", ");
+			info.append("empleLognPwd=").append(empleLognPwd);
 		}
+		if(!SBNUtils.isNull(oldEmpleLognPwd)) {
+			info.append(", ");
+			info.append("oldEmpleLognPwd=").append(oldEmpleLognPwd);
+		}
+		if(!SBNUtils.isNull(newEmpleLognPwd)) {
+			info.append(", ");
+			info.append("newEmpleLognPwd=").append(newEmpleLognPwd);
+		}
+		if(!SBNUtils.isNull(updtSeq)) {
+			info.append(", ");
+			info.append("updtSeq=").append(updtSeq);
+		}		
+		if(!SBNUtils.isNull(deltSeq)) {
+			info.append(", ");
+			info.append("deltSeq=").append(deltSeq);
+		}		
 		info.append(" }");
 		return info.toString();
 	}

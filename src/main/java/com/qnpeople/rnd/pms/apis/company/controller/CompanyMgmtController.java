@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,6 +31,7 @@ import com.qnpeople.rnd.pms.utils.QNPResponseEntityUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import kr.co.sbn.platformhub.framework.core.types.SBNUseYnType;
 import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -72,7 +74,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	//	관리
 	//		업체_업체 등록
 	//  	업체_업체 변경
-	//  	업체_업체 삭제
+	//  	업체_업체 삭제	=> 리팩토링 예정
 	//  	업체_업체 서비스 지정
 	//  	업체_업체 서비스 해제
 	/////////////////////////////////////////////////////////////////		
@@ -88,7 +90,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException			클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/mgmt/registerNewCompany", method= {RequestMethod.GET, RequestMethod.POST})
+	@PostMapping(value="/mgmt/registerNewCompany")
 	public ResponseEntity<?> registerNewCompany(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyMgmtRequest companyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -172,7 +174,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException			클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/mgmt/updateCompany", method= {RequestMethod.GET, RequestMethod.POST})
+	@PostMapping(value="/mgmt/updateCompany")
 	public ResponseEntity<?> updateCompany(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyMgmtRequest companyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -246,7 +248,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	}
 	
 	/**
-	 * [ 업체_업체 삭제 ]
+	 * [ 업체_업체 삭제 ]	=> 리팩토링 예정
 	 * 전달된 클라이언트의 업체 삭제 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
 	 * 
 	 * @author		BeomSeok.Seo
@@ -257,7 +259,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException			클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/mgmt/deleteCompany", method= {RequestMethod.GET, RequestMethod.POST})
+	@PostMapping(value="/mgmt/deleteCompany")
 	public ResponseEntity<?> deleteCompany(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyMgmtRequest companyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -290,6 +292,8 @@ public class CompanyMgmtController extends QNPWebBaseController {
 				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
 				return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
 			}
+			companySC.setDeltYn(SBNUseYnType.Y.getTypeCode());
+			companySC.setDeltSeq(adminAuthData.getClientSeq());
 			companySC.setCompSeq(companyMgmtRequest.getCompSeq());
 			companySC.setCompCd(companyMgmtRequest.getCompCd());
 			
@@ -341,7 +345,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException						클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/mgmt/assignServiceCompany", method= {RequestMethod.GET, RequestMethod.POST})
+	@PostMapping(value="/mgmt/assignServiceCompany")
 	public ResponseEntity<?> assignServiceCompany(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ServiceCompanyMgmtRequest serviceCompanyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -427,7 +431,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException					클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/mgmt/releaseServiceCompany", method= {RequestMethod.GET, RequestMethod.POST})
+	@PostMapping(value="/mgmt/releaseServiceCompany")
 	public ResponseEntity<?> releaseServiceCompany(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ServiceCompanyMgmtRequest serviceCompanyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();

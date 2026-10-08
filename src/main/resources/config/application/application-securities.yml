@@ -24,7 +24,7 @@ jasypt:
 # 프로젝트 보안 처리 관련 설정 프로퍼티 정의
 securities:
   cors:
-    corsName: SBN Framework Default CORS Filter 				# CORS 필터 구분 명 정보
+    corsName: QNP Framework Default CORS Filter 				# CORS 필터 구분 명 정보
     corsAdaptYn: N															# CORS 필터 적용 여부
     urlPatterns: /**															    # CORS 필터 허용 대상 패턴 ( 전체 적용 /** )
     allowedOriginePatterns: "http://localhost:8080"                 # CORS 필터 교차 출처 요청을 허용할 도메인 (전체 허용 '*' )
@@ -34,25 +34,25 @@ securities:
     maxAge: 3600																# CORS Preflight 요청에 대한 캐싱 유지 시간(단위: 초). 기본: 3600(1시간)
   crxsite:
     csrf:
-      csrfName: SBN Framework Default CSRF Filter				# CSRF 필터 구분 명 정보
+      csrfName: QNP Framework Default CSRF Filter				# CSRF 필터 구분 명 정보
       csrfAdaptYn: N        													# CSRF 필터 적용 여부
       csrfRepositoryType: cookie                                          # CSRF 키 저장소 유형 ( session , cookie)
       csrfVerifyKeyType: header                                           # CSRF 키 검증 대상 유형 ( header, param )
       csrfSecureUseFlag: true                                               # CSRF 보안 설정 여부 ( true: HTTPS , SSL 적용, 일반: false )  => 추가 미 적용
       csrfSiteRangeType: lax                                                 # CSRF 동일 사이트 허용 유형 ( none: 모두 허용 , strict: 동일 사이트만 허용  lax: 안전한 이동은 허용)
     referer:
-      refererName: SBN Framework Default Referer Filter 		# REFERER 필터 구분 명 정보
+      refererName: QNP Framework Default Referer Filter 		# REFERER 필터 구분 명 정보
       refererAdaptYn: N														# REFERER 필터 적용 여부
       refererAllowedUris: http://localhost:8080/api/v3/crxsite/, http://localhost:8080/enterprize/biz		# REFERER 허용 URI 목록
     xss:
-      xssName: SBN Framework Default XSS Filter					# XSS 필터 구분 명 정보
+      xssName: QNP Framework Default XSS Filter					# XSS 필터 구분 명 정보
       xssAdaptYn: N 															# XSS 필터 적용 여부
       xssReverseResponseYn: N 											# XSS 필터 적용 응답 복원 여부
       xssExcludeRequestUrls: hdcci/, hdcci/api		                # XSS 필터 적용 제외 요청 URL 목록 정보
   cypher:
-    cypherName: SBN Framework Default CYPHER Module	    # 암호화 모듈 구분 명 정보
+    cypherName: QNP Framework Default CYPHER Module	    # 암호화 모듈 구분 명 정보
     cypherAdaptYn: Y														# 암호화 적용 여부
-    venderName: SBN Inc													# 암호화 모듈 적용 업체 명
+    venderName: QNP Inc													# 암호화 모듈 적용 업체 명
     availableCypherTypes: aes256, sha256, sha512, md5          # 적용 대상 암호화 유형 목록 정보  aes256, sha256, sha512, md5	
     cypherModuleBuildType: pool 										# 암호화 모듈 구축 유형 ( single: 단일 모듈 구축, pool: 모듈 관리 풀 구축 )
     cypherModulePoolCount: 5 											# 암호화 모듈 관리 Pool 갯수 ( 암호화 모듈 구축 유형이 pool 인 경우 적용 )
@@ -65,72 +65,72 @@ securities:
         aes256:
           cypherName:                                                        # AES256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# AES256 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks aes256 cypher                # AES256 암호화/복호화 수행 키 정보       
+          keyString: qmpeople aes256 cypher                    	 	# AES256 암호화/복호화 수행 키 정보       
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes256.SBNAes256CypherExecutorAdaptor # AES256 암호화 수행 모듈의 클래스 명 정보
         aes512:
           cypherName:                                                        # AES512 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# AES512 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks aes512 cypher                # AES512 암호화/복호화 수행 키 정보
+          keyString: qmpeople aes512 cypher                			# AES512 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes512.SBNAes512CypherExecutorAdaptor # AES512 암호화 수행 모듈의 클래스 명 정보
       sha:
         sha256:
-          cypherName: smartbiznetworks Default sha256 cypher # SHA256 암호화 모듈 구분 명 정보
+          cypherName: qmpeople Default sha256 cypher # SHA256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA256 암호화 적용 여부			
           saltAdaptYn: Y														# SHA256 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qmpeople md5 salt key						# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha256.SBNSha256CypherExecutorAdaptor # SHA256 암호화 수행 모듈의 클래스 명 정보
         sha512:
-          cypherName: smartbiznetworks Default sha512 cyphe # SHA512 암호화 모듈 구분 명 정보
+          cypherName: qmpeople Default sha512 cyphe 			# SHA512 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA512 암호화 적용 여부			
           saltAdaptYn: Y														# SHA512 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qmpeople md5 salt key						# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha512.SBNSha512CypherExecutorAdaptor # SHA512 암호화 수행 모듈의 클래스 명 정보
       md5:
-        cypherName: SBN Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
+        cypherName: QNP Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y  													# MD5 암호화 적용 여부
         saltAdaptYn: Y  														# MD5 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-        saltKeyString: sbn md5 salt key  								# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+        saltKeyString: qmpeople md5 salt key  				 		# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
         cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.md5.SBNMd5CypherExecutorAdaptor # MD5 암호화 수행 모듈의 클래스 명 정보
       des:
         des:
           cypherName:                                                        # DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# DES 암호화 적용 여부		
           saltAdaptYn: Y														# DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qmpeople md5 salt key						# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # DES 암호화 수행 모듈의 클래스 명 정보
         triple-des:
           cypherName:                                                        # TRIPLE-DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# TRIPLE-DES 암호화 적용 여부	
           saltAdaptYn: Y														# TRIPLE-DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qmpeople md5 salt key						# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # TRIPLE-DES 암호화 수행 모듈의 클래스 명 정보
       seed:
         seed128:
           cypherName:                                                        # SEED128 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED128 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks seed128 cypher 				# SEED128 암호화/복호화 수행 키 정보
+          keyString: qmpeople seed128 cypher 						# SEED128 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED128 암호화 수행 모듈의 클래스 명 정보
         seed256:
           cypherName:                                                        # SEED256 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED256 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks seed256 cypher 				# SEED256 암호화/복호화 수행 키 정보
+          keyString: qmpeople seed256 cypher 						# SEED256 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED256 암호화 수행 모듈의 클래스 명 정보
       rsa:
         cypherName:                                                          # RSA 암호화 모듈 구분 명 정보
         cypherAdaptYn: N													# RSA 암호화/복호화 적용 여부 
-        keyString: smartbiznetworks rsa cypher 						# RSA 암호화/복호화 수행 키 정보
+        keyString: qmpeople rsa cypher 								# RSA 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # RSA 암호화 수행 모듈의 클래스 명 정보
       ecc:
         cypherName:                                                          # ECC 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y													# ECC 암호화/복호화 적용 여부 
-        keyString: smartbiznetworks ecc cypher 						# ECC 암호화/복호화 수행 키 정보
+        keyString: qmpeople ecc cypher 								# ECC 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # ECC 암호화 수행 모듈의 클래스 명 정보
   jwt:
-    jwtTokenName: SBN Framework Default JWT Token Module	# JWT 토큰 모듈 구분 명 정보
+    jwtTokenName: QNP Framework Default JWT Token Module	# JWT 토큰 모듈 구분 명 정보
     jwtTokenAdaptYn: N													        # JWT 토큰 적용 여부		
     jwtTokenAlgorithm: HS256												# JWT 토큰 암호호 알고리즘 유형 정보 (SH512)
-    jwtTokenIssuer: sbn.co.kr													# JWT 토큰 발급자 정보
-    jwtTokenKey: smartbiznetworksFrameworkJwtTokendsfadfadfadfafadsfsasdfads		        # JWT 토큰 발급 키 정보 ( 발급 키 길이에 따라 AlgorithmType 이 변경)
+    jwtTokenIssuer: qnpeople.com											# JWT 토큰 발급자 정보
+    jwtTokenKey: qnpeople_hdcci_applicationFrameworkJwtToken_202611130000000  # JWT 토큰 발급 키 정보 ( 발급 키 길이에 따라 AlgorithmType 이 변경)
     jwtTokenNewIssueDurationMinTime: 1440						    # JWT 토큰 최초 발급 유지 시간 정보 ( 기본: 1일, 단위: 분 )
     jwtTokenReIssueDurationMinTime: 10080							    # JWT 토큰 재 발급 유지 시간 정보 ( 기본: 7일, 단위: 분 )
     jwtTokenExcludeUrls: /index, /createJwtAuthToken, /refreshJwtAuthToken 	# JWT 토큰 인증 제외 요청 URL 목록 정보
@@ -144,16 +144,16 @@ securities:
 
 # 프로젝트 인증 처리 관련 설정 프로퍼티 정의
 identiy-authentificaitons:
-  adaptYn: Y
+  adaptYn: N
   availableAuthTypes: 
   authentications:
     mobile-self-authentication:    # 휴대폰 본인인증 방법
-      adaptYn: Y
+      adaptYn: N
       name: 
       availableModules: nice, kmc
       modules:
        nice:
-         adaptYn: Y
+         adaptYn: N
          account: 
          password:
          callbackUrl:
@@ -185,10 +185,10 @@ spring:
 
 jasypt:
   encryptor:
-    password: SBN_FRAMEWORK
+    password: QNP_FRAMEWORK
     bean: jasyptStringEncryptor
     poolSize: 1
-    algorithm: PBEWithMD5AndDES   # PBEWithMD5AndDES	PBEWITHHMACSHA512ANDAES_256
+    algorithm: PBEWithMD5AndDES
     keyObtentionIterations: 1000
     saltGeneratorClassName: org.jasypt.salt.RandomSaltGenerator
     ivGeneratorClassName: org.jasypt.iv.RandomIvGenerator
@@ -197,7 +197,7 @@ jasypt:
 
 securities:
   cors:
-    corsName: SBN Framework Default CORS Filter 				# CORS 필터 구분 명 정보
+    corsName: QNP Framework Default CORS Filter 				# CORS 필터 구분 명 정보
     corsAdaptYn: N															# CORS 필터 적용 여부
     urlPatterns: /**															    # CORS 필터 허용 대상 패턴 ( 전체 적용 /** )
     allowedOriginePatterns: https://localhost:8080 					# CORS 필터 교차 출처 요청을 허용할 도메인 (전체 허용 '*' )
@@ -207,21 +207,21 @@ securities:
     maxAge: 3600																# CORS Preflight 요청에 대한 캐싱 유지 시간(단위: 초). 기본: 3600(1시간)
   crxsite:
     csrf:
-      csrfName: SBN Framework Default CSRF Filter				# CSRF 필터 구분 명 정보
+      csrfName: QNP Framework Default CSRF Filter				# CSRF 필터 구분 명 정보
       csrfAdaptYn: N															# CSRF 필터 적용 여부
     referer:
-      refererName: SBN Framework Default Referer Filter 		# REFERER 필터 구분 명 정보
+      refererName: QNP Framework Default Referer Filter 		# REFERER 필터 구분 명 정보
       refererAdaptYn: N														# REFERER 필터 적용 여부
       refererAllowedUris: http://localhost:8080/api/v3/crxsite/, http://localhost:8080/enterprize/biz		# REFERER 허용 URI 목록
     xss:
-      xssName: SBN Framework Default XSS Filter					# XSS 필터 구분 명 정보
+      xssName: QNP Framework Default XSS Filter					# XSS 필터 구분 명 정보
       xssAdaptYn: N 															# XSS 필터 적용 여부
       xssReverseResponseYn: N 											# XSS 필터 적용 응답 복원 여부
       xssExcludeRequestUrls: hdcci/, hdcci/api		                # XSS 필터 적용 제외 요청 URL 목록 정보
   cypher:
-    cypherName: SBN Framework Default CYPHER Module	    # 암호화 모듈 구분 명 정보
+    cypherName: QNP Framework Default CYPHER Module	    # 암호화 모듈 구분 명 정보
     cypherAdaptYn: Y														# 암호화 적용 여부
-    venderName: SBN Inc													# 암호화 모듈 적용 업체 명
+    venderName: qnpeople corp											# 암호화 모듈 적용 업체 명
     availableCypherTypes: aes256, sha256, sha512, md5			# 적용 대상 암호화 유형 목록 정보
     cypherModuleBuildType: pool 										# 암호화 모듈 구축 유형 ( single: 단일 모듈 구축, pool: 모듈 관리 풀 구축 )
     cypherModulePoolCount: 5 											# 암호화 모듈 관리 Pool 갯수 ( 암호화 모듈 구축 유형이 pool 인 경우 적용 )
@@ -234,72 +234,72 @@ securities:
         aes256:
           cypherName:                                                        # AES256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# AES256 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks aes256 cypher 				# AES256 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes256 cypher 							# AES256 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes256.SBNAes256CypherExecutorAdaptor # AES256 암호화 수행 모듈의 클래스 명 정보
         aes512:
           cypherName:                                                        # AES512 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# AES512 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks aes512 cypher 				# AES512 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes512 cypher 							# AES512 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes512.SBNAes512CypherExecutorAdaptor # AES512 암호화 수행 모듈의 클래스 명 정보
       sha:
         sha256:
           cypherName:                                                        # SHA256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA256 암호화 적용 여부			
           saltAdaptYn: Y														# SHA256 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha256.SBNSha256CypherExecutorAdaptor # SHA256 암호화 수행 모듈의 클래스 명 정보
         sha512:
           cypherName:                                                        # SHA512 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA512 암호화 적용 여부			
           saltAdaptYn: Y														# SHA512 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha512.SBNSha512CypherExecutorAdaptor # SHA512 암호화 수행 모듈의 클래스 명 정보
       md5:
-        cypherName: SBN Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
+        cypherName: QNP Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y  													# MD5 암호화 적용 여부
         saltAdaptYn: Y  														# MD5 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-        saltKeyString: sbn md5 salt key  								# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+        saltKeyString: qnpeople md5 salt key  						# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
         cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.md5.SBNMd5CypherExecutorAdaptor # MD5 암호화 수행 모듈의 클래스 명 정보
       des:
         des:
           cypherName:                                                        # DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# DES 암호화 적용 여부		
           saltAdaptYn: Y														# DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # DES 암호화 수행 모듈의 클래스 명 정보
         triple-des:
           cypherName:                                                        # TRIPLE-DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# TRIPLE-DES 암호화 적용 여부	
           saltAdaptYn: Y														# TRIPLE-DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: sbn md5 salt key								# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # TRIPLE-DES 암호화 수행 모듈의 클래스 명 정보
       seed:
         seed128:
           cypherName:                                                        # SEED128 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED128 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks seed128 cypher 				# SEED128 암호화/복호화 수행 키 정보
+          keyString: qnpeople seed128 cypher 						# SEED128 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED128 암호화 수행 모듈의 클래스 명 정보
         seed256:
           cypherName:                                                        # SEED256 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED256 암호화/복호화 적용 여부 
-          keyString: smartbiznetworks seed256 cypher 				# SEED256 암호화/복호화 수행 키 정보
+          keyString: qnpeople seed256 cypher 						# SEED256 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED256 암호화 수행 모듈의 클래스 명 정보
       rsa:
         cypherName:                                                          # RSA 암호화 모듈 구분 명 정보
         cypherAdaptYn: N													# RSA 암호화/복호화 적용 여부 
-        keyString: smartbiznetworks rsa cypher 						# RSA 암호화/복호화 수행 키 정보
+        keyString: qnpeople rsa cypher 									# RSA 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # RSA 암호화 수행 모듈의 클래스 명 정보
       ecc:
         cypherName:                                                          # ECC 암호화 모듈 구분 명 정보
         cypherAdaptYn: N													# ECC 암호화/복호화 적용 여부 
-        keyString: smartbiznetworks ecc cypher 						# ECC 암호화/복호화 수행 키 정보
+        keyString: qnpeople ecc cypher 								# ECC 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # ECC 암호화 수행 모듈의 클래스 명 정보
   jwt:
-    jwtTokenName: SBN Framework Default JWT Token Module	# JWT 토큰 모듈 구분 명 정보
+    jwtTokenName: QNP Framework Default JWT Token Module	# JWT 토큰 모듈 구분 명 정보
     jwtTokenAdaptYn: N 													    # JWT 토큰 적용 여부		
     jwtTokenAlgorithm: HS256												# JWT 토큰 암호호 알고리즘 유형 정보
-    jwtTokenIssuer: qnpeople.cm												# JWT 토큰 발급자 정보
-    jwtTokenKey: qnpeople_hdcci_qnpFrameworkJwtToken_adfadfadafddadfadddf # JWT 토큰 발급 키 정보
+    jwtTokenIssuer: qnpeople.com											# JWT 토큰 발급자 정보
+    jwtTokenKey: qnpeople_hdcci_applicationFrameworkJwtToken_202611130000000 # JWT 토큰 발급 키 정보
     jwtTokenNewIssueDurationMinTime: 1440						    # JWT 토큰 최초 발급 유지 시간 정보 ( 기본: 1일, 단위: 분 )
     jwtTokenReIssueDurationMinTime: 10080							    # JWT 토큰 재 발급 유지 시간 정보 ( 기본: 7일, 단위: 분 )
     jwtTokenExcludeUrls: /index, /security/jwt/, enterprize/biz/security/jwt/	# JWT 토큰 인증 제외 요청 URL 목록 정보
@@ -358,7 +358,7 @@ securities:
   cypher:
     cypherName: QNP Framework Default CYPHER Module	    # 암호화 모듈 구분 명 정보
     cypherAdaptYn: Y														# 암호화 적용 여부
-    venderName: QNP Inc													# 암호화 모듈 적용 업체 명
+    venderName: qnpeople corp											# 암호화 모듈 적용 업체 명
     availableCypherTypes: aes256, sha256, sha512, md5			# 적용 대상 암호화 유형 목록 정보
     cypherModuleBuildType: pool 										# 암호화 모듈 구축 유형 ( single: 단일 모듈 구축, pool: 모듈 관리 풀 구축 )
     cypherModulePoolCount: 5 											# 암호화 모듈 관리 Pool 갯수 ( 암호화 모듈 구축 유형이 pool 인 경우 적용 )
@@ -371,72 +371,72 @@ securities:
         aes256:
           cypherName:                                                        # AES256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# AES256 암호화/복호화 적용 여부 
-          keyString: qnpeople aes256 cypher 				# AES256 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes256 cypher 							# AES256 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes256.SBNAes256CypherExecutorAdaptor # AES256 암호화 수행 모듈의 클래스 명 정보
         aes512:
           cypherName:                                                        # AES512 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# AES512 암호화/복호화 적용 여부 
-          keyString: qnpeople aes512 cypher 				# AES512 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes512 cypher 							# AES512 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes512.SBNAes512CypherExecutorAdaptor # AES512 암호화 수행 모듈의 클래스 명 정보
       sha:
         sha256:
           cypherName:                                                        # SHA256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA256 암호화 적용 여부			
           saltAdaptYn: Y														# SHA256 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha256.SBNSha256CypherExecutorAdaptor # SHA256 암호화 수행 모듈의 클래스 명 정보
         sha512:
           cypherName:                                                        # SHA512 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA512 암호화 적용 여부			
           saltAdaptYn: Y														# SHA512 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha512.SBNSha512CypherExecutorAdaptor # SHA512 암호화 수행 모듈의 클래스 명 정보
       md5:
         cypherName: SBN Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y  													# MD5 암호화 적용 여부
         saltAdaptYn: Y  														# MD5 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-        saltKeyString: qnpeople md5 salt key  								# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+        saltKeyString: qnpeople md5 salt key  						# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
         cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.md5.SBNMd5CypherExecutorAdaptor # MD5 암호화 수행 모듈의 클래스 명 정보
       des:
         des:
           cypherName:                                                        # DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# DES 암호화 적용 여부		
           saltAdaptYn: Y														# DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # DES 암호화 수행 모듈의 클래스 명 정보
         triple-des:
           cypherName:                                                        # TRIPLE-DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# TRIPLE-DES 암호화 적용 여부	
           saltAdaptYn: Y														# TRIPLE-DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # TRIPLE-DES 암호화 수행 모듈의 클래스 명 정보
       seed:
         seed128:
           cypherName:                                                        # SEED128 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED128 암호화/복호화 적용 여부 
-          keyString: qnpeople seed128 cypher 				# SEED128 암호화/복호화 수행 키 정보
+          keyString: qnpeople seed128 cypher 						# SEED128 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED128 암호화 수행 모듈의 클래스 명 정보
         seed256:
           cypherName:                                                        # SEED256 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# SEED256 암호화/복호화 적용 여부 
-          keyString: qnpeople seed256 cypher 				# SEED256 암호화/복호화 수행 키 정보
+          keyString: qnpeople seed256 cypher 						# SEED256 암호화/복호화 수행 키 정보
           cypherModuleClassName:                                       # SEED256 암호화 수행 모듈의 클래스 명 정보
       rsa:
         cypherName:                                                          # RSA 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y													# RSA 암호화/복호화 적용 여부 
-        keyString: qnpeople rsa cypher 						# RSA 암호화/복호화 수행 키 정보
+        keyString: qnpeople rsa cypher 									# RSA 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # RSA 암호화 수행 모듈의 클래스 명 정보
       ecc:
         cypherName:                                                          # ECC 암호화 모듈 구분 명 정보
         cypherAdaptYn: N													# ECC 암호화/복호화 적용 여부 
-        keyString: qnpeople ecc cypher 						# ECC 암호화/복호화 수행 키 정보
+        keyString: qnpeople ecc cypher 								# ECC 암호화/복호화 수행 키 정보
         cypherModuleClassName:                                         # ECC 암호화 수행 모듈의 클래스 명 정보
   jwt:
     jwtTokenName: QNP Framework Default JWT Token Module	# JWT 토큰 모듈 구분 명 정보
     jwtTokenAdaptYn: N 													    # JWT 토큰 적용 여부		
     jwtTokenAlgorithm: HS256												# JWT 토큰 암호호 알고리즘 유형 정보
     jwtTokenIssuer: qnpeople.com											# JWT 토큰 발급자 정보
-    jwtTokenKey: qnpeople.com.rnd.jwt.issuer							# JWT 토큰 발급 키 정보
+    jwtTokenKey: qnpeople_hdcci_applicationFrameworkJwtToken_202611130000000	# JWT 토큰 발급 키 정보
     jwtTokenNewIssueDurationMinTime: 1440						    # JWT 토큰 최초 발급 유지 시간 정보 ( 기본: 1일, 단위: 분 )
     jwtTokenReIssueDurationMinTime: 10080							    # JWT 토큰 재 발급 유지 시간 정보 ( 기본: 7일, 단위: 분 )
     jwtTokenExcludeUrls: /index, /security/jwt/, enterprize/biz/security/jwt/	# JWT 토큰 인증 제외 요청 URL 목록 정보
@@ -508,44 +508,44 @@ securities:
         aes256:
           cypherName:                                                        # AES256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# AES256 암호화/복호화 적용 여부 
-          keyString: qnpeople aes256 cypher 				# AES256 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes256 cypher 							# AES256 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes256.SBNAes256CypherExecutorAdaptor # AES256 암호화 수행 모듈의 클래스 명 정보
         aes512:
           cypherName:                                                        # AES512 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# AES512 암호화/복호화 적용 여부 
-          keyString: qnpeople aes512 cypher 				# AES512 암호화/복호화 수행 키 정보
+          keyString: qnpeople aes512 cypher 							# AES512 암호화/복호화 수행 키 정보
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.aes.aes512.SBNAes512CypherExecutorAdaptor # AES512 암호화 수행 모듈의 클래스 명 정보
       sha:
         sha256:
           cypherName:                                                        # SHA256 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y                                                  # SHA256 암호화 적용 여부			
           saltAdaptYn: Y														# SHA256 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA256 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha256.SBNSha256CypherExecutorAdaptor # SHA256 암호화 수행 모듈의 클래스 명 정보
         sha512:
           cypherName:                                                        # SHA512 암호화 모듈 구분 명 정보
           cypherAdaptYn: Y													# SHA512 암호화 적용 여부			
           saltAdaptYn: Y														# SHA512 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: qnpeople md5 salt key								# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# SHA512 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.sha.sha512.SBNSha512CypherExecutorAdaptor # SHA512 암호화 수행 모듈의 클래스 명 정보
       md5:
         cypherName: QNP Framework Default MD5 Module  	# MD5 암호화 모듈 구분 명 정보
         cypherAdaptYn: Y  													# MD5 암호화 적용 여부
         saltAdaptYn: Y  														# MD5 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-        saltKeyString: QNP md5 salt key  								# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+        saltKeyString: qnpeople md5 salt key  						# MD5 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
         cypherModuleClassName: kr.co.sbn.platformhub.framework.securities.domains.cypher.common.module.md5.SBNMd5CypherExecutorAdaptor # MD5 암호화 수행 모듈의 클래스 명 정보
       des:
         des:
           cypherName:                                                        # DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# DES 암호화 적용 여부		
           saltAdaptYn: Y														# DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: QNP md5 salt key								# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # DES 암호화 수행 모듈의 클래스 명 정보
         triple-des:
           cypherName:                                                        # TRIPLE-DES 암호화 모듈 구분 명 정보
           cypherAdaptYn: N													# TRIPLE-DES 암호화 적용 여부	
           saltAdaptYn: Y														# TRIPLE-DES 암호화 수행 SALT 키 적용 여부 ( Y: 적용, N: 미 적용 )
-          saltKeyString: QNP md5 salt key								# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
+          saltKeyString: qnpeople md5 salt key						# TRIPLE-DES 암호화 수행 SALT 키 정보 ( SALT 적용 시 적용 )
           cypherModuleClassName:                                       # TRIPLE-DES 암호화 수행 모듈의 클래스 명 정보
       seed:
         seed128:
@@ -573,7 +573,7 @@ securities:
     jwtTokenAdaptYn: N 													    # JWT 토큰 적용 여부		
     jwtTokenAlgorithm: HS256												# JWT 토큰 암호호 알고리즘 유형 정보
     jwtTokenIssuer: qnpeople.com   										# JWT 토큰 발급자 정보
-    jwtTokenKey: qnpeople.com.rnd.jwt.issuer							# JWT 토큰 발급 키 정보
+    jwtTokenKey: qnpeople_hdcci_applicationFrameworkJwtToken_202611130000000	# JWT 토큰 발급 키 정보
     jwtTokenNewIssueDurationMinTime: 1440						    # JWT 토큰 최초 발급 유지 시간 정보 ( 기본: 1일, 단위: 분 )
     jwtTokenReIssueDurationMinTime: 10080							    # JWT 토큰 재 발급 유지 시간 정보 ( 기본: 7일, 단위: 분 )
     jwtTokenExcludeUrls: /index, /security/jwt/, enterprize/biz/security/jwt/	# JWT 토큰 인증 제외 요청 URL 목록 정보

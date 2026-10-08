@@ -12,6 +12,7 @@
 		<result property="empleDgrTp" column="EMPLE_DGR_TP" />
 		<result property="empleDgrTpNm" column="EMPLE_DGR_TP_NM" />
 		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
 		<result property="empleNm" column="EMPLE_NM" />
 		<result property="empleLognId" column="EMPLE_LOGN_ID" />
 		<result property="empleLognPwd" column="EMPLE_LOGN_PWD" />
@@ -29,6 +30,9 @@
 		<result property="updtDt" column="UPDT_DT" />
 		<result property="updtSeq" column="UPDT_SEQ" />
 		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
 	</resultMap>	
 	
 	<!-- 
@@ -36,18 +40,418 @@
 	// 업체 근무자 정보 관리 쿼리 정의
 	/////////////////////////////////////////////////////////////////////////////// 
     -->
+    <!-- 업체별 전체 근무자 삭제 수행 쿼리 [ 업체 삭제 시 일괄 삭제 수행 ] -->
 	<delete id="deleteAllCompanyEmployees" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC">
-		DELETE 
-		FROM	 CMP_COMP_EMPLE_INFO_TBL
+		UPDATE  CMP_COMP_EMPLE_INFO_TBL
+		SET 		USE_YN = 'N'
+				  , DELT_YN = (
+						CASE
+							WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_YN
+							ELSE   #{deltYn, jdbcType=VARCHAR}
+						END 	
+					)
+				  , DELT_DT = (
+						CASE
+							WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_DT
+							ELSE   (
+									CASE
+										WHEN (#{deltYn, jdbcType=VARCHAR} = 'N') THEN DELT_DT
+										ELSE   CURRENT_TIMESTAMP(3)
+									END
+							)
+						END 	
+				  	)
+				  , DELT_SEQ = (
+						CASE
+							WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_SEQ
+							ELSE   (
+									CASE
+										WHEN (#{deltYn, jdbcType=VARCHAR} = 'N') THEN DELT_SEQ
+										ELSE   #{deltSeq, jdbcType=NUMERIC}
+									END
+							)
+						END 			
+				  	)	
 		WHERE 	1 	= 	1
+		AND 		DELT_YN 	= 	'N'
 		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
 	</delete>
+	
+	<!-- 신규 업체 근무자 등록 수행 쿼리 -->
+	<insert id="insertNewCompanyEmployee" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeDto">
+		INSERT INTO CMP_COMP_EMPLE_INFO_TBL (
+			COMP_SEQ
+		  , EMPLE_TP	
+		  , EMPLE_STAT_TP
+		  , EMPLE_DGR_TP
+		  , USE_YN
+		  , EMPLE_NM
+		  , EMPLE_LOGN_ID
+		  , EMPLE_LOGN_PWD
+		  , EMPLE_DEPT_NM
+		  , EMPLE_PSTN_NM
+		  , EMPLE_MBL_NO
+		  , ADTN_DESC
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{compSeq, jdbcType=NUMERIC}
+		  , 	#{empleTp, jdbcType=VARCHAR}
+		  , 	#{empleStatTp, jdbcType=VARCHAR}
+		  , 	#{empleDgrTp, jdbcType=VARCHAR}
+		  , 	#{useYn, jdbcType=VARCHAR}
+		  , 	#{empleNm, jdbcType=VARCHAR}
+		  , 	#{empleLognId, jdbcType=VARCHAR}
+		  , 	#{empleLognPwd, jdbcType=VARCHAR}
+		  , 	#{empleDeptNm, jdbcType=VARCHAR}
+		  , 	#{emplePstnNm, jdbcType=VARCHAR}
+		  , 	#{empleMblNo, jdbcType=VARCHAR}
+		  , 	#{adtnDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		)
+	</insert>
 
+	<!-- 업체 근무자 변경 수행 쿼리 -->
+	<update id="updateCompanyEmployee" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeDto">
+		UPDATE CMP_COMP_EMPLE_INFO_TBL
+		SET 		EMPLE_TP = (
+						CASE
+							WHEN (#{empleTp, jdbcType=VARCHAR} IS NULL OR #{empleTp, jdbcType=VARCHAR} = '') THEN EMPLE_TP
+							ELSE #{empleTp, jdbcType=VARCHAR}
+						END
+					)
+				  , EMPLE_STAT_TP = (
+						CASE
+							WHEN (#{empleStatTp, jdbcType=VARCHAR} IS NULL OR #{empleStatTp, jdbcType=VARCHAR} = '') THEN EMPLE_STAT_TP
+							ELSE #{empleStatTp, jdbcType=VARCHAR}
+						END
+				  	)
+				  , EMPLE_DGR_TP = (
+						CASE
+							WHEN (#{empleDgrTp, jdbcType=VARCHAR} IS NULL OR #{empleDgrTp, jdbcType=VARCHAR} = '') THEN EMPLE_DGR_TP
+							ELSE #{empleDgrTp, jdbcType=VARCHAR}
+						END
+				  	)
+				  , USE_YN = (
+						CASE
+							WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+							ELSE #{useYn, jdbcType=VARCHAR}
+						END
+				  	)
+				  , EMPLE_NM = (
+						CASE
+							WHEN (#{empleNm, jdbcType=VARCHAR} IS NULL OR #{empleNm, jdbcType=VARCHAR} = '') THEN EMPLE_NM
+							ELSE #{empleNm, jdbcType=VARCHAR}
+						END
+				  	)
+				  , EMPLE_DEPT_NM = (
+						CASE
+							WHEN (#{empleDeptNm, jdbcType=VARCHAR} IS NULL OR #{empleDeptNm, jdbcType=VARCHAR} = '') THEN EMPLE_DEPT_NM
+							ELSE #{empleDeptNm, jdbcType=VARCHAR}
+						END
+				  	)
+				  , EMPLE_PSTN_NM = (
+						CASE
+							WHEN (#{emplePstnNm, jdbcType=VARCHAR} IS NULL OR #{emplePstnNm, jdbcType=VARCHAR} = '') THEN EMPLE_PSTN_NM
+							ELSE #{emplePstnNm, jdbcType=VARCHAR}
+						END	
+				  	)
+				  , EMPLE_MBL_NO = (
+						CASE
+							WHEN (#{empleMblNo, jdbcType=VARCHAR} IS NULL OR #{empleMblNo, jdbcType=VARCHAR} = '') THEN EMPLE_MBL_NO
+							ELSE #{empleMblNo, jdbcType=VARCHAR}
+						END	
+				  	)
+				  , ADTN_DESC = (
+						CASE
+							WHEN (#{adtnDesc, jdbcType=VARCHAR} IS NULL OR #{adtnDesc, jdbcType=VARCHAR} = '') THEN ADTN_DESC
+							ELSE #{adtnDesc, jdbcType=VARCHAR}
+						END
+				  	)
+				  , UPDT_DT = CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ = #{updtSeq, jdbcType=NUMERIC}
+		WHERE 	1	=	1
+		AND 		DELT_YN 	= 	'N'
+		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+		AND 		EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}
+	</update>
 
-
+	<!-- 업체 근무자 삭제 수행 쿼리 -->
+	<delete id="deleteCompanyEmployee" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC">
+		UPDATE  CMP_COMP_EMPLE_INFO_TBL
+		SET 	   USE_YN   = 	'N'	
+				  , DELT_YN = (
+							CASE 
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_YN
+								ELSE   #{deltYn, jdbcType=VARCHAR}
+							END
+					 )
+				   , DELT_DT = (
+							CASE 
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_DT
+								ELSE   CURRENT_TIMESTAMP(3)
+							END
+				    )
+				   , DELT_SEQ = (
+							CASE 
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_SEQ
+								ELSE   #{deltSeq, jdbcType=NUMERIC}
+							END
+				     ) 
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 	= 	'N'
+		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+		AND 		EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}
+	</delete>
+	
 	<!-- 
 	///////////////////////////////////////////////////////////////////////////////
 	// 업체 근무자 정보 서비스 쿼리 정의
 	/////////////////////////////////////////////////////////////////////////////// 
     -->
+    <!-- 근무자 로그인 ID 중복 체크 수행 쿼리 -->
+    <select id="selectEmployeeLoginIdDuplicationFlag" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC" resultType="java.lang.Boolean">
+    	SELECT 	(
+						CASE
+							WHEN (COUNT(EMPLE_SEQ) > 0) THEN true
+							ELSE    false 
+						END	
+					)	AS DUP_FLAG
+    	FROM 	CMP_COMP_EMPLE_INFO_TBL
+    	WHERE 	1 	= 	1
+    	AND 		COMP_SEQ 		=	#{compSeq, jdbcType=NUMERIC}
+    	AND 		EMPLE_LOGN_ID =  #{empleLognId, jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 업체 근무자 로그인 비밀번호 변경 수행 쿼리 -->
+    <update id="updateEmployeeLognPwd" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC">
+    	UPDATE 	CMP_COMP_EMPLE_INFO_TBL
+    	SET 			EMPLE_LOGN_PWD = (
+							CASE
+								WHEN (#{empleLognPwd, jdbcType=VARCHAR} IS NULL OR #{empleLognPwd, jdbcType=VARCHAR} = '') THEN EMPLE_LOGN_PWD
+								ELSE   #{empleLognPwd, jdbcType=VARCHAR}
+							END
+					    )
+    				  , INIT_PWD_CHNG_YN = (
+							CASE
+								WHEN (#{empleLognPwd, jdbcType=VARCHAR} IS NULL OR #{empleLognPwd, jdbcType=VARCHAR} = '') THEN INIT_PWD_CHNG_YN
+								ELSE   (
+									CASE
+										WHEN (INIT_PWD_CHNG_YN IS NULL OR INIT_PWD_CHNG_YN = 'N') THEN 'Y'
+										ELSE    INIT_PWD_CHNG_YN
+									END
+								)
+							END
+					    )
+    				  , INIT_PWD_CHNG_DT = (
+							CASE
+								WHEN (#{empleLognPwd, jdbcType=VARCHAR} IS NULL OR #{empleLognPwd, jdbcType=VARCHAR} = '') THEN INIT_PWD_CHNG_DT
+								ELSE   (
+									CASE
+									  	WHEN (INIT_PWD_CHNG_DT IS NULL) THEN CURRENT_TIMESTAMP(3)
+									  	ELSE    INIT_PWD_CHNG_DT
+									END
+								)
+							END
+					    )
+    				  , UPDT_DT = (
+							CASE 
+								WHEN (#{empleLognPwd, jdbcType=VARCHAR} IS NULL OR #{empleLognPwd, jdbcType=VARCHAR} = '') THEN UPDT_DT
+								ELSE   CURRENT_TIMESTAMP(3) 
+							END
+						)
+    				  , UPDT_SEQ = ( 
+							CASE
+								WHEN (#{empleLognPwd, jdbcType=VARCHAR} IS NULL OR #{empleLognPwd, jdbcType=VARCHAR} = '') THEN UPDT_SEQ
+								ELSE 	#{updtSeq, jdbcType=NUMERIC}
+							END
+						)
+    	WHERE 		1	= 	1
+    	AND 		COMP_SEQ 		=	#{compSeq, jdbcType=NUMERIC}
+    	AND 		DELT_YN 			= 	'N'
+    	AND 		((#{empleSeq, jdbcType=NUMERIC} IS NULL OR #{empleSeq, jdbcType=NUMERIC} = 0) OR (EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}))
+    	AND 		((#{empleLognId, jdbcType=VARCHAR} IS NULL OR #{empleLognId, jdbcType=VARCHAR} = '') OR (EMPLE_LOGN_ID = #{empleLognId, jdbcType=VARCHAR}))    	
+    </update>
+    
+    <!-- 전체 근무자 목록 정보 추출 수행 쿼리 -->
+    <select id="selectTotalEmployeeList" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC" resultMap="employee">
+    	SELECT 	COMP_EMPLE.EMPLE_SEQ
+    			  , COMP_EMPLE.COMP_SEQ
+    			  , COMP_EMPLE.EMPLE_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_INFO_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_TP
+				    ) 	AS EMPLE_TP_NM
+    			  , COMP_EMPLE.EMPLE_STAT_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_STAT_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_STAT_TP
+				    ) 	AS EMPLE_STAT_TP_NM
+    			  , COMP_EMPLE.EMPLE_DGR_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_DGR_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_DGR_TP
+				   ) 	AS EMPLE_DGR_TP_NM
+    			  , COMP_EMPLE.USE_YN
+    			  , COMP_EMPLE.DELT_YN
+    			  , COMP_EMPLE.EMPLE_NM
+    			  , COMP_EMPLE.EMPLE_LOGN_ID
+    			  , COMP_EMPLE.EMPLE_LOGN_PWD
+    			  , COMP_EMPLE.AUTH_CID
+    			  , COMP_EMPLE.EMPLE_DEPT_NM
+    			  , COMP_EMPLE.EMPLE_PSTN_NM
+    			  , COMP_EMPLE.EMPLE_MBL_NO
+    			  , COMP_EMPLE.INIT_PWD_CHNG_YN
+    			  , COMP_EMPLE.INIT_PWD_CHNG_DT
+    			  , COMP_EMPLE.LST_LOGN_DT
+    			  , COMP_EMPLE.ADTN_DESC
+    			  , TO_CHAR(COMP_EMPLE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+    			  , COMP_EMPLE.RGST_SEQ
+    			  , NULL 	AS 	RGST_NM
+    			  , TO_CHAR(COMP_EMPLE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+    			  , COMP_EMPLE.UPDT_SEQ
+    			  , NULL 	AS 	UPDT_NM
+    			  , TO_CHAR(COMP_EMPLE.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS DELT_DT
+    			  , COMP_EMPLE.DELT_SEQ
+    			  , NULL 	AS 	DELT_NM
+    	FROM 	CMP_COMP_EMPLE_INFO_TBL	COMP_EMPLE
+    	WHERE 	1 	= 	1
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		COMP_EMPLE.DELT_YN  = 'N'
+    	AND 		(((#{initPwdChngYn, jdbcType=VARCHAR} IS NULL) OR (#{initPwdChngYn, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.INIT_PWD_CHNG_YN = #{initPwdChngYn, jdbcType=VARCHAR}))
+    	AND 		(((#{empleTp, jdbcType=VARCHAR} IS NULL) OR (#{empleTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_TP = #{empleTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleStatTp, jdbcType=VARCHAR} IS NULL) OR (#{empleStatTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_STAT_TP = #{empleStatTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleDgrTp, jdbcType=VARCHAR} IS NULL) OR (#{empleDgrTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_DGR_TP = #{empleDgrTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleNm, jdbcType=VARCHAR} IS NULL) OR (#{empleNm, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_NM LIKE '%' || #{empleNm, jdbcType=VARCHAR} || '%'))    	
+    </select>
+    
+    <!-- 업체별 근무자 목록 정보 추출 수행 쿼리 -->
+    <select id="selectCompanyEmployeeList" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC" resultMap="employee">
+    	SELECT 	COMP_EMPLE.EMPLE_SEQ
+    			  , COMP_EMPLE.COMP_SEQ
+    			  , COMP_EMPLE.EMPLE_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_INFO_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_TP
+				    ) 	AS EMPLE_TP_NM
+    			  , COMP_EMPLE.EMPLE_STAT_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_STAT_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_STAT_TP
+				    ) 	AS EMPLE_STAT_TP_NM
+    			  , COMP_EMPLE.EMPLE_DGR_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_DGR_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_DGR_TP
+				   ) 	AS EMPLE_DGR_TP_NM
+    			  , COMP_EMPLE.USE_YN
+    			  , COMP_EMPLE.DELT_YN
+    			  , COMP_EMPLE.EMPLE_NM
+    			  , COMP_EMPLE.EMPLE_LOGN_ID
+    			  , COMP_EMPLE.EMPLE_LOGN_PWD
+    			  , COMP_EMPLE.AUTH_CID
+    			  , COMP_EMPLE.EMPLE_DEPT_NM
+    			  , COMP_EMPLE.EMPLE_PSTN_NM
+    			  , COMP_EMPLE.EMPLE_MBL_NO
+    			  , COMP_EMPLE.INIT_PWD_CHNG_YN
+    			  , COMP_EMPLE.INIT_PWD_CHNG_DT
+    			  , COMP_EMPLE.LST_LOGN_DT
+    			  , COMP_EMPLE.ADTN_DESC
+    			  , TO_CHAR(COMP_EMPLE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+    			  , COMP_EMPLE.RGST_SEQ
+    			  , NULL 	AS 	RGST_NM
+    			  , TO_CHAR(COMP_EMPLE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+    			  , COMP_EMPLE.UPDT_SEQ
+    			  , NULL 	AS 	UPDT_NM
+    			  , TO_CHAR(COMP_EMPLE.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS DELT_DT
+    			  , COMP_EMPLE.DELT_SEQ
+    			  , NULL 	AS 	DELT_NM
+    	FROM 	CMP_COMP_EMPLE_INFO_TBL	COMP_EMPLE
+    	WHERE 	1 	= 	1    	
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		COMP_EMPLE.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+    	AND 		COMP_EMPLE.DELT_YN  	= 'N'
+    	AND 		(((#{initPwdChngYn, jdbcType=VARCHAR} IS NULL) OR (#{initPwdChngYn, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.INIT_PWD_CHNG_YN = #{initPwdChngYn, jdbcType=VARCHAR}))
+    	AND 		(((#{empleTp, jdbcType=VARCHAR} IS NULL) OR (#{empleTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_TP = #{empleTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleStatTp, jdbcType=VARCHAR} IS NULL) OR (#{empleStatTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_STAT_TP = #{empleStatTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleDgrTp, jdbcType=VARCHAR} IS NULL) OR (#{empleDgrTp, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_DGR_TP = #{empleDgrTp, jdbcType=VARCHAR}))
+    	AND 		(((#{empleNm, jdbcType=VARCHAR} IS NULL) OR (#{empleNm, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_NM LIKE '%' || #{empleNm, jdbcType=VARCHAR} || '%'))    	
+    </select>
+    
+    <!-- 업체 근무자 상세 정보 추출 수행 쿼리 -->
+    <select id="selectCompanyEmployeeDetail" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeSC" resultMap="employee">
+	   	SELECT 	COMP_EMPLE.EMPLE_SEQ
+    			  , COMP_EMPLE.COMP_SEQ
+    			  , COMP_EMPLE.EMPLE_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_INFO_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_TP
+				    ) 	AS EMPLE_TP_NM
+    			  , COMP_EMPLE.EMPLE_STAT_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_STAT_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_STAT_TP
+				    ) 	AS EMPLE_STAT_TP_NM
+    			  , COMP_EMPLE.EMPLE_DGR_TP
+    			  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMP_EMP_DGR_001'
+						AND 		CD 			= 	COMP_EMPLE.EMPLE_DGR_TP
+				   ) 	AS EMPLE_DGR_TP_NM
+    			  , COMP_EMPLE.USE_YN
+    			  , COMP_EMPLE.DELT_YN
+    			  , COMP_EMPLE.EMPLE_NM
+    			  , COMP_EMPLE.EMPLE_LOGN_ID
+    			  , COMP_EMPLE.EMPLE_LOGN_PWD
+    			  , COMP_EMPLE.AUTH_CID
+    			  , COMP_EMPLE.EMPLE_DEPT_NM
+    			  , COMP_EMPLE.EMPLE_PSTN_NM
+    			  , COMP_EMPLE.EMPLE_MBL_NO
+    			  , COMP_EMPLE.INIT_PWD_CHNG_YN
+    			  , COMP_EMPLE.INIT_PWD_CHNG_DT
+    			  , COMP_EMPLE.LST_LOGN_DT
+    			  , COMP_EMPLE.ADTN_DESC
+    			  , TO_CHAR(COMP_EMPLE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+    			  , COMP_EMPLE.RGST_SEQ
+    			  , NULL 	AS 	RGST_NM
+    			  , TO_CHAR(COMP_EMPLE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+    			  , COMP_EMPLE.UPDT_SEQ
+    			  , NULL 	AS 	UPDT_NM
+    			  , TO_CHAR(COMP_EMPLE.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS DELT_DT
+    			  , COMP_EMPLE.DELT_SEQ
+    			  , NULL 	AS 	DELT_NM
+    	FROM 	CMP_COMP_EMPLE_INFO_TBL	COMP_EMPLE
+    	WHERE 	1 	= 	1
+    	AND 	 	COMP_EMPLE.DELT_YN 	= 'N'
+    	AND 		COMP_EMPLE.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+    	AND 		COMP_EMPLE.EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}
+    </select>
 </mapper>

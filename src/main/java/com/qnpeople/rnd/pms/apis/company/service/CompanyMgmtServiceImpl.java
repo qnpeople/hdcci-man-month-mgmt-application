@@ -111,6 +111,8 @@ public class CompanyMgmtServiceImpl extends QNPWebBaseServiceImpl implements Com
 		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
 		String errorCode = reason.getReasonCode();
 		String errorMessage = "";
+		CompanySC companySC = null;
+		CompanyDto companyDetail = null;
 		Integer updateCount = 0;
 		Boolean resultFlag = Boolean.FALSE;
 		try {
@@ -120,7 +122,31 @@ public class CompanyMgmtServiceImpl extends QNPWebBaseServiceImpl implements Com
 				throw new QNPWebException(reason, errorCode, errorMessage);
 			}
 			
-			//	2. 전달된 변경 대상 업체 정보 변경 작업을 수행한다
+			//	2. 변경 대상 업체 존재 여부를 체크하기 위해 변경 대상 업체의 상세 정보 추출 작업을 수행한다
+			companySC = new CompanySC();
+			if((SBNUtils.isNull(companyDto.getCompSeq()) || (companyDto.getCompSeq() <= 0l)) &&
+				SBNUtils.isNull(companyDto.getCompCd())) {
+				errorMessage = "변경 대상 업체의 수행 키 정보 미 정의 오류.";
+				throw new QNPWebException(reason, errorCode, errorMessage);
+			}
+			if(!SBNUtils.isNull(companyDto.getCompSeq())) {
+				companySC.setCompSeq(companyDto.getCompSeq());
+			}
+			if(!SBNUtils.isNull(companyDto.getCompCd())) {
+				companySC.setCompCd(companyDto.getCompCd());
+			}
+			log.debug("updateCompany() companySC={}", companySC.toStringInfo());
+			//	
+			companyDetail = companyMgmtMapper.selectCompanyDetail(companySC);
+			if(SBNUtils.isNull(companyDetail)) {
+				errorMessage = "변경 대상 업체 미 존재 오류.";
+				throw new QNPWebException(reason, errorCode, errorMessage);
+			}
+			companyDto.setCompSeq(companyDetail.getCompSeq());
+			companyDto.setCompCd(companyDetail.getCompCd());
+			log.debug("updateCompany() companyDto={}", companyDto.toStringInfo());
+			
+			//	3. 전달된 변경 대상 업체 정보 변경 작업을 수행한다
 			updateCount = companyMgmtMapper.updateCompany(companyDto);
 			if(updateCount > 0) {
 				//	2.1. 변경 수행 결과 갯수가 0 보다 큰 경우(수정 성공), 결과 Flag 정보를 true 로 설정한다
@@ -159,39 +185,46 @@ public class CompanyMgmtServiceImpl extends QNPWebBaseServiceImpl implements Com
 				errorMessage = "업체 정보 삭제 수행 조건 정보 전달 객체 미 전달 오류.";
 				throw new QNPWebException(reason, errorCode, errorMessage);
 			}
-			
+
 			//	2. 전달된 삭제 조건 정보에서 업체 식별자와 업체 코드 정보에 대한 유효성 체크 수행 후, 모두 전달되지 않은 경우 예외 처리 후 작업을 종료한다
 			if((SBNUtils.isNull(companySC.getCompSeq()) || (companySC.getCompSeq() <= 0)) && 
 				SBNUtils.isNull(companySC.getCompCd())) {
 				errorMessage = "업체 정보 삭제 수행 조건 키 정보 미 전달 오류.";
 				throw new QNPWebException(reason, errorCode, errorMessage);
-			}			
+			}
+			// log.debug("deleteCompany() companySC={}", companySC.toStringInfo());
 			//	3. 업체 삭제 조건 전달 정보를 이용하여 삭제 대상 업체의 상세 정보를 추출하고, 미 존재 시 예외 처리 후 작업을 종료한다
 			companyDto = companyMgmtMapper.selectCompanyDetail(companySC);
 			if(SBNUtils.isNull(companyDto)) {
 				errorMessage = "삭제 대상 업체가 존재하지 않습니다.";
 				throw new QNPWebException(reason, errorCode, errorMessage);
 			}
-			log.debug("deleteCompany() companyDto=[ {} ]", companyDto.toStringInfo());
+			// log.debug("deleteCompany() companyDto=[ {} ]", companyDto.toStringInfo());
 			//	3.1. 삭제 조건 중 업체 식별자가 미 전달된 경우, 업체 상세 정보에서 업체 식별자 정보를 삭제 조건 정보에 설정한다
 			if(SBNUtils.isNull(companySC.getCompSeq()) || (companySC.getCompSeq() <= 0)) {
 				companySC.setCompSeq(companyDto.getCompSeq());
 			}
-			log.debug("deleteCompany() companySC=[ {} ]", companySC.toStringInfo());
+			// log.debug("deleteCompany() companySC=[ {} ]", companySC.toStringInfo());
 			
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//	4. 최종 구축된 삭제 조건 정보 객체를 이용하여 업체 삭제 작업을 수행 후, 수행 결과 갯수를 전달 받는다
+			//	4.1. 업체 기본 정보 삭제 처리를 위해 업체 근로자 정보 전체를 일괄 삭제 처리 한다
+			//	4.2. 업체 근무자 일괄 삭제 처리가 정상적으로 수행 시, 업체 서비스 매핑 정보를 삭제 처리한다
+			//	4.3. 업체 전체 근로자 삭제 처리 및 업체 서비스 매핑 정보 삭제 처리 정상 수행 시, 업체 기본 정보 삭제 처리를 수행한다
+			////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//	4.1. 업체 기본 정보 삭제 처리를 위해 업체 근로자 정보 전체를 삭제 처리 한다
+			deleteCompanyAllEmployeeCount = companyEmployeeMgmtMapper.deleteAllCompanyEmployees(companySC);
+			log.debug("deleteCompany() deleteCompanyAllEmployeeCount=[ {} ]", deleteCompanyAllEmployeeCount);
+			
+			//	4.2. 업체 근무자 일괄 삭제 처리가 정상적으로 수행 시, 업체 서비스 매핑 정보를 삭제 처리한다
+			deleteServiceCompanyCount = companyMgmtMapper.deleteAllServiceCompanyMapping(companySC);
+			log.debug("deleteCompany() deleteServiceCompanyCount=[ {} ]", deleteServiceCompanyCount);
+			
+			//	4.3. 업체 전체 근로자 삭제 처리 및 업체 서비스 매핑 정보 삭제 처리 정상 수행 시, 업체 기본 정보 삭제 처리를 수행한다
 			deleteCount = companyMgmtMapper.deleteCompany(companySC);
 			if(deleteCount > 0) {
-				//	4.1. 정상 삭제 수행 시, 수행 결과 상태 Flag 를 true 로 설정한다
+				//	4.3.1. 업체 기본 정보 정상 삭제 수행 시, 수행 결과 상태 Flag 를 true 로 설정한다
 				resultFlag = true;
-				
-				//	4.2. 업체에 매핑되어 있는 서비스 업체 매핑 정보 삭제 작업을 수행한다
-				deleteServiceCompanyCount = companyMgmtMapper.deleteAllServiceCompanyMapping(companySC);
-				log.debug("deleteCompany() deleteServiceCompanyCount=[ {} ]", deleteServiceCompanyCount);
-				
-				//	4.3. 업체의 전체 근무자 정보를 삭제한다
-				deleteCompanyAllEmployeeCount = companyEmployeeMgmtMapper.deleteAllCompanyEmployees(companySC);
-				log.debug("deleteCompany() deleteCompanyAllEmployeeCount=[ {} ]", deleteCompanyAllEmployeeCount);
 			}
 			
 			//	5. 최종 업체 삭제 수행 결과 Flag 를 전달 후 작업을 종료한다

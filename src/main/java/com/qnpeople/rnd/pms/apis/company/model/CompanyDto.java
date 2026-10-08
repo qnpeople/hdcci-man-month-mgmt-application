@@ -32,6 +32,8 @@ public class CompanyDto extends QNPWebBaseModel {
 	private String cntrctStatTpNm;
 	/* 업체 사용 여부(Y: 사용(기본), N: 미사용) */
 	private String useYn;
+	/* 업체 삭제 여부(N: 미삭제(기본), Y: 삭제) */
+	private String deltYn;
 	/* 업체 사업자 번호 */
 	private String brn;
 	/* 업체 명 */
@@ -68,6 +70,12 @@ public class CompanyDto extends QNPWebBaseModel {
 	private Long updtSeq;
 	/* 업체 최종 수정자 명 */
 	private String updtNm;
+	/* 업체 최종 삭제 일시 */
+	private String deltDt;
+	/* 업체 최종 삭제 식별자 */
+	private Long deltSeq;
+	/* 업체 최종 삭제 명 */
+	private String deltNm;
 	
 	@JsonIgnore
 	public String toStringInfo() {
@@ -105,6 +113,10 @@ public class CompanyDto extends QNPWebBaseModel {
 		if(!SBNUtils.isNull(useYn)) {
 			info.append(", ");
 			info.append("useYn=").append(useYn);
+		}
+		if(!SBNUtils.isNull(deltYn)) {
+			info.append(", ");
+			info.append("deltYn=").append(deltYn);
 		}
 		if(!SBNUtils.isNull(brn)) {
 			info.append(", ");
@@ -177,6 +189,18 @@ public class CompanyDto extends QNPWebBaseModel {
 		if(!SBNUtils.isNull(updtNm)) {
 			info.append(", ");
 			info.append("updtNm=").append(updtNm);
+		}
+		if(!SBNUtils.isNull(deltDt)) {
+			info.append(",");
+			info.append("deltDt=").append(deltDt);
+		}
+		if(!SBNUtils.isNull(deltSeq)) {
+			info.append(", ");
+			info.append("deltSeq=").append(deltSeq);
+		}
+		if(!SBNUtils.isNull(deltNm)) {
+			info.append(", ");
+			info.append("deltNm=").append(deltNm);
 		}
 		info.append(" }");
 		return info.toString();

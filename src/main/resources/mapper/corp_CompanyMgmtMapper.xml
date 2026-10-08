@@ -12,6 +12,7 @@
 		<result property="cntrctStatTp" column="CNTRCT_STAT_TP" />
 		<result property="cntrctStatTpNm" column="CNTRCT_STAT_TP_NM" />
 		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
 		<result property="brn" column="BRN" />
 		<result property="compNm" column="COMP_NM" />
 		<result property="compDispNm" column="COMP_DISP_NM" />
@@ -30,6 +31,9 @@
 		<result property="updtDt" column="UPDT_DT" />
 		<result property="updtSeq" column="UPDT_SEQ" />
 		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
 	</resultMap>
 	<!-- 서비스 업체 매핑 정보 -->
 	<resultMap id="serviceCompany" type="com.qnpeople.rnd.pms.apis.company.model.ServiceCompanyDto">
@@ -213,15 +217,35 @@
 			  , UPDT_DT = CURRENT_TIMESTAMP(3)
 			  , UPDT_SEQ = #{updtSeq, jdbcType=NUMERIC}
 		WHERE 	1 	= 	1
+		AND 		DELT_YN 	=	'N'
 		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
     	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP_CD = #{compCd, jdbcType=VARCHAR}))
 	</update>
 	
 	<!-- 업체 정보 삭제 수행 쿼리 -->
 	<delete id="deleteCompany" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC">
-		DELETE 
-		FROM 	CMP_COMP_INFO_TBL
+		UPDATE 	CMP_COMP_INFO_TBL 
+		SET 			USE_YN = 'N'
+					  , DELT_YN = (
+							CASE
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_YN
+								ELSE    #{deltYn, jdbcType=VARCHAR}
+							END
+						)
+					  , DELT_DT = (
+							CASE
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_DT
+								ELSE    CURRENT_TIMESTAMP(3)
+							END
+					  	)
+					  , DELT_SEQ = (
+							CASE
+								WHEN (#{deltYn, jdbcType=VARCHAR} IS NULL OR #{deltYn, jdbcType=VARCHAR} = '') THEN DELT_SEQ
+								ELSE    #{deltSeq, jdbcType=NUMERIC}
+							END
+					  	)		
 		WHERE 	1 	= 	1
+		AND  	DELT_YN = 'N'
 		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
     	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP_CD = #{compCd, jdbcType=VARCHAR}))
 	</delete>
@@ -262,6 +286,7 @@
 						AND 		CD 	=	COMP.CNTRCT_STAT_TP
 				   ) 	AS 	CNTRCT_STAT_TP_NM
 				  , COMP.USE_YN
+				  , COMP.DELT_YN
 				  , COMP.BRN
 				  , COMP.COMP_NM
 				  , COMP.COMP_DISP_NM
@@ -289,10 +314,20 @@
 						FROM 	SYS_ADM_INFO_TBL
 						WHERE 	1	=	1
 						AND 		ADM_SEQ = COMP.UPDT_SEQ					
-				  	) 		AS 	RGST_NM
+				  	) 		AS 	UPDT_NM
+				  , TO_CHAR(COMP.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+				  , COMP.DELT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.DELT_SEQ					
+				  	) 		AS 	DELT_NM
 		FROM 	CMP_COMP_INFO_TBL	COMP
 		WHERE 	1 	= 	1
 		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		COMP.DELT_YN = 'N'
+		AND 		(((#{deltYn, jdbcType=VARCHAR} IS NULL) OR (#{deltYn, jdbcType=VARCHAR} = '')) OR (COMP.DELT_YN = #{deltYn, jdbcType=VARCHAR}))
 		AND 		(((#{compTp, jdbcType=VARCHAR} IS NULL) OR (#{compTp, jdbcType=VARCHAR} = '')) OR (COMP.COMP_TP = #{compTp, jdbcType=VARCHAR}))
 		AND 		(((#{subscrStatTp, jdbcType=VARCHAR} IS NULL) OR (#{subscrStatTp, jdbcType=VARCHAR} = '')) OR (COMP.SUBSCR_STAT_TP = #{subscrStatTp, jdbcType=VARCHAR}))
 		AND 		(((#{cntrctStatTp, jdbcType=VARCHAR} IS NULL) OR (#{cntrctStatTp, jdbcType=VARCHAR} = '')) OR (COMP.CNTRCT_STAT_TP = #{cntrctStatTp, jdbcType=VARCHAR}))
@@ -329,6 +364,7 @@
 						AND 		CD 	=	COMP.CNTRCT_STAT_TP
 				   ) 	AS 	CNTRCT_STAT_TP_NM
 				  , COMP.USE_YN
+				  , COMP.DELT_YN
 				  , COMP.BRN
 				  , COMP.COMP_NM
 				  , COMP.COMP_DISP_NM
@@ -356,10 +392,19 @@
 						FROM 	SYS_ADM_INFO_TBL
 						WHERE 	1	=	1
 						AND 		ADM_SEQ = COMP.UPDT_SEQ					
-				  	) 		AS 	RGST_NM
+				  	) 		AS 	UPDT_NM
+				  , TO_CHAR(COMP.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+				  , COMP.DELT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = COMP.DELT_SEQ					
+				  	) 		AS 	DELT_NM
 		FROM 	CMP_COMP_INFO_TBL	COMP
 		WHERE 	1 	= 	1
 		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		COMP.DELT_YN = 'N'
 		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
     	AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP.COMP_CD = #{compCd, jdbcType=VARCHAR}))
 	</select>

@@ -26,10 +26,14 @@ public class CompanySC extends QNPWebBaseModel {
 	private String cntrctStatTp;
 	/* 업체 사용 여부(Y: 사용(기본), N: 미사용) */
 	private String useYn;
+	/* 업체 삭제 여부(N: 삭제(기본), Y: 미삭제) */
+	private String deltYn;
 	/* 업체 사업자 번호 */
 	private String brn;
 	/* 업체 명 */
 	private String compNm;
+	
+	private Long deltSeq;
 	
 	@JsonIgnore
 	public String toStringInfo() {
@@ -56,6 +60,10 @@ public class CompanySC extends QNPWebBaseModel {
 			info.append(", ");
 			info.append("useYn=").append(useYn);
 		}
+		if(!SBNUtils.isNull(deltYn)) {
+			info.append(", ");
+			info.append("deltYn=").append(deltYn);
+		}
 		if(!SBNUtils.isNull(brn)) {
 			info.append(", ");
 			info.append("brn=").append(brn);
@@ -64,6 +72,10 @@ public class CompanySC extends QNPWebBaseModel {
 			info.append(", ");
 			info.append("compNm=").append(compNm);
 		}
+		if(!SBNUtils.isNull(deltSeq)) {
+			info.append(", ");
+			info.append("deltSeq=").append(deltSeq);
+		}		
 		info.append(" }");
 		return info.toString();
 	}
