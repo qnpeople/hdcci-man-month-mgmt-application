@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.project.crtr.mapper.ProjectWorkTimeCriteriaMapper">
+	<!-- 프로젝트 근무 시간 기준 정보 -->
+	<resultMap id="projectWorkTimeCriteria" type="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaDto">
+		<id property="wrkTmCrtrSeq" column="WRK_TM_CRTR_SEQ" />
+		<result property="wrkTmCrtrCd" column="WRK_TM_CRTR_CD" />
+		<result property="wrkTmMeasCrtrTp" column="WRK_TM_MEAS_CRTR_TP" />
+		<result property="wrkTmMeasCrtrTpNm" column="WRK_TM_MEAS_CRTR_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="wrkTmMeasCrtrNm" column="WRK_TM_MEAS_CRTR_NM" />
+		<result property="wrkTmMeasCrtrDgr" column="WRK_TM_MEAS_CRTR_DGR" />
+		<result property="wrkTmMeasCrtrVal" column="WRK_TM_MEAS_CRTR_VAL" />
+		<result property="wrkTmMeasCrtrDesc" column="WRK_TM_MEAS_CRTR_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>
+
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 근무 시간 기준 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 신규 프로젝트 근무 시간 기준 정보 등록 수행 쿼리 -->
+	<insert id="insertProjectWorkTimeCriteria" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaDto">
+		INSERT INTO PRJ_WRK_TM_CRTR_INFO_TBL (
+			WRK_TM_CRTR_CD
+		  , 	WRK_TM_MEAS_CRTR_TP
+		  , USE_YN
+		  , WRK_TM_MEAS_CRTR_NM
+		  , WRK_TM_MEAS_CRTR_DGR
+		  , WRK_TM_MEAS_CRTR_VAL
+		  , WRK_TM_MEAS_CRTR_DESC
+		  , RGST_DT
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{wrkTmCrtrCd, jdbcType=VARCHAR}
+		  , #{wrkTmMeasCrtrTp, jdbcType=VARCHAR}
+		  , 	(
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE #{useYn, jdbcType=VARCHAR}
+				END
+		  	)
+		  , 	#{wrkTmMeasCrtrNm, jdbcType=VARCHAR}
+		  , #{wrkTmMeasCrtrDgr, jdbcType=NUMERIC}
+		  , #{wrkTmMeasCrtrVal, jdbcType=NUMERIC}
+		  , #{wrkTmMeasCrtrDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , #{rgstNm, jdbcType=VARCHAR}
+		)
+	</insert>
+
+	<!-- 프로젝트 근무 시간 기준 정보 변경 수행 쿼리 -->
+	<update id="updateProjectWorkTimeCriteria" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaDto">
+		UPDATE PRJ_WRK_TM_CRTR_INFO_TBL
+		SET 		WRK_TM_MEAS_CRTR_TP  =  (
+						CASE
+							WHEN (#{wrkTmMeasCrtrTp, jdbcType=VARCHAR} IS NULL OR #{wrkTmMeasCrtrTp, jdbcType=VARCHAR} = '') THEN WRK_TM_MEAS_CRTR_TP
+							ELSE #{wrkTmMeasCrtrTp, jdbcType=VARCHAR}
+						END
+					)
+				 , 	USE_YN  = (
+						CASE
+							WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+							ELSE #{useYn, jdbcType=VARCHAR}
+						END
+				    )
+				 ,  WRK_TM_MEAS_CRTR_NM  =  (
+						CASE
+							WHEN (#{wrkTmMeasCrtrNm, jdbcType=VARCHAR} IS NULL OR #{wrkTmMeasCrtrNm, jdbcType=VARCHAR} = '') THEN WRK_TM_MEAS_CRTR_NM
+							ELSE   #{wrkTmMeasCrtrNm, jdbcType=VARCHAR}
+						END
+				    )
+				 , WRK_TM_MEAS_CRTR_DGR  =  (
+						CASE
+							WHEN (#{wrkTmMeasCrtrDgr, jdbcType=NUMERIC} IS NULL OR #{wrkTmMeasCrtrDgr, jdbcType=NUMERIC} = 0) THEN WRK_TM_MEAS_CRTR_DGR
+							ELSE   #{wrkTmMeasCrtrDgr, jdbcType=NUMERIC}
+						END
+				   )
+				 , WRK_TM_MEAS_CRTR_VAL  =  (
+						CASE
+							WHEN (#{wrkTmMeasCrtrVal, jdbcType=NUMERIC} IS NULL OR #{wrkTmMeasCrtrVal, jdbcType=NUMERIC} = 0) THEN WRK_TM_MEAS_CRTR_VAL
+							ELSE   #{wrkTmMeasCrtrVal, jdbcType=NUMERIC}
+						END
+				   )
+				 , WRK_TM_MEAS_CRTR_DESC  =  (
+						CASE
+							WHEN (#{wrkTmMeasCrtrDesc, jdbcType=VARCHAR} IS NULL OR #{wrkTmMeasCrtrDesc, jdbcType=VARCHAR} = '') THEN WRK_TM_MEAS_CRTR_DESC
+							ELSE   #{wrkTmMeasCrtrDesc, jdbcType=VARCHAR}
+						END
+				 )
+				 , UPDT_DT  	=	  CURRENT_TIMESTAMP(3)
+				 , UPDT_SEQ  	=  ( 
+						CASE
+							WHEN (#{updtSeq, jdbcType=NUMERIC} IS NULL OR #{updtSeq, jdbcType=NUMERIC} = 0) THEN UPDT_SEQ
+							ELSE 	  #{updtSeq, jdbcType=NUMERIC}
+						END
+					)
+				  , UPDT_NM 	= 	(
+						CASE
+							WHEN (#{updtNm, jdbcType=VARCHAR} IS NULL OR #{updtNm, jdbcType=VARCHAR} = '') THEN UPDT_NM
+							ELSE 	  #{updtNm, jdbcType=VARCHAR}
+						END
+				    ) 
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 	= 	'N'
+		AND 		(((#{wrkTmCrtrSeq, jdbcType=NUMERIC} IS NULL) OR (#{wrkTmCrtrSeq, jdbcType=NUMERIC} = 0)) OR (WRK_TM_CRTR_SEQ = #{wrkTmCrtrSeq, jdbcType=NUMERIC}))
+		AND 		(((#{wrkTmCrtrCd, jdbcType=VARCHAR} IS NULL) OR (#{wrkTmCrtrCd, jdbcType=VARCHAR} = '')) OR (WRK_TM_CRTR_CD = #{wrkTmCrtrCd, jdbcType=VARCHAR}))			
+	</update>
+
+	<!-- 프로젝트 근무 시간 기준 정보 삭제 수행 쿼리 -->
+	<delete id="deleteProjectWorkTimeCriteria" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaSC">
+		UPDATE PRJ_WRK_TM_CRTR_INFO_TBL
+		SET 		USE_YN 		= 	'N'
+				  , DELT_YN 	=	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	#{deltSeq, jdbcType=NUMERIC}
+				  , DELT_NM 	= 	#{deltNm, jdbcType=VARCHAR}	
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 	= 	'N'
+		AND 		(((#{wrkTmCrtrSeq, jdbcType=NUMERIC} IS NULL) OR (#{wrkTmCrtrSeq, jdbcType=NUMERIC} = 0)) OR (WRK_TM_CRTR_SEQ = #{wrkTmCrtrSeq, jdbcType=NUMERIC}))
+		AND 		(((#{wrkTmCrtrCd, jdbcType=VARCHAR} IS NULL) OR (#{wrkTmCrtrCd, jdbcType=VARCHAR} = '')) OR (WRK_TM_CRTR_CD = #{wrkTmCrtrCd, jdbcType=VARCHAR}))	
+	</delete>
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 근무 시간 기준 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->   
+	<!-- 프로젝트 근무 시간 기준 코드 중복 체크 수행 쿼리 -->
+	<select id="selectProjectWorkTimeCodeDuplication" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaSC" resultType="java.lang.Boolean">
+		SELECT 	(
+						CASE
+							WHEN (COUNT(WRK_TM_CRTR_CD) <![CDATA[ > ]]> 0) THEN true
+							ELSE 	  false 
+						END
+					) 	AS 	DUP_FLAG
+		FROM 	PRJ_WRK_TM_CRTR_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		WRK_TM_CRTR_CD 	=	#{wrkTmCrtrCd, jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 프로젝트 근무 시간 기준 목록 정보 추출 쿼리 -->
+	<select id="selectProjectWorkTimeCriteriaList" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaSC" resultMap="projectWorkTimeCriteria">
+		SELECT 	WRK_TM.WRK_TM_CRTR_SEQ
+				  , WRK_TM.WRK_TM_CRTR_CD
+				  , WRK_TM.WRK_TM_MEAS_CRTR_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_WRK_MEAS_UNIT'
+						AND 		CD 		=	WRK_TM.WRK_TM_MEAS_CRTR_TP
+				  	) 	AS 	WRK_TM_MEAS_CRTR_TP_NM
+				  , WRK_TM.USE_YN
+				  , WRK_TM.DELT_YN
+				  , WRK_TM.WRK_TM_MEAS_CRTR_NM
+				  , WRK_TM.WRK_TM_MEAS_CRTR_DGR
+				  , WRK_TM.WRK_TM_MEAS_CRTR_VAL
+				  , WRK_TM.WRK_TM_MEAS_CRTR_DESC
+    			  , TO_CHAR(WRK_TM.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , WRK_TM.RGST_SEQ
+    			  , WRK_TM.RGST_NM
+    			  , TO_CHAR(WRK_TM.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , WRK_TM.UPDT_SEQ
+    			  , WRK_TM.UPDT_NM
+    			  , TO_CHAR(WRK_TM.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , WRK_TM.DELT_SEQ
+    			  , WRK_TM.DELT_NM
+		FROM 	PRJ_WRK_TM_CRTR_INFO_TBL	WRK_TM
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (WRK_TM.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		WRK_TM.DELT_YN 	= 	'N'
+		AND 		(((#{wrkTmMeasCrtrTp, jdbcType=VARCHAR} IS NULL) OR (#{wrkTmMeasCrtrTp, jdbcType=VARCHAR} = '')) OR (WRK_TM.WRK_TM_MEAS_CRTR_TP = #{wrkTmMeasCrtrTp, jdbcType=VARCHAR}))
+		AND 		(((#{wrkTmMeasCrtrNm, jdbcType=VARCHAR} IS NULL) OR (#{wrkTmMeasCrtrNm, jdbcType=VARCHAR} = '')) OR (WRK_TM.WRK_TM_MEAS_CRTR_NM LIKE '%' || #{wrkTmMeasCrtrNm, jdbcType=VARCHAR} || '%'))
+		ORDER BY WRK_TM.WRK_TM_MEAS_CRTR_VAL  ASC
+	</select>
+	
+	<!-- 프로젝트 근무 시간 기준 상세 정보 추출 쿼리 -->
+	<select id="selectProjectWorkTimeCriteriaDetail" parameterType="com.qnpeople.rnd.pms.apis.project.crtr.model.WorkTimeCriteriaSC" resultMap="projectWorkTimeCriteria">
+		SELECT 	WRK_TM.WRK_TM_CRTR_SEQ
+				  , WRK_TM.WRK_TM_CRTR_CD
+				  , WRK_TM.WRK_TM_MEAS_CRTR_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_WRK_MEAS_UNIT'
+						AND 		CD 		=	WRK_TM.WRK_TM_MEAS_CRTR_TP
+				  	) 	AS 	WRK_TM_MEAS_CRTR_TP_NM
+				  , WRK_TM.USE_YN
+				  , WRK_TM.DELT_YN
+				  , WRK_TM.WRK_TM_MEAS_CRTR_NM
+				  , WRK_TM.WRK_TM_MEAS_CRTR_DGR
+				  , WRK_TM.WRK_TM_MEAS_CRTR_VAL
+				  , WRK_TM.WRK_TM_MEAS_CRTR_DESC
+    			  , TO_CHAR(WRK_TM.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , WRK_TM.RGST_SEQ
+    			  , WRK_TM.RGST_NM
+    			  , TO_CHAR(WRK_TM.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , WRK_TM.UPDT_SEQ
+    			  , WRK_TM.UPDT_NM
+    			  , TO_CHAR(WRK_TM.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , WRK_TM.DELT_SEQ
+    			  , WRK_TM.DELT_NM
+		FROM 	PRJ_WRK_TM_CRTR_INFO_TBL	WRK_TM
+		WHERE 	1 	= 	1
+		AND 		WRK_TM.DELT_YN 	= 	'N'
+		AND 		(((#{wrkTmCrtrSeq, jdbcType=NUMERIC} IS NULL) OR (#{wrkTmCrtrSeq, jdbcType=NUMERIC} = 0)) OR (WRK_TM.WRK_TM_CRTR_SEQ = #{wrkTmCrtrSeq, jdbcType=NUMERIC}))
+		AND 		(((#{wrkTmCrtrCd, jdbcType=VARCHAR} IS NULL) OR (#{wrkTmCrtrCd, jdbcType=VARCHAR} = '')) OR (WRK_TM.WRK_TM_CRTR_CD = #{wrkTmCrtrCd, jdbcType=VARCHAR}))
+	</select>
+	
+</mapper>

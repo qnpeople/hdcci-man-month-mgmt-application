@@ -46,6 +46,8 @@ public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 	protected Long clientSeq;
 	/** 클라이언트의 시스템 로그인 ID 정보*/
 	protected String clientLoginId;
+	/** 클라이언트 명 정보 */
+	protected String clientNm;
 	
 	// 사용자 소속 업체 정보 */
 	/** 클라이언트의 소속 업체의 고유 일련 번호 */

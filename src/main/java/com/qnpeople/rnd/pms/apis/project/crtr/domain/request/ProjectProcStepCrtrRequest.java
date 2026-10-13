@@ -1,0 +1,59 @@
+package com.qnpeople.rnd.pms.apis.project.crtr.domain.request;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qnpeople.rnd.pms.apis.project.crtr.model.ProjectProcStepDto;
+import com.qnpeople.rnd.pms.common.domain.request.QNPWebClientRequestWrapper;
+
+import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
+
+@EqualsAndHashCode(callSuper = true)
+@JsonInclude(value = Include.NON_NULL)
+@Slf4j
+@Data
+public class ProjectProcStepCrtrRequest extends QNPWebClientRequestWrapper {
+
+	/* 프로젝트 수행 단계 사용 여부(Y: 사용(기본), N: 미사용) */
+	private String useYn;
+	/* 프로젝트 수행 단계 명 */
+	private String execStpNm;
+	
+	/* 프로젝트 수행 단계 코드 */
+	private String execStpCd;
+	
+	/* 프로젝트 수행 단계 상세 정보 객체 */
+	private ProjectProcStepDto procStepDto;
+		
+	@JsonIgnore
+	public String toStringInfo() {
+		StringBuilder info = new StringBuilder();
+		info.append(className).append("{ ");
+		info.append("txId= ").append(txId);
+		if(!SBNUtils.isNull(execStpCd)) {
+			info.append(", ");
+			info.append("execStpCd=").append(execStpCd);
+		}
+		if(!SBNUtils.isNull(useYn)) {
+			info.append(", ");
+			info.append("useYn=").append(useYn);
+		}
+		if(!SBNUtils.isNull(execStpNm)) {
+			info.append(", ");
+			info.append("execStpNm=").append(execStpNm);
+		}
+		if(!SBNUtils.isNull(execStpNm)) {
+			info.append(", ");
+			info.append("execStpNm=").append(execStpNm);
+		}
+		if(!SBNUtils.isNull(procStepDto)) {
+			info.append(", ");
+			info.append("procStepDto=").append(procStepDto.toStringInfo());
+		}
+		info.append(" }");
+		return info.toString();
+	}
+}

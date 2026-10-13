@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.project.bsc.mapper.ProjectRoleMgmtMapper">
+	<!-- 프로젝트 역할 수행 단계 기준 정보 -->
+	<resultMap id="projectRole" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleDto">
+		<id property="compSeq" column="COMP_SEQ" />
+		<id property="prjctRoleCd" column="PRJCT_ROLE_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="dispOrd" column="DISP_ORD" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="prjctRoleNm" column="PRJCT_ROLE_NM" />
+		<result property="prjctRoleDesc" column="PRJCT_ROLE_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 업체별 프로젝트 역할 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 업체별 프로젝트 역할 정보 등록 수행 쿼리 -->
+    <insert id="insertProjectRole" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleDto">
+    	INSERT INTO PRJ_PRJCT_ROLE_BSC_INFO_TBL (
+			COMP_SEQ
+		  , PRJCT_ROLE_CD
+		  , USE_YN
+		  , DISP_ORD
+		  , PRJCT_ROLE_NM
+		  , PRJCT_ROLE_DESC
+		  , RGST_DT
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{compSeq, jdbcType=NUMERIC}
+		  , 	#{prjctRoleCd, jdbcType=VARCHAR}
+		  , 	(
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{prjctRoleCd, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE    #{useYn, jdbcType=VARCHAR}
+				END	
+			)	
+		  , 	(
+				CASE 
+					WHEN (#{dispOrd, jdbcType=NUMERIC} IS NULL OR #{dispOrd, jdbcType=NUMERIC} = 0) THEN (
+						SELECT 	MAX(DISP_ORD) + 1
+						FROM 	PRJ_PRJCT_ROLE_BSC_INFO_TBL
+						WHERE 	1 	= 	1
+						AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
+					)
+					ELSE #{dispOrd, jdbcType=NUMERIC}
+				END	
+			)
+		  , 	#{prjctRoleNm, jdbcType=VARCHAR}
+		  , 	#{prjctRoleDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , (
+				CASE
+					WHEN (#{rgstNm, jdbcType=VARCHAR} IS NULL OR #{rgstNm, jdbcType=VARCHAR} = '') THEN NULL
+					ELSE   #{rgstNm, jdbcType=VARCHAR}
+				END
+		    )
+		)
+    </insert>
+    
+    <!-- 업체별 프로젝트 역할 정보 수정 수행 쿼리 -->
+	<update id="updateProjectRole" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleDto">
+		UPDATE PRJ_PRJCT_ROLE_BSC_INFO_TBL
+		SET 		USE_YN 	=	(
+						CASE 
+							WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+							ELSE    #{useYn, jdbcType=VARCHAR}
+						END
+				    )
+				  , DISP_ORD = (
+						CASE 
+							WHEN (#{dispOrd, jdbcType=NUMERIC} IS NULL OR #{dispOrd, jdbcType=NUMERIC} = 0) THEN DISP_ORD
+							ELSE    #{dispOrd, jdbcType=NUMERIC}
+						END
+				    )
+		 	 	  , PRJCT_ROLE_NM = (
+						CASE 
+							WHEN (#{prjctRoleNm, jdbcType=VARCHAR} IS NULL OR #{prjctRoleNm, jdbcType=VARCHAR} = '') THEN PRJCT_ROLE_NM
+							ELSE    #{prjctRoleNm, jdbcType=VARCHAR}
+						END					
+				    )
+		  		  , PRJCT_ROLE_DESC = (
+						CASE 
+							WHEN (#{prjctRoleDesc, jdbcType=VARCHAR} IS NULL OR #{prjctRoleDesc, jdbcType=VARCHAR} = '') THEN PRJCT_ROLE_DESC
+							ELSE    #{prjctRoleDesc, jdbcType=VARCHAR}
+						END					
+				    )
+		  		  , UPDT_DT 	= CURRENT_TIMESTAMP(3)
+		  		  , UPDT_SEQ 	= #{updtSeq, jdbcType=NUMERIC}
+		  		  , UPDT_NM 	= (
+						CASE
+							WHEN (#{updtNm, jdbcType=VARCHAR} IS NULL OR #{updtNm, jdbcType=VARCHAR} = '') THEN UPDT_NM
+							ELSE    #{updtNm, jdbcType=VARCHAR}
+						END
+				    )
+		WHERE 	1 	= 	1
+		AND 		COMP_SEQ 		=	#{compSeq, jdbcType=NUMERIC}
+		AND 		PRJCT_ROLE_CD 	= 	#{prjctRoleCd, jdbcType=VARCHAR}
+	</update>
+	
+	<!-- 업체별 프로젝트 역할 정보 삭제 수행 쿼리 -->
+	<delete id="deleteProjectRole" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleSC">
+		UPDATE  PRJ_PRJCT_ROLE_BSC_INFO_TBL
+		SET 		USE_YN 		= 	'N' 
+				  , DELT_YN 	= 	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	(
+						CASE
+							WHEN ( #{deltSeq, jdbcType=NUMERIC} IS NULL OR  #{deltSeq, jdbcType=NUMERIC} = 0) THEN DELT_SEQ
+							ELSE    #{deltSeq, jdbcType=VARCHAR}
+						END
+				  	)
+				  , DELT_NM 	= 	(
+						CASE
+							WHEN ( #{deltNm, jdbcType=VARCHAR} IS NULL OR  #{deltNm, jdbcType=VARCHAR} = '') THEN DELT_NM
+							ELSE    #{deltNm, jdbcType=VARCHAR}
+						END
+				    )	
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 			= 	'N'
+		AND 		COMP_SEQ 		=	#{compSeq, jdbcType=NUMERIC}
+		AND 		PRJCT_ROLE_CD 	= 	#{prjctRoleCd, jdbcType=VARCHAR}
+	</delete>
+	
+    <!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 업체별 프로젝트 역할 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 업체별 프로젝트 역할 코드 중복 체크 추출 쿼리 -->
+    <select id="selectProjectRoleCodeDuplication" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleSC" resultType="java.lang.Boolean">
+    	SELECT 	(
+						CASE
+							WHEN (COUNT(PRJCT_ROLE_CD) > 0) THEN true
+							ELSE    false 
+						END
+					) 	AS 	DUP_FLAG
+    	FROM 	PRJ_PRJCT_ROLE_BSC_INFO_TBL
+    	WHERE 	1 	= 	1
+    	AND 		COMP_SEQ 		= 	#{compSeq, jdbcType=NUMERIC}
+    	AND 		PRJCT_ROLE_CD 	= 	#{prjctRoleCd, jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 업체별 프로젝트 역할 목록 정보 추출 쿼리 -->
+    <select id="selectProjectRoleList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleSC" resultMap="projectRole">
+    	SELECT 	PRJCT_ROLE.COMP_SEQ
+    			  , PRJCT_ROLE.PRJCT_ROLE_CD
+    			  , PRJCT_ROLE.USE_YN
+    			  , PRJCT_ROLE.DISP_ORD
+    			  , PRJCT_ROLE.PRJCT_ROLE_NM
+    			  , PRJCT_ROLE.PRJCT_ROLE_DESC
+    			  , COMP.COMP_NM
+    			  , TO_CHAR(PRJCT_ROLE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , PRJCT_ROLE.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = PRJCT_ROLE.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+    			  , TO_CHAR(PRJCT_ROLE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , PRJCT_ROLE.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = PRJCT_ROLE.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+    	FROM 	PRJ_PRJCT_ROLE_BSC_INFO_TBL	 PRJCT_ROLE
+    	LEFT JOIN CMP_COMP_INFO_TBL 	COMP ON PRJCT_ROLE.COMP_SEQ = COMP.COMP_SEQ
+    	WHERE 	1 	= 	1
+    	AND 		((#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') OR (PRJCT_ROLE.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		PRJCT_ROLE.DELT_YN = 'N'
+    	AND 		((#{compSeq, jdbcType=NUMERIC} IS NULL OR #{compSeq, jdbcType=NUMERIC} = 0) OR (PRJCT_ROLE.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+    	AND 		((#{prjctRoleNm, jdbcType=VARCHAR}  IS NULL OR #{prjctRoleNm, jdbcType=VARCHAR}  = '') OR (PRJCT_ROLE.PRJCT_ROLE_NM LIKE '%' || #{prjctRoleNm, jdbcType=VARCHAR} || '%'))
+    	ORDER BY PRJCT_ROLE.DISP_ORD ASC
+    </select>
+    
+    <!-- 업체별 프로젝트 역할 상세 정보 추출 쿼리 -->
+    <select id="selectProjectRoleDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleSC" resultMap="projectRole">
+    	SELECT 	PRJCT_ROLE.COMP_SEQ
+    			  , PRJCT_ROLE.PRJCT_ROLE_CD
+    			  , PRJCT_ROLE.USE_YN
+    			  , PRJCT_ROLE.DISP_ORD
+    			  , PRJCT_ROLE.PRJCT_ROLE_NM
+    			  , PRJCT_ROLE.PRJCT_ROLE_DESC
+    			  , COMP.COMP_NM
+    			  , TO_CHAR(PRJCT_ROLE.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , PRJCT_ROLE.RGST_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = PRJCT_ROLE.RGST_SEQ					
+				  	) 		AS 	RGST_NM
+    			  , TO_CHAR(PRJCT_ROLE.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , PRJCT_ROLE.UPDT_SEQ
+  				  , (
+						SELECT 	ADM_NM
+						FROM 	SYS_ADM_INFO_TBL
+						WHERE 	1	=	1
+						AND 		ADM_SEQ = PRJCT_ROLE.UPDT_SEQ					
+				  	) 		AS 	UPDT_NM
+    	FROM 	PRJ_PRJCT_ROLE_BSC_INFO_TBL	 PRJCT_ROLE
+    	LEFT JOIN CMP_COMP_INFO_TBL 	COMP ON PRJCT_ROLE.COMP_SEQ = COMP.COMP_SEQ
+    	WHERE 	1 	= 	1
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (PRJCT_ROLE.USE_YN = #{useYn, jdbcType=VARCHAR} ))
+    	AND 		PRJCT_ROLE.DELT_YN = 'N'
+    	AND 		PRJCT_ROLE.COMP_SEQ 			= 	#{compSeq, jdbcType=NUMERIC}
+    	AND 		PRJCT_ROLE.PRJCT_ROLE_CD 	= 	#{prjctRoleCd, jdbcType=VARCHAR}
+    </select>
+    
+</mapper>

@@ -132,7 +132,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 			//	3. 업체 등록 수행 결과에 대한 클라이언트로의 전달 응답 패킷 객체를 구축한다
 			if(!resultFlag) {
 				//	3.1. 업체 등록 작업 실패 시, 오류 메시지 정의 후 클라이언트로 전달 할 오류 응답 패킷 객체를 구축한다
-				reason = QNPReasonCode.FRAMEWORK_NO_DATA_ERROR;
+				reason = QNPReasonCode.REGISTRATION_EXEC_FAILURE_ERROR;
 				errorCode = reason.getReasonCode();
 				errorMessage = "신규 업체 등록 작업을 실패 했습니다.";
 				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
@@ -217,7 +217,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 			//	4. 업체 변경 수행 결과에 대한 클라이언트로의 전달 응답 패킷 객체를 구축한다
 			if(!resultFlag) {
 				//	3.1. 업체 변경 작업 실패 시, 오류 메시지 정의 후 클라이언트로 전달 할 오류 응답 패킷 객체를 구축한다
-				reason = QNPReasonCode.FRAMEWORK_NO_DATA_ERROR;
+				reason = QNPReasonCode.MODIFICATION_EXEC_FAILURE_ERROR;
 				errorCode = reason.getReasonCode();
 				errorMessage = "업체 변경 작업을 실패 했습니다.";
 				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
@@ -303,7 +303,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 			//	3. 업체 삭제 수행 결과에 대한 클라이언트로의 전달 응답 패킷 객체를 구축한다
 			if(!resultFlag) {
 				//	3.1. 업체 삭제 작업 실패 시, 오류 메시지 정의 후 클라이언트로 전달 할 오류 응답 패킷 객체를 구축한다
-				reason = QNPReasonCode.FRAMEWORK_NO_DATA_ERROR;
+				reason = QNPReasonCode.DELETION_EXEC_FAILURE_ERROR;
 				errorCode = reason.getReasonCode();
 				errorMessage = "업체 삭제 작업을 실패 했습니다.";
 				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
@@ -523,7 +523,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException					클라이언트의 업체 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/srvc/checkCompanyCdDuplication", method= {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/srvc/checkCompanyCodeDuplication", method= {RequestMethod.GET, RequestMethod.POST})
 	public ResponseEntity<?> checkCompanyCdDuplication(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyMgmtRequest companyMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -563,7 +563,7 @@ public class CompanyMgmtController extends QNPWebBaseController {
 			
 			//	3. 신규 등록 대상 업체 코드 중복 여부 체크 수행 결과에 대한 클라이언트로의 전달 응답 패킷 객체를 구축한다
 			if(duplicationFlag) {
-				//	3.1. 업체 목록 조회 작업 실패 시, 오류 메시지 정의 후 클라이언트로 전달 할 오류 응답 패킷 객체를 구축한다
+				//	3.1. 신규 등록 대상 업체 코드 중복 인 경우, 오류 메시지 정의 후 클라이언트로 전달 할 오류 응답 패킷 객체를 구축한다
 				reason = QNPReasonCode.FRAMEWORK_NO_DATA_ERROR;
 				errorCode = reason.getReasonCode();
 				errorMessage = "이미 사용 중인 중복된 업체 코드 정보 입니다.";

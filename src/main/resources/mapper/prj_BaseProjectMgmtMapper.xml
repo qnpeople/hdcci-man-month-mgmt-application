@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.project.bsc.mapper.BaseProjectMgmtMapper">
+	<!-- 프로젝트 기본 정보 -->
+	<resultMap id="baseProject" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectDto">
+		<id property="prjctSeq" column="PRJCT_SEQ" />
+		<result property="prjctCd" column="PRJCT_CD" />
+		<result property="prjctTp" column="PRJCT_TP" />
+		<result property="prjctTpNm" column="PRJCT_TP_NM" />
+		<result property="prjctStatTp" column="PRJCT_STAT_TP" />
+		<result property="prjctStatTpNm" column="PRJCT_STAT_TP_NM" />
+		<result property="prjctDplyTp" column="PRJCT_DPLY_TP" />
+		<result property="prjctDplyTpNm" column="PRJCT_DPLY_TP_NM" />
+		<result property="prjctVrfcTp" column="PRJCT_VRFC_TP" />
+		<result property="prjctVrfcTpNm" column="PRJCT_VRFC_TP_NM" />
+		<result property="prjctCptbTp" column="PRJCT_CPTB_TP" />
+		<result property="prjctCptbTpNm" column="PRJCT_CPTB_TP_NM" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="prjctNm" column="PRJCT_NM" />
+		<result property="prjctStrtDt" column="PRJCT_STRT_DT" />
+		<result property="prjctEndDt" column="PRJCT_END_DT" />
+		<result property="prjctCnclDt" column="PRJCT_CNCL_DT" />
+		<result property="prjctCnclRsn" column="PRJCT_CNCL_RSN" />
+		<result property="prjctDesc" column="PRJCT_DESC" />
+		<result property="etc" column="ETC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>	
+	<!-- 프로젝트 사이트 매핑 정보 -->
+	<resultMap id="prjectSite" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteDto">
+		<id property="prjctSeq" column="PRJCT_SEQ" />
+		<id property="chnlSiteSeq" column="CHNL_SITE_SEQ" />
+		<id property="srvcSeq" column="SRVC_SEQ" />		
+		<result property="prjctCd" column="PRJCT_CD" />
+		<result property="chnlCd" column="CHNL_CD" />
+		<result property="siteCd" column="SITE_CD" />
+		<result property="srvcCd" column="SRVC_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="prjctNm" column="PRJCT_NM" />
+		<result property="chnlNm" column="CHNL_NM" />
+		<result property="siteNm" column="SITE_NM" />
+		<result property="srvcNm" column="SRVC_NM" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 기본 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+    <!-- 신규 프로젝트 기본 정보 등록 수행 쿼리 -->
+	<insert id="insertNewProject" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectDto">
+		INSERT INTO PRJ_PRJCT_INFO_TBL (
+			PRJCT_CD
+		  , PRJCT_TP
+		  , PRJCT_STAT_TP
+		  , PRJCT_DPLY_TP
+		  , PRJCT_VRFC_TP
+		  , PRJCT_CPTB_TP
+		  , USE_YN
+		  , PRJCT_NM
+		  , PRJCT_STRT_DT
+		  , PRJCT_END_DT
+		  , PRJCT_DESC 
+		  , ETC
+		  , RGST_DT
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{prjctCd, jdbcType=VARCHAR}
+		  , #{prjctTp, jdbcType=VARCHAR}
+		  , #{prjctStatTp, jdbcType=VARCHAR}
+ 		  , (
+				CASE
+					WHEN (#{prjctDplyTp, jdbcType=VARCHAR} IS NULL OR #{prjctDplyTp, jdbcType=VARCHAR} = '') THEN '99'
+					ELSE    #{prjctDplyTp, jdbcType=VARCHAR}
+				END
+			)
+		  , (
+				CASE
+					WHEN (#{prjctVrfcTp, jdbcType=VARCHAR} IS NULL OR #{prjctVrfcTp, jdbcType=VARCHAR} = '') THEN '99'
+					ELSE    #{prjctVrfcTp, jdbcType=VARCHAR}
+				END
+		 	)
+		  , (
+				CASE
+					WHEN (#{prjctCptbTp, jdbcType=VARCHAR} IS NULL OR #{prjctCptbTp, jdbcType=VARCHAR} = '') THEN '99'
+					ELSE    #{prjctCptbTp, jdbcType=VARCHAR}
+				END
+		 	)
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE    #{useYn, jdbcType=VARCHAR}
+				END
+		   )	
+		  , #{prjctNm, jdbcType=VARCHAR}
+		  , (
+				CASE
+					WHEN (#{prjctStrtDt, jdbcType=VARCHAR} IS NULL OR #{prjctStrtDt, jdbcType=VARCHAR} = '') THEN NULL
+					ELSE    TO_DATE(#{prjctStrtDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')
+				END
+		   )
+		  , (
+				CASE
+					WHEN (#{prjctEndDt, jdbcType=VARCHAR} IS NULL OR #{prjctEndDt, jdbcType=VARCHAR} = '') THEN NULL
+					ELSE    TO_DATE(#{prjctEndDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')
+				END
+		   )
+		  , #{prjctDesc, jdbcType=VARCHAR} 
+		  , #{etc, jdbcType=VARCHAR} 
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , (
+				CASE 
+					WHEN (#{rgstNm, jdbcType=VARCHAR} IS NULL OR #{rgstNm, jdbcType=VARCHAR} = '') THEN NULL
+					ELSE   #{rgstNm, jdbcType=VARCHAR}
+				END
+			)	
+		)		
+	</insert>
+	
+	<!-- 프로젝트 기본 정보 변경 수행 쿼리 -->
+	<update id="updateProject" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectDto">
+		UPDATE PRJ_PRJCT_INFO_TBL
+		SET 		PRJCT_TP			= 	(
+						CASE
+							WHEN (#{prjctTp, jdbcType=VARCHAR} IS NULL OR #{prjctTp, jdbcType=VARCHAR} = '') THEN 	PRJCT_TP
+							ELSE    #{prjctTp, jdbcType=VARCHAR}
+						END
+					)
+				  , PRJCT_STAT_TP	= 	(
+						CASE
+							WHEN (#{prjctStatTp, jdbcType=VARCHAR} IS NULL OR #{prjctStatTp, jdbcType=VARCHAR} = '') THEN 	PRJCT_STAT_TP
+							ELSE    #{prjctStatTp, jdbcType=VARCHAR}
+						END
+					)
+				  , PRJCT_DPLY_TP   = 	(
+						CASE
+							WHEN (#{prjctDplyTp, jdbcType=VARCHAR} IS NULL OR #{prjctDplyTp, jdbcType=VARCHAR} = '') THEN 	PRJCT_DPLY_TP
+							ELSE    #{prjctDplyTp, jdbcType=VARCHAR}
+						END
+					)
+				  , PRJCT_VRFC_TP	= 	(
+						CASE
+							WHEN (#{prjctVrfcTp, jdbcType=VARCHAR} IS NULL OR #{prjctVrfcTp, jdbcType=VARCHAR} = '') THEN 	PRJCT_VRFC_TP
+							ELSE    #{prjctVrfcTp, jdbcType=VARCHAR}
+						END
+					)
+				  , PRJCT_CPTB_TP  	= 	(
+						CASE
+							WHEN (#{prjctCptbTp, jdbcType=VARCHAR} IS NULL OR #{prjctCptbTp, jdbcType=VARCHAR} = '') THEN 	PRJCT_CPTB_TP
+							ELSE    #{prjctCptbTp, jdbcType=VARCHAR}
+						END
+					)
+				  , USE_YN				=	(
+						CASE
+							WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 	USE_YN
+							ELSE    #{useYn, jdbcType=VARCHAR}
+						END
+				   )	
+				  , PRJCT_NM			=	(
+						CASE
+							WHEN (#{prjctNm, jdbcType=VARCHAR} IS NULL OR #{prjctNm, jdbcType=VARCHAR} = '') THEN 	PRJCT_NM
+							ELSE    #{prjctNm, jdbcType=VARCHAR}
+						END
+				   )	
+				  , PRJCT_STRT_DT	= 	(
+						CASE
+							WHEN (#{prjctStrtDt, jdbcType=VARCHAR} IS NULL OR #{prjctStrtDt, jdbcType=VARCHAR} = '') THEN PRJCT_STRT_DT
+							ELSE    TO_DATE(#{prjctStrtDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')
+						END
+				   )
+				  , PRJCT_END_DT	=	(
+						CASE
+							WHEN (#{prjctEndDt, jdbcType=VARCHAR} IS NULL OR #{prjctEndDt, jdbcType=VARCHAR} = '') THEN PRJCT_END_DT
+							ELSE    TO_DATE(#{prjctEndDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')
+						END
+				   )
+				  , PRJCT_DESC 		= 	(
+						CASE
+							WHEN (#{prjctDesc, jdbcType=VARCHAR} IS NULL OR #{prjctDesc, jdbcType=VARCHAR} = '') THEN PRJCT_DESC
+							ELSE    #{prjctDesc, jdbcType=VARCHAR}
+						END
+				  	)
+				  , ETC					= 	(
+						CASE
+							WHEN (#{etc, jdbcType=VARCHAR} IS NULL OR #{etc, jdbcType=VARCHAR} = '') THEN ETC
+							ELSE    #{etc, jdbcType=VARCHAR}
+						END
+				  	)
+				  , UPDT_DT 			=	CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ 			= 	(
+						CASE
+							WHEN (#{updtSeq, jdbcType=NUMERIC} IS NULL OR #{updtSeq, jdbcType=NUMERIC} = 0) THEN UPDT_SEQ
+							ELSE    #{updtSeq, jdbcType=NUMERIC}
+						END
+				    )
+				  , UPDT_NM 			= 	(
+						CASE
+							WHEN (#{updtNm, jdbcType=VARCHAR} IS NULL OR #{updtNm, jdbcType=VARCHAR} = '') THEN UPDT_NM
+							ELSE    #{updtNm, jdbcType=VARCHAR}
+						END
+				    )
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 		= 'N'
+		AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+	</update>
+	
+	<!-- 프로젝트 기본 정보 삭제 수행 쿼리 -->
+	<delete id="deleteProject" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectSC">
+		UPDATE PRJ_PRJCT_INFO_TBL
+		SET 		USE_YN 		=	'N'
+				  , DELT_YN 	= 	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	(
+						CASE
+							WHEN ( #{deltSeq, jdbcType=NUMERIC} IS NULL OR  #{deltSeq, jdbcType=NUMERIC} = 0) THEN DELT_SEQ
+							ELSE    #{deltSeq, jdbcType=VARCHAR}
+						END
+				  	)
+				  , DELT_NM 	= 	(
+						CASE
+							WHEN ( #{deltNm, jdbcType=VARCHAR} IS NULL OR  #{deltNm, jdbcType=VARCHAR} = '') THEN DELT_NM
+							ELSE    #{deltNm, jdbcType=VARCHAR}
+						END
+				    )
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 		= 'N'
+		AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+	</delete>
+	
+	<!-- 프로젝트 신규 사이트 매핑 지정 수행 쿼리 -->
+	<insert id="insertNewProjectAssignSite" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteDto">
+		INSERT INTO PRJ_SITE_PRJCT_MAP (
+			PRJCT_SEQ
+		  , CHNL_SITE_SEQ
+		  , SRVC_SEQ
+		  , USE_YN
+		  , RGST_DT	
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{prjctSeq, jdbcType=NUMERIC}
+		  , #{chnlSiteSeq, jdbcType=NUMERIC}
+		  , #{srvcSeq, jdbcType=NUMERIC}
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE   #{useYn, jdbcType=VARCHAR}
+				END
+		    )
+		  ,	CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , #{rgstNm, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!--프로젝트 지정 사이트 삭제 처리 수행 쿼리 -->
+	<delete id="deleteProjectAssignedSite" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteSC">
+		UPDATE  PRJ_SITE_PRJCT_MAP
+		SET 		USE_YN  	= 	'N'
+				  , DELT_YN 	= 	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	(
+						CASE
+							WHEN ( #{deltSeq, jdbcType=NUMERIC} IS NULL OR  #{deltSeq, jdbcType=NUMERIC} = 0) THEN DELT_SEQ
+							ELSE    #{deltSeq, jdbcType=VARCHAR}
+						END
+				  	)
+				  , DELT_NM 	= 	(
+						CASE
+							WHEN ( #{deltNm, jdbcType=VARCHAR} IS NULL OR  #{deltNm, jdbcType=VARCHAR} = '') THEN DELT_NM
+							ELSE    #{deltNm, jdbcType=VARCHAR}
+						END
+				    )
+		WHERE 	1 	= 	1
+		AND 		DELT_YN 		= 'N'
+		AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))
+		AND 		(((#{chnlSiteSeq, jdbcType=NUMERIC} IS NULL) OR (#{chnlSiteSeq, jdbcType=NUMERIC} = 0)) OR (CHNL_SITE_SEQ = #{chnlSiteSeq, jdbcType=NUMERIC}))
+		AND 		(((#{srvcSeq, jdbcType=NUMERIC} IS NULL) OR (#{srvcSeq, jdbcType=NUMERIC} = 0)) OR (SRVC_SEQ = #{srvcSeq, jdbcType=NUMERIC}))
+	</delete>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 기본 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->   
+    <!-- 프로젝트 코드 중복 여부 체크 수행 쿼리 -->
+    <select id="selectProjectCodeDuplication" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectSC" resultType="java.lang.Boolean">
+    	SELECT 	(
+						CASE
+							WHEN (COUNT(BASE_PRJCT.PRJCT_CD) <![CDATA[ > ]]> 0) THEN true
+							ELSE   false 
+						END
+					) 	AS 	DUP_FLAG
+    	FROM 	PRJ_PRJCT_INFO_TBL 	BASE_PRJCT
+    	WHERE 	1 	= 	1
+    	AND 		BASE_PRJCT.PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}
+    </select>
+    
+    <!-- 프로젝트 기본 정보 목록 정보 추출 쿼리 -->
+    <select id="selectProjectList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectSC" resultMap="baseProject">
+    	SELECT 	BASE_PRJCT.PRJCT_SEQ
+    			  , BASE_PRJCT.PRJCT_CD
+    			  , BASE_PRJCT.PRJCT_TP
+    			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_INFO_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_TP
+				  	) 	AS 	PRJCT_TP_NM
+    			  , BASE_PRJCT.PRJCT_STAT_TP
+    			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_STAT_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_STAT_TP
+				  	) 	AS 	PRJCT_STAT_TP_NM
+    			  , BASE_PRJCT.PRJCT_DPLY_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_DPLY_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_DPLY_TP
+				  	) 	AS 	PRJCT_DPLY_TP_NM
+    			  , BASE_PRJCT.PRJCT_VRFC_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_VRFY_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_VRFC_TP
+				  	) 	AS 	PRJCT_VRFC_TP
+    			  , BASE_PRJCT.PRJCT_CPTB_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_CPTB_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_CPTB_TP
+				  	) 	AS 	PRJCT_CPTB_TP_NM
+    			  , BASE_PRJCT.USE_YN
+    			  , BASE_PRJCT.PRJCT_NM
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_STRT_DT, 'YYYY-MM-DD') 					AS 	PRJCT_STRT_DT
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_END_DT, 'YYYY-MM-DD') 					AS 	PRJCT_END_DT
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_CNCL_DT, 'YYYY-MM-DD') 				AS 	PRJCT_CNCL_DT
+    			  , BASE_PRJCT.PRJCT_CNCL_RSN
+    			  , BASE_PRJCT.PRJCT_DESC
+    			  , BASE_PRJCT.ETC
+    			  , TO_CHAR(BASE_PRJCT.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , BASE_PRJCT.RGST_SEQ
+    			  , BASE_PRJCT.RGST_NM
+    			  , TO_CHAR(BASE_PRJCT.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , BASE_PRJCT.UPDT_SEQ
+    			  , BASE_PRJCT.UPDT_NM
+    			  , TO_CHAR(BASE_PRJCT.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , BASE_PRJCT.DELT_SEQ
+    			  , BASE_PRJCT.DELT_NM
+    	FROM 	PRJ_PRJCT_INFO_TBL 	BASE_PRJCT
+    	WHERE 	1	= 	1
+    	AND 		BASE_PRJCT.PRJCT_SEQ != 0
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		BASE_PRJCT.DELT_YN = 'N'
+    	AND 		(((#{prjctTp, jdbcType=VARCHAR} IS NULL) OR (#{prjctTp, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_TP = #{prjctTp, jdbcType=VARCHAR}))
+    	AND 		(((#{prjctStatTp, jdbcType=VARCHAR} IS NULL) OR (#{prjctStatTp, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_STAT_TP = #{prjctStatTp, jdbcType=VARCHAR}))
+    	AND 		(((#{prjctDplyTp, jdbcType=VARCHAR} IS NULL) OR (#{prjctDplyTp, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_DPLY_TP = #{prjctDplyTp, jdbcType=VARCHAR}))
+    	AND 		(((#{prjctVrfcTp, jdbcType=VARCHAR} IS NULL) OR (#{prjctVrfcTp, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_VRFC_TP = #{prjctVrfcTp, jdbcType=VARCHAR}))
+    	AND 		(((#{prjctCptbTp, jdbcType=VARCHAR} IS NULL) OR (#{prjctCptbTp, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_CPTB_TP = #{prjctCptbTp, jdbcType=VARCHAR}))
+    	AND 		(((#{prjctNm, jdbcType=VARCHAR} IS NULL) OR (#{prjctNm, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_NM LIKE '%' || #{prjctNm, jdbcType=VARCHAR} || '%'))
+    	AND 		(((#{prjctStrtDt, jdbcType=VARCHAR} IS NULL) OR (#{prjctStrtDt, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_STRT_DT <![CDATA[ >= ]]> TO_DATE(#{prjctStrtDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')))
+    	AND 		(((#{prjctEndDt, jdbcType=VARCHAR} IS NULL) OR (#{prjctEndDt, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_END_DT <![CDATA[ <= ]]> TO_DATE(#{prjctEndDt, jdbcType=VARCHAR}, 'YYYY-MM-DD')))
+    	AND 		(((#{etc, jdbcType=VARCHAR} IS NULL) OR (#{etc, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.ETC LIKE '%' || #{etc, jdbcType=VARCHAR} || '%'))
+    	ORDER BY BASE_PRJCT.PRJCT_SEQ ASC
+    </select>
+    
+    <!-- 프로젝트 기본 정보 상세 정보 추출 쿼리 -->
+    <select id="selectProjectDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectSC" resultMap="baseProject">
+    	SELECT 	BASE_PRJCT.PRJCT_SEQ
+    			  , BASE_PRJCT.PRJCT_CD
+    			  , BASE_PRJCT.PRJCT_TP
+    			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_INFO_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_TP
+				  	) 	AS 	PRJCT_TP_NM
+    			  , BASE_PRJCT.PRJCT_STAT_TP
+    			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_STAT_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_STAT_TP
+				  	) 	AS 	PRJCT_STAT_TP_NM
+    			  , BASE_PRJCT.PRJCT_DPLY_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_DPLY_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_DPLY_TP
+				  	) 	AS 	PRJCT_DPLY_TP_NM
+    			  , BASE_PRJCT.PRJCT_VRFC_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_VRFY_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_VRFC_TP
+				  	) 	AS 	PRJCT_VRFC_TP
+    			  , BASE_PRJCT.PRJCT_CPTB_TP
+     			  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'PRJ_PRJCT_CPTB_001'
+						AND 		CD 		=	BASE_PRJCT.PRJCT_CPTB_TP
+				  	) 	AS 	PRJCT_CPTB_TP_NM
+    			  , BASE_PRJCT.USE_YN
+    			  , BASE_PRJCT.PRJCT_NM
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_STRT_DT, 'YYYY-MM-DD') 					AS 	PRJCT_STRT_DT
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_END_DT, 'YYYY-MM-DD') 					AS 	PRJCT_END_DT
+    			  , TO_CHAR(BASE_PRJCT.PRJCT_CNCL_DT, 'YYYY-MM-DD') 				AS 	PRJCT_CNCL_DT
+    			  , BASE_PRJCT.PRJCT_CNCL_RSN
+    			  , BASE_PRJCT.PRJCT_DESC
+    			  , BASE_PRJCT.ETC
+    			  , TO_CHAR(BASE_PRJCT.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , BASE_PRJCT.RGST_SEQ
+    			  , BASE_PRJCT.RGST_NM
+    			  , TO_CHAR(BASE_PRJCT.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , BASE_PRJCT.UPDT_SEQ
+    			  , BASE_PRJCT.UPDT_NM
+    			  , TO_CHAR(BASE_PRJCT.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , BASE_PRJCT.DELT_SEQ
+    			  , BASE_PRJCT.DELT_NM
+    	FROM 	PRJ_PRJCT_INFO_TBL 	BASE_PRJCT
+    	WHERE 	1	= 	1
+    	AND 		BASE_PRJCT.DELT_YN 		= 'N'
+    	AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (BASE_PRJCT.PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (BASE_PRJCT.PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+    </select>  
+    
+    <!-- 기본 프로젝트 지정 사이트 목록 정보 추출 쿼리 --> 
+    <select id="selectAssignedBaseProjectSiteList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteSC" resultMap="prjectSite">
+		SELECT 	DISTINCT
+				    SITE_PRJCT.PRJCT_SEQ
+				  , SITE_PRJCT.CHNL_SITE_SEQ
+				  , SITE_PRJCT.SRVC_SEQ
+				  , PRJCT.PRJCT_CD
+				  , CHNL.CHNL_CD
+				  , SITE.SITE_CD
+				  , SRVC.SRVC_CD
+				  , SITE_PRJCT.USE_YN
+				  , SITE_PRJCT.DELT_YN
+				  , PRJCT.PRJCT_NM
+				  , CHNL.CHNL_NM
+				  , SITE.SITE_NM
+				  , SRVC.SRVC_NM
+				  , TO_CHAR(SITE_PRJCT.RGST_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	RGST_DT
+				  , SITE_PRJCT.RGST_SEQ
+				  , SITE_PRJCT.RGST_NM
+				  , TO_CHAR(SITE_PRJCT.UPDT_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	UPDT_DT
+				  , SITE_PRJCT.UPDT_SEQ
+				  , SITE_PRJCT.UPDT_NM
+				  , TO_CHAR(SITE_PRJCT.DELT_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	DELT_DT
+				  , SITE_PRJCT.DELT_SEQ
+				  , SITE_PRJCT.DELT_NM
+		FROM 	PRJ_SITE_PRJCT_MAP 	            		SITE_PRJCT
+		LEFT OUTER JOIN SVC_SITE_SRVC_MAP  		SITE_SRVC
+				ON   SITE_SRVC.USE_YN 				= 'Y' 
+				AND SITE_SRVC.CHNL_SITE_SEQ 	= SITE_PRJCT.CHNL_SITE_SEQ
+				AND SITE_SRVC.SRVC_SEQ 			= SITE_PRJCT.SRVC_SEQ
+		LEFT OUTER JOIN CMN_CHNL_SITE_MAP 	CHNL_SITE
+				ON 	CHNL_SITE.USE_YN 				=	'Y'
+				AND 	CHNL_SITE.CHNL_SITE_SEQ 	= SITE_PRJCT.CHNL_SITE_SEQ
+		LEFT JOIN  CMN_CHNL_INFO_TBL			CHNL
+		ON 	CHNL.USE_YN 							=	'Y'
+		AND 	CHNL.CHNL_SEQ 						=	CHNL_SITE.CHNL_SEQ    	
+		LEFT JOIN 	CMN_SITE_INFO_TBL 			SITE
+		ON 	SITE.USE_YN 								= 	'Y'
+		AND 	SITE.SITE_SEQ 							=	CHNL_SITE.SITE_SEQ    	
+		LEFT JOIN  SVC_SRVC_INFO_TBL 			SRVC
+		ON 	SRVC.USE_YN  							= 	'Y'
+		AND 	SRVC.SRVC_SEQ 							= 	SITE_SRVC.SRVC_SEQ
+		LEFT OUTER JOIN PRJ_PRJCT_INFO_TBL  PRJCT 
+		ON   PRJCT.USE_YN 							= 	'Y' 
+		AND PRJCT.PRJCT_SEQ 						= 	SITE_PRJCT.PRJCT_SEQ
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (SITE_PRJCT.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		SITE_PRJCT.DELT_YN 	= 'N'
+		AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (PRJCT.PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (CHNL.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (SITE.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+		AND 		(((#{srvcCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCd, jdbcType=VARCHAR} = '')) OR (SRVC.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
+    </select>
+    
+    <!-- 기본 프로젝트 지정 사이트 상세 정보 추출 쿼리  -->
+    <select id="selectAssignedBaseProjectSiteDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteSC" resultMap="prjectSite">
+		SELECT 	DISTINCT
+				    SITE_PRJCT.PRJCT_SEQ
+				  , SITE_PRJCT.CHNL_SITE_SEQ
+				  , SITE_PRJCT.SRVC_SEQ
+				  , PRJCT.PRJCT_CD
+				  , CHNL.CHNL_CD
+				  , SITE.SITE_CD
+				  , SRVC.SRVC_CD
+				  , SITE_PRJCT.USE_YN
+				  , SITE_PRJCT.DELT_YN
+				  , PRJCT.PRJCT_NM
+				  , CHNL.CHNL_NM
+				  , SITE.SITE_NM
+				  , SRVC.SRVC_NM
+				  , TO_CHAR(SITE_PRJCT.RGST_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	RGST_DT
+				  , SITE_PRJCT.RGST_SEQ
+				  , SITE_PRJCT.RGST_NM
+				  , TO_CHAR(SITE_PRJCT.UPDT_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	UPDT_DT
+				  , SITE_PRJCT.UPDT_SEQ
+				  , SITE_PRJCT.UPDT_NM
+				  , TO_CHAR(SITE_PRJCT.DELT_DT, 'YYYY-MM-DD HH:MI:SS.MS') 	AS 	DELT_DT
+				  , SITE_PRJCT.DELT_SEQ
+				  , SITE_PRJCT.DELT_NM
+		FROM 	PRJ_SITE_PRJCT_MAP 	            	SITE_PRJCT
+		LEFT OUTER JOIN SVC_SITE_SRVC_MAP  		SITE_SRVC
+				ON   SITE_SRVC.USE_YN 				= 'Y' 
+				AND SITE_SRVC.CHNL_SITE_SEQ 	= SITE_PRJCT.CHNL_SITE_SEQ
+				AND SITE_SRVC.SRVC_SEQ 			= SITE_PRJCT.SRVC_SEQ
+		LEFT OUTER JOIN CMN_CHNL_SITE_MAP 	CHNL_SITE
+				ON 	CHNL_SITE.USE_YN 				=	'Y'
+				AND 	CHNL_SITE.CHNL_SITE_SEQ 	= SITE_PRJCT.CHNL_SITE_SEQ
+		LEFT JOIN  CMN_CHNL_INFO_TBL			CHNL
+		ON 	CHNL.USE_YN 							=	'Y'
+		AND 	CHNL.CHNL_SEQ 						=	CHNL_SITE.CHNL_SEQ    	
+		LEFT JOIN 	CMN_SITE_INFO_TBL 			SITE
+		ON 	SITE.USE_YN 								= 	'Y'
+		AND 	SITE.SITE_SEQ 							=	CHNL_SITE.SITE_SEQ    	
+		LEFT JOIN  SVC_SRVC_INFO_TBL 			SRVC
+		ON 	SRVC.USE_YN  							= 	'Y'
+		AND 	SRVC.SRVC_SEQ 							= 	SITE_SRVC.SRVC_SEQ
+		LEFT OUTER JOIN PRJ_PRJCT_INFO_TBL  PRJCT 
+		ON   PRJCT.USE_YN 							= 	'Y' 
+		AND PRJCT.PRJCT_SEQ 						= 	SITE_PRJCT.PRJCT_SEQ
+		WHERE 	1 	= 	1
+		AND 		SITE_PRJCT.DELT_YN 			= 'N'
+		AND 		SITE_PRJCT.PRJCT_SEQ 			= #{prjctSeq, jdbcType=NUMERIC}
+		AND 		SITE_PRJCT.CHNL_SITE_SEQ 	= #{chnlSiteSeq, jdbcType=NUMERIC}
+		AND 		SITE_PRJCT.SRVC_SEQ 			= #{srvcSeq, jdbcType=NUMERIC}
+    </select>
+</mapper>

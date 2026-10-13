@@ -214,4 +214,68 @@
 					LEFT OUTER  JOIN SVC_SRVC_INFO_TBL SRVC ON TMP_SITE_SRVC.SRVC_SEQ = SRVC.SRVC_SEQ 		AND 	SRVC.USE_YN = 'Y'
 		WHERE 	1	=	1
 	</select>
+	
+	<!-- 사이트 서비스 매핑 상세 정보 추출 쿼리  -->
+	<select id="selectSiteServiceDetailByCode" parameterType="com.qnpeople.rnd.pms.apis.service.siteservice.model.SiteServiceSC" resultMap="siteService">
+		SELECT 	SITE_SRVC.CHNL_SITE_SEQ
+				  , CHNL.CHNL_SEQ
+				  , SITE.SITE_SEQ
+				  , SITE_SRVC.SRVC_SEQ
+				  , SITE_SRVC.CHNL_CD
+				  , SITE_SRVC.SITE_CD
+				  , SITE_SRVC.SRVC_CD
+				  , SITE_SRVC.USE_YN
+				  , SITE_SRVC.SITE_SRVC_NM
+				  , SITE_SRVC.SITE_SRVC_DESC
+				  , CHNL.CHNL_NM
+				  , CHNL.CHNL_IP
+				  , CHNL.CHNL_PORT
+				  , CHNL.CHNL_DMN
+				  , CHNL.CHNL_BSC_URI
+				  , CHNL.CHNL_DESC
+				  , SITE.SITE_TP
+				  , (
+						SELECT  CD_NM
+						FROM 	CMN_CD_INFO_TBL
+						WHERE 	1	=	1
+						AND 		GRP_CD 	= 	'CMN_SITE_INFO_001'
+						AND 		CD 			= 	SITE.SITE_TP
+					) AS 	SITE_TP_NM
+				  , SITE.SITE_NM
+				  , SITE.SITE_BSC_URI
+				  , SITE.SITE_DESC
+				  , SRVC.SRVC_CTGRY_CD
+				  , SRVC.SRVC_TP
+				  , (
+						SELECT 	CD_NM
+						FROM 	CMN_CD_INFO_TBL 
+						WHERE 	1 	= 	1
+						AND 		GRP_CD = 'SVC_SRVC_INFO_001'
+						AND 		CD 	=	SRVC.SRVC_TP				
+					) 	AS SRVC_TP_NM
+				  , SRVC.SRVC_NM
+				  , SRVC.SRVC_BSC_URI
+				  , SRVC.SRVC_DESC
+				  , SITE_SRVC.RGST_DT
+				  , SITE_SRVC.RGST_SEQ
+				  , SITE_SRVC.UPDT_DT
+				  , SITE_SRVC.UPDT_SEQ	
+		FROM 	SVC_SITE_SRVC_MAP 		SITE_SRVC
+		LEFT JOIN CMN_CHNL_SITE_MAP 	CHNL_SITE
+			ON 	CHNL_SITE.USE_YN 				= 'Y'
+			AND 	CHNL_SITE.CHNL_SITE_SEQ = SITE_SRVC.CHNL_SITE_SEQ
+		LEFT JOIN CMN_CHNL_INFO_TBL 	CHNL
+			ON 	CHNL.USE_YN 					= 	'Y'
+			AND 	CHNL.CHNL_SEQ 				= 	CHNL_SITE.CHNL_SEQ
+		LEFT JOIN CMN_SITE_INFO_TBL 	SITE
+			ON 	SITE.USE_YN 						=	'Y'
+			AND	SITE.SITE_SEQ 						=	CHNL_SITE.SITE_SEQ
+		LEFT JOIN SVC_SRVC_INFO_TBL 	SRVC
+			ON 	SRVC.USE_YN 						=	'Y'
+			AND 	SRVC.SRVC_SEQ 					=	SITE_SRVC.SRVC_SEQ
+		WHERE 	1 	= 	1
+		AND 		(((#{chnlCd, jdbcType=VARCHAR} IS NULL) OR (#{chnlCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.CHNL_CD = #{chnlCd, jdbcType=VARCHAR}))
+		AND 		(((#{siteCd, jdbcType=VARCHAR} IS NULL) OR (#{siteCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.SITE_CD = #{siteCd, jdbcType=VARCHAR}))
+		AND 		(((#{srvcCd, jdbcType=VARCHAR} IS NULL) OR (#{srvcCd, jdbcType=VARCHAR} = '')) OR (SITE_SRVC.SRVC_CD = #{srvcCd, jdbcType=VARCHAR}))
+	</select>
 </mapper>
