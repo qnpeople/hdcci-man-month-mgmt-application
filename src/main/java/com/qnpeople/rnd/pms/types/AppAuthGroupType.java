@@ -5,8 +5,8 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 /**
  * ================================================================================
  * @Project		: hdcci-man-month-mgmt-application
- * @Package		: com.qnpeople.rnd.pms.common.auth
- * @Filename		: QNPAuthGrpupType.java
+ * @Package		: com.qnpeople.rnd.pms.types
+ * @Filename		: AppAuthGroupType.java
  * 
  * =================================================================================
  *  version      date              author 						description
@@ -14,10 +14,10 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
  *  1.0		2026.09.07.     BeamSeok.Seo				Initialization
  *  =================================================================================
  *  [ 설명 ]
- *  QNP 웹 어플리케이션 수행을 위한 시스템 접근 사용자의 접근 권한에 대한 유형을 정의한 열거형 클래스
+ *  웹 어플리케이션 수행을 위한 시스템 접근 사용자의 접근 권한에 대한 유형을 정의한 열거형 클래스
  * =================================================================================
  */
-public enum QNPAuthGrpupType {
+public enum AppAuthGroupType {
 
 	/*@formatter:off */
 	SPR_AUTH_GRP("SPR_AUTH_GRP", "통합 권한 그룹", "시스템 전체 관리 최상위 통합 권한 그룹", Boolean.TRUE),
@@ -51,7 +51,7 @@ public enum QNPAuthGrpupType {
 	 * @param 		authGrpTypeDesc		권한 그룹 유형 설명 정보
 	 * @param 		authGrpTypeUseFlag	권한 그룹 유형 사용 여부 Flag
 	 */
-	private QNPAuthGrpupType(String authGrpTypeCode, String authGrpTypeName, String authGrpTypeDesc, Boolean authGrpTypeUseFlag) {
+	private AppAuthGroupType(String authGrpTypeCode, String authGrpTypeName, String authGrpTypeDesc, Boolean authGrpTypeUseFlag) {
 		this.authGrpTypeCode = authGrpTypeCode;
 		this.authGrpTypeName = authGrpTypeName;
 		this.authGrpTypeDesc = authGrpTypeDesc;
@@ -111,7 +111,7 @@ public enum QNPAuthGrpupType {
 	 */
 	public String getAuthGrpType() {
 		StringBuilder info = new StringBuilder();
-		info.append(QNPAuthGrpupType.class.getSimpleName()).append("{ ");
+		info.append(AppAuthGroupType.class.getSimpleName()).append("{ ");
 		info.append("authGrpTypeCode=").append(authGrpTypeCode).append(", ");
 		info.append("authGrpTypeName=").append(authGrpTypeName).append(", ");
 		info.append("authGrpTypeDesc=").append(authGrpTypeDesc).append(", ");
@@ -134,7 +134,7 @@ public enum QNPAuthGrpupType {
 			return false;
 		}
 		tmpAuthGrpTypeCode = authGrpTypeCode.trim().toUpperCase();
-		for(QNPAuthGrpupType authGrpupType : values()) {
+		for(AppAuthGroupType authGrpupType : values()) {
 			if(authGrpupType.isAuthGrpTypeUsable() && authGrpupType.getAuthGrpTypeCode().equals(tmpAuthGrpTypeCode)) {
 				return true;
 			}
@@ -150,13 +150,13 @@ public enum QNPAuthGrpupType {
 	 * @param 	authGrpTypeCode	권한 그룹 유형 코드 정보
 	 * @return		전달된 권한 그룹 유형 코드 정보에 대한 어플리케이션 내부 기본 제공 권한 그룹 유형 객체. 유효하지 않은 경우 null 전달
 	 */
-	public static final QNPAuthGrpupType getAuthGrpupType(String authGrpTypeCode) {
+	public static final AppAuthGroupType getAuthGrpupType(String authGrpTypeCode) {
 		String tmpAuthGrpTypeCode = "";
 		if(!isValid(authGrpTypeCode)) {
 			return NONE_AUTH_GRP;
 		}
 		tmpAuthGrpTypeCode = authGrpTypeCode.trim().toUpperCase();
-		for(QNPAuthGrpupType authGrpupType : values()) {
+		for(AppAuthGroupType authGrpupType : values()) {
 			if(authGrpupType.isAuthGrpTypeUsable() && authGrpupType.getAuthGrpTypeCode().equals(tmpAuthGrpTypeCode)) {
 				return authGrpupType;
 			}

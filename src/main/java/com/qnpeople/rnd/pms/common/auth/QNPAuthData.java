@@ -5,8 +5,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.qnpeople.rnd.pms.types.QNPAuthGrpupType;
-import com.qnpeople.rnd.pms.types.QNPUserType;
+import com.qnpeople.rnd.pms.types.AppAuthGroupType;
+import com.qnpeople.rnd.pms.types.AppUserType;
 
 import kr.co.sbn.platformhub.framework.core.common.data.auth.SBNAuthData;
 import kr.co.sbn.platformhub.framework.securities.domains.jwt.data.SBNJwtAccessTokenData;
@@ -38,10 +38,10 @@ public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 	/** 클라이언트의 권한 및 인증 수행을 위한 JWT 접근 토큰 데이터 객체 */
 	protected SBNJwtAccessTokenData jwtAccessToken;
 	/** 클라이언트의 시스템 관리 및 이용 권한 그룹 유형 객체 */
-	protected QNPAuthGrpupType authGrpupType;
+	protected AppAuthGroupType authGrpupType;
 	
 	/** 클라이언트의 유형 객체 */
-	protected QNPUserType userType;
+	protected AppUserType userType;
 	/** 클라이언트 고유 식별자 정보 */
 	protected Long clientSeq;
 	/** 클라이언트의 시스템 로그인 ID 정보*/

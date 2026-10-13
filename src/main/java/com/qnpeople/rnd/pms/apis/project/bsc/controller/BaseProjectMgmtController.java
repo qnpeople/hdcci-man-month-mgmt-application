@@ -29,7 +29,7 @@ import com.qnpeople.rnd.pms.common.domain.response.QNPResponsePacketEntityData;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonCode;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonInterface;
 import com.qnpeople.rnd.pms.exceptions.QNPWebException;
-import com.qnpeople.rnd.pms.types.QNPRequestExecuteWayType;
+import com.qnpeople.rnd.pms.types.AppRequestExecuteWayType;
 import com.qnpeople.rnd.pms.utils.QNPResponseEntityUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -378,7 +378,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
 		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
 		//	요청 수행 객체
-		QNPRequestExecuteWayType requestWayType = null;	//	클라이언트의 요청 수행 유형 객체
+		AppRequestExecuteWayType requestWayType = null;	//	클라이언트의 요청 수행 유형 객체
 		String txId = SBNUtils.createSystemRandomId(true);
 		ProjectChannelSiteDto registerProjectChannelSite = null;
 		List<ProjectChannelSiteDto> registerProjectChannelSiteList = null;
@@ -414,7 +414,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			if(!SBNUtils.isNull(projectSiteMgmtRequest.getProjectChannelSite())) {
 				//	2.1. 단건 프로젝트 사이트 매핑 정보 전달 시, 수행
 				log.debug("assignBaseProjectToSite() 단건 프로젝트 사이트 매핑 작업 수행 시작");
-				requestWayType = QNPRequestExecuteWayType.SINGLE;
+				requestWayType = AppRequestExecuteWayType.SINGLE;
 				registerProjectChannelSite = projectSiteMgmtRequest.getProjectChannelSite();
 				//	
 				if((SBNUtils.isNull(registerProjectChannelSite.getChnlSiteSeq()) || (registerProjectChannelSite.getChnlSiteSeq() <= 0L)) &&
@@ -450,7 +450,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			} else {
 				log.debug("assignBaseProjectToSite() 다중 프로젝트 사이트 매핑 작업 수행 시작");
 				//	2.2. 다중 프로젝트 사이트 매핑 정보 전달 시, 수행
-				requestWayType = QNPRequestExecuteWayType.MULTI;
+				requestWayType = AppRequestExecuteWayType.MULTI;
 				registerProjectChannelSiteList = projectSiteMgmtRequest.getProjectChannelSiteList();
 				for(int i = 0; i < registerProjectChannelSiteList.size(); i++) {
 					if((SBNUtils.isNull(registerProjectChannelSiteList.get(i).getChnlSiteSeq()) || (registerProjectChannelSiteList.get(i).getChnlSiteSeq() <= 0L)) &&
@@ -487,7 +487,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			}
 						
 			//	3. 전달된 기본 프로젝트에 대한 사이트 지정 작업을 수행 후, 수행 결과를 전달 받는다
-			if(QNPRequestExecuteWayType.SINGLE.equals(requestWayType)) {
+			if(AppRequestExecuteWayType.SINGLE.equals(requestWayType)) {
 				assignResultFlag = baseProjectMgmtService.assignBaseProjectToSiteForIndividual(registerProjectChannelSite);
 			} else {
 				assignResultFlag = baseProjectMgmtService.assignBaseProjectToSiteForList(registerProjectChannelSiteList);
@@ -548,7 +548,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
 		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
 		//	요청 수행 객체
-		QNPRequestExecuteWayType requestWayType = null;	//	클라이언트의 요청 수행 유형 객체
+		AppRequestExecuteWayType requestWayType = null;	//	클라이언트의 요청 수행 유형 객체
 		String txId = SBNUtils.createSystemRandomId(true);
 		ProjectChannelSiteSC releaseProjectSiteKey = null;
 		List<ProjectChannelSiteSC> releaseProjectSiteKeyList = null;
@@ -584,7 +584,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			if(!SBNUtils.isNull(projectSiteMgmtRequest.getProjectChannelSiteKey())) {				
 				//	2.1. 단건 프로젝트 사이트 지정 해제 키 정보 전달 시, 프로젝트 사이트 지정 해제 작업 수행 시작
 				log.debug("releaseBaseProjectFromSite() 단건 프로젝트 사이트 지정 해제 작업 수행 시작");
-				requestWayType = QNPRequestExecuteWayType.SINGLE;
+				requestWayType = AppRequestExecuteWayType.SINGLE;
 				releaseProjectSiteKey = projectSiteMgmtRequest.getProjectChannelSiteKey();
 				log.debug("releaseBaseProjectFromSite() [ {} ] releaseProjectSiteKey={}", requestWayType, releaseProjectSiteKey);
 				//	
@@ -621,7 +621,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			} else {				
 				//	2.2. 다중 프로젝트 사이트 지정 해제 키 목록 정보 전달 시, 프로젝트 사이트 지정 해제 작업 수행 시작
 				log.debug("releaseBaseProjectFromSite() 다중 프로젝트 사이트 지정 해제 작업 수행 시작");
-				requestWayType = QNPRequestExecuteWayType.MULTI;
+				requestWayType = AppRequestExecuteWayType.MULTI;
 				releaseProjectSiteKeyList = projectSiteMgmtRequest.getProjectChannelSiteKeyList();
 				log.debug("releaseBaseProjectFromSite() [ {} ] releaseProjectSiteKeyList={}", requestWayType, releaseProjectSiteKeyList);
 				for(int i = 0; i < releaseProjectSiteKeyList.size(); i++) {
@@ -659,7 +659,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 			}
 			
 			//	3. 전달된 기본 프로젝트에 대한 지정된 사이트해제 작업을 수행 후, 수행 결과를 전달 받는다
-			if(QNPRequestExecuteWayType.SINGLE.equals(requestWayType)) {
+			if(AppRequestExecuteWayType.SINGLE.equals(requestWayType)) {
 				releaseResultFlag = baseProjectMgmtService.releaseBaseProjectFromSiteForIndividual(releaseProjectSiteKey);
 			} else {
 				releaseResultFlag = baseProjectMgmtService.releaseBaseProjectFromSiteForList(releaseProjectSiteKeyList);

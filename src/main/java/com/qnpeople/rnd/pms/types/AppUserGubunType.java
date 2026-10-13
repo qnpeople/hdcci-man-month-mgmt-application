@@ -5,8 +5,8 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 /**
  * ================================================================================
  * @Project		: hdcci-man-month-mgmt-application
- * @Package		: com.qnpeople.rnd.pms.common.auth
- * @Filename		: QNPUserGubunType.java
+ * @Package		: com.qnpeople.rnd.pms.types
+ * @Filename		: AppUserGubunType.java
  * 
  * =================================================================================
  *  version      date              author 						description
@@ -14,10 +14,10 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
  *  1.0		2026.09.07.     BeamSeok.Seo				Initialization
  *  =================================================================================
  *  [ 설명 ]
- *  QNP 웹 어플리케이션 수행을 위한 사용자의 구분 유형을 정의한 열거형 클래스
+ *  웹 어플리케이션 수행을 위한 사용자의 구분 유형을 정의한 열거형 클래스
  * =================================================================================
  */
-public enum QNPUserGubunType {
+public enum AppUserGubunType {
 
 	/*@formatter:off */
 	ADM("ADM", "관리자 유형", "시스템 관리자 유형", Boolean.TRUE),
@@ -45,7 +45,7 @@ public enum QNPUserGubunType {
 	 * @param 		userGubunTypeDesc		사용자 구분 유형 설명 정보
 	 * @param 		userGubunTypeUseFlag	사용자 구분 유형 사용 여부 Flag 
 	 */
-	private QNPUserGubunType(String userGubunTypeCode, String userGubunTypeName, String userGubunTypeDesc, Boolean userGubunTypeUseFlag) {
+	private AppUserGubunType(String userGubunTypeCode, String userGubunTypeName, String userGubunTypeDesc, Boolean userGubunTypeUseFlag) {
 		this.userGubunTypeCode = userGubunTypeCode;
 		this.userGubunTypeName = userGubunTypeName;
 		this.userGubunTypeDesc = userGubunTypeDesc;
@@ -105,7 +105,7 @@ public enum QNPUserGubunType {
 	 */
 	public String getUserGubunType() {
 		StringBuilder info = new StringBuilder();
-		info.append(QNPUserGubunType.class.getSimpleName()).append("{ ");
+		info.append(AppUserGubunType.class.getSimpleName()).append("{ ");
 		info.append("userGubunTypeCode=").append(userGubunTypeCode).append(", ");
 		info.append("userGubunTypeName=").append(userGubunTypeName).append(", ");
 		info.append("userGubunTypeDesc=").append(userGubunTypeDesc).append(", ");
@@ -127,7 +127,7 @@ public enum QNPUserGubunType {
 			return false;
 		}
 		tmpUserGubunTypeCode = userGubunTypeCode.trim().toUpperCase();
-		for(QNPUserGubunType userGubunType : values()) {
+		for(AppUserGubunType userGubunType : values()) {
 			if(userGubunType.isUserGubunTypeUsable() && userGubunType.getUserGubunTypeCode().equals(tmpUserGubunTypeCode)) {
 				return true;
 			}
@@ -142,13 +142,13 @@ public enum QNPUserGubunType {
 	 * @param 	userGubunTypeCode
 	 * @return
 	 */
-	public static final QNPUserGubunType getUserGubunType(String userGubunTypeCode) {
+	public static final AppUserGubunType getUserGubunType(String userGubunTypeCode) {
 		String tmpUserGubunTypeCode = "";
 		if(!isValid(userGubunTypeCode)) {
 			return ETC;
 		}
 		tmpUserGubunTypeCode = userGubunTypeCode.trim().toUpperCase();
-		for(QNPUserGubunType userGubunType : values()) {
+		for(AppUserGubunType userGubunType : values()) {
 			if(userGubunType.isUserGubunTypeUsable() && userGubunType.getUserGubunTypeCode().equals(tmpUserGubunTypeCode)) {
 				return userGubunType;
 			}

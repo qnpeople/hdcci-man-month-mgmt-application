@@ -5,8 +5,8 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 /**
  * ================================================================================
  * @Project		: hdcci-man-month-mgmt-application
- * @Package		: com.qnpeople.rnd.pms.common.auth
- * @Filename		: QNPUserType.java
+ * @Package		: com.qnpeople.rnd.pms.types
+ * @Filename		: AppUserType.java
  * 
  * =================================================================================
  *  version      date              author 						description
@@ -14,27 +14,27 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
  *  1.0		2026.09.07.     BeamSeok.Seo				Initialization
  *  =================================================================================
  *  [ 설명 ]
- *  QNP 웹 어플리케이션 수행을 위한 시스템 접근 사용자의 유형을 정의한 열거형 클래스
+ *  웹 어플리케이션 수행을 위한 시스템 접근 사용자의 유형을 정의한 열거형 클래스
  * =================================================================================
  */
-public enum QNPUserType {
+public enum AppUserType {
 
 	/*@formatter:off */
 	//	관리자
-	SUPER_ADMIN("", QNPUserGubunType.ADM , "", "", Boolean.TRUE),
-	SYSTEM_ADMIN("", QNPUserGubunType.ADM , "", "", Boolean.TRUE),
-	SERVICE_ADMIN("", QNPUserGubunType.ADM , "", "", Boolean.TRUE),
-	COMPANY_ADMIN("", QNPUserGubunType.ADM , "", "", Boolean.TRUE),
-	PROJECT_ADMIN("", QNPUserGubunType.ADM , "", "", Boolean.TRUE),
+	SUPER_ADMIN("", AppUserGubunType.ADM , "", "", Boolean.TRUE),
+	SYSTEM_ADMIN("", AppUserGubunType.ADM , "", "", Boolean.TRUE),
+	SERVICE_ADMIN("", AppUserGubunType.ADM , "", "", Boolean.TRUE),
+	COMPANY_ADMIN("", AppUserGubunType.ADM , "", "", Boolean.TRUE),
+	PROJECT_ADMIN("", AppUserGubunType.ADM , "", "", Boolean.TRUE),
 	//	사용자
 	
-	ETC("", QNPUserGubunType.ETC, "", "", Boolean.TRUE);
+	ETC("", AppUserGubunType.ETC, "", "", Boolean.TRUE);
 	/*@formatter:on */
 	
 	/* 시스템 접근 사용자 유형 코드 정보 */
 	private String userTypeCode;
 	/* 시스템 접근 사용자 구분 유형 객체 */
-	private QNPUserGubunType userGubunType;
+	private AppUserGubunType userGubunType;
 	/* 시스템 접근 사용자 유형 명 정보 */
 	private String userTypeName;
 	/* 시스템 접근 사용자 유형 설명 정보 */
@@ -53,7 +53,7 @@ public enum QNPUserType {
 	 * @param 		userTypeDesc		시스템 접근 사용자 유형 설명 정보
 	 * @param 		userTypeFlag		시스템 접근 사용자 유형 사용 여부 Flag
 	 */
-	private QNPUserType(String userTypeCode, QNPUserGubunType userGubunType, String userTypeName, String userTypeDesc, Boolean userTypeFlag) {
+	private AppUserType(String userTypeCode, AppUserGubunType userGubunType, String userTypeName, String userTypeDesc, Boolean userTypeFlag) {
 		this.userTypeCode = userTypeCode;
 		this.userGubunType = userGubunType;
 		this.userTypeName = userTypeName;
@@ -79,7 +79,7 @@ public enum QNPUserType {
 	 * @date 		2026.09.07
 	 * @return		시스템 접근 사용자 구분 유형 객체
 	 */
-	public QNPUserGubunType getUserGubunType() {
+	public AppUserGubunType getUserGubunType() {
 		return userGubunType;
 	}
 	
@@ -125,7 +125,7 @@ public enum QNPUserType {
 	 */
 	public String getUserType() {
 		StringBuilder info = new StringBuilder();
-		info.append(QNPUserType.class.getSimpleName()).append("{ ");
+		info.append(AppUserType.class.getSimpleName()).append("{ ");
 		info.append("userTypeCode=").append(userTypeCode).append(", ");
 		info.append("userGubunType=").append(userGubunType).append(", ");
 		info.append("userTypeName=").append(userTypeName).append(", ");
@@ -149,7 +149,7 @@ public enum QNPUserType {
 			return false;
 		}
 		tmpUserTypeCode = userTypeCode.trim().toUpperCase();
-		for(QNPUserType userType : values()) {
+		for(AppUserType userType : values()) {
 			if(userType.isUserTypeUsable() && userType.getUserTypeCode().equals(tmpUserTypeCode)) {
 				return true;
 			}
@@ -165,13 +165,13 @@ public enum QNPUserType {
 	 * @param 	userTypeCode		시스템 접근 사용자 유형 코드 정보
 	 * @return		전달된 시스템 접근 사용자 유형 코드 정보에 대한 어플리케이션 내부 정의 사용자 유형 객체, 유효하지 않은 경우 null 전달
 	 */
-	public static final QNPUserType getUserType(String userTypeCode) {
+	public static final AppUserType getUserType(String userTypeCode) {
 		String tmpUserTypeCode = "";
 		if(!isValid(userTypeCode)) {
 			return null;
 		}
 		tmpUserTypeCode = userTypeCode.trim().toUpperCase();
-		for(QNPUserType userType : values()) {
+		for(AppUserType userType : values()) {
 			if(userType.isUserTypeUsable() && userType.getUserTypeCode().equals(tmpUserTypeCode)) {
 				return userType;
 			}

@@ -5,8 +5,8 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 /**
  * ================================================================================
  * @Project		: hdcci-man-month-mgmt-application
- * @Package		: com.qnpeople.rnd.pms.common.auth
- * @Filename		: QNPRequestExecuteWayType.java
+ * @Package		: com.qnpeople.rnd.pms.types
+ * @Filename		: AppRequestExecuteWayType.java
  * 
  * =================================================================================
  *  version      date              author 						description
@@ -14,10 +14,10 @@ import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
  *  1.0		2026.09.07.     BeamSeok.Seo				Initialization
  *  =================================================================================
  *  [ 설명 ]
- *  QNP 웹 어플리케이션의 클라이언트 요청 수행을 위한 요청 수행 방식 유형을 정의한 열거형 클래스
+ *  웹 어플리케이션의 클라이언트 요청 수행을 위한 요청 수행 방식 유형을 정의한 열거형 클래스
  * =================================================================================
  */
-public enum QNPRequestExecuteWayType {
+public enum AppRequestExecuteWayType {
 
 	/*@formatter:off */
 	SINGLE("SNGL", "단건 수행", "단건 수행 방법 유형", Boolean.TRUE),
@@ -43,7 +43,7 @@ public enum QNPRequestExecuteWayType {
 	 * @param 		executeTypeDesc			클라이언트 요청 수행 방법 유형 설명
 	 * @param 		executeTypeUseFlag		클라이언트 요청 수행 방법 유형 사용 여부 Flag
 	 */
-	private QNPRequestExecuteWayType(String executeTypeCode, String executeTypeName, String executeTypeDesc, Boolean executeTypeUseFlag) {
+	private AppRequestExecuteWayType(String executeTypeCode, String executeTypeName, String executeTypeDesc, Boolean executeTypeUseFlag) {
 		this.executeTypeCode = executeTypeCode;
 		this.executeTypeName = executeTypeName;
 		this.executeTypeDesc = executeTypeDesc;
@@ -103,7 +103,7 @@ public enum QNPRequestExecuteWayType {
 	 */
 	public String getRequestExecuteWayType() {
 		StringBuilder info = new StringBuilder();
-		info.append(QNPRequestExecuteWayType.class.getSimpleName()).append("{ ");
+		info.append(AppRequestExecuteWayType.class.getSimpleName()).append("{ ");
 		info.append("executeTypeCode=").append(executeTypeCode).append(", ");
 		info.append("executeTypeName=").append(executeTypeName).append(", ");
 		info.append("executeTypeDesc=").append(executeTypeDesc).append(", ");
@@ -126,7 +126,7 @@ public enum QNPRequestExecuteWayType {
 			return false;
 		}
 		tmpExecuteTypeCode = executeTypeCode.trim().toUpperCase();
-		for(QNPRequestExecuteWayType requestExecuteWayType : values()) {
+		for(AppRequestExecuteWayType requestExecuteWayType : values()) {
 			if(requestExecuteWayType.isExecuteTypeUsable() && requestExecuteWayType.getExecuteTypeCode().equals(tmpExecuteTypeCode)) {
 				return true;
 			}
@@ -142,13 +142,13 @@ public enum QNPRequestExecuteWayType {
 	 * @param 	executeTypeCode	클라이언트 요청 수행 방법 유형 코드
 	 * @return		전달된 클라이언트 요청 수행 방법 유형 코드 정보에 대한 프레임워크 내부 정의 유형 객체. 유효하지 않은 경우 null 전달
 	 */
-	public static final QNPRequestExecuteWayType getRequestExecuteWayType(final String executeTypeCode) {
+	public static final AppRequestExecuteWayType getRequestExecuteWayType(final String executeTypeCode) {
 		String tmpExecuteTypeCode ="";
 		if(!isValid(executeTypeCode)) {
 			return null;
 		}
 		tmpExecuteTypeCode = executeTypeCode.trim().toUpperCase();
-		for(QNPRequestExecuteWayType requestExecuteWayType : values()) {
+		for(AppRequestExecuteWayType requestExecuteWayType : values()) {
 			if(requestExecuteWayType.isExecuteTypeUsable() && requestExecuteWayType.getExecuteTypeCode().equals(tmpExecuteTypeCode)) {
 				return requestExecuteWayType;
 			}
