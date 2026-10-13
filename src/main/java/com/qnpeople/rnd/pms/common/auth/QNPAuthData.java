@@ -3,12 +3,15 @@ package com.qnpeople.rnd.pms.common.auth;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.qnpeople.rnd.pms.types.AppAuthGroupType;
+import com.qnpeople.rnd.pms.types.AppAuthGubunType;
 import com.qnpeople.rnd.pms.types.AppUserType;
 
 import kr.co.sbn.platformhub.framework.core.common.data.auth.SBNAuthData;
+import kr.co.sbn.platformhub.framework.core.utils.SBNUtils;
 import kr.co.sbn.platformhub.framework.securities.domains.jwt.data.SBNJwtAccessTokenData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,6 +42,8 @@ public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 	protected SBNJwtAccessTokenData jwtAccessToken;
 	/** 클라이언트의 시스템 관리 및 이용 권한 그룹 유형 객체 */
 	protected AppAuthGroupType authGrpupType;
+	/** 시스템 접근 인증 구분 유형 */
+	protected AppAuthGubunType appAuthGubunType;
 	
 	/** 클라이언트의 유형 객체 */
 	protected AppUserType userType;
@@ -74,5 +79,61 @@ public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 		super();
 	}
 	
+	@JsonIgnore
+	public String toStringInfo() {
+		StringBuilder info = new StringBuilder();
+		info.append(className).append("{ ");
+		info.append("id=").append(id);
+		if(!SBNUtils.isNull(jwtAccessToken)) {
+			info.append(", ");
+			info.append("jwtAccessToken=").append(jwtAccessToken.toStringInfo());
+		}
+		if(!SBNUtils.isNull(authGrpupType)) {
+			info.append(", ");
+			info.append("authGrpupType=").append(authGrpupType);
+		}
+		if(!SBNUtils.isNull(appAuthGubunType)) {
+			info.append(", ");
+			info.append("appAuthGubunType=").append(appAuthGubunType);
+		}
+		if(!SBNUtils.isNull(userType)) {
+			info.append(", ");
+			info.append("userType=").append(userType);
+		}
+		if(!SBNUtils.isNull(clientSeq)) {
+			info.append(", ");
+			info.append("clientSeq=").append(clientSeq);
+		}
+		if(!SBNUtils.isNull(clientLoginId)) {
+			info.append(", ");
+			info.append("clientLoginId=").append(clientLoginId);
+		}
+		if(!SBNUtils.isNull(clientNm)) {
+			info.append(", ");
+			info.append("clientNm=").append(clientNm);
+		}
+		if(!SBNUtils.isNull(clientCompCd)) {
+			info.append(", ");
+			info.append("clientCompCd=").append(clientCompCd);
+		}
+		if(!SBNUtils.isNull(clientCompNm)) {
+			info.append(", ");
+			info.append("clientCompNm=").append(clientCompNm);
+		}
+		if(!SBNUtils.isNull(clientAuthGrpMenuList)) {
+			info.append(", ");
+			info.append("clientAuthGrpMenuList=").append(clientAuthGrpMenuList);
+		}
+		if(!SBNUtils.isNull(clientProjectList)) {
+			info.append(", ");
+			info.append("clientProjectList=").append(clientProjectList);
+		}
+		if(!SBNUtils.isNull(clientEventProjectList)) {
+			info.append(", ");
+			info.append("clientEventProjectList=").append(clientEventProjectList);
+		}
+		info.append(" }");
+		return info.toString();
+	}
 	
 }

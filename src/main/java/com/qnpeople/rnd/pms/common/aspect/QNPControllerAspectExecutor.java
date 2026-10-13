@@ -70,7 +70,7 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 	 * @author		BeomSeok.Seo
 	 * @date 		2026.08.20
 	 */
-	public QNPControllerAspectExecutor() {
+	public QNPControllerAspectExecutor() {		
 		super();
 	}
 	
@@ -101,10 +101,13 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 	 * @author		BeomSeok.Seo
 	 * @date 		2026.08.20
 	 */
-	@Pointcut("execution(* com.qnpeople.rnd.pmp.*.*.controller.*.*Controller.*(..)) || "
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.controller.*.*.*Controller.*(..)) || "
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.*.controller.*.*.*Controller.*(..)) || "
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.*.controller.*.*.*.*Controller.*(..))")
+	/*
+	@Pointcut("execution(* com.qnpeople.rnd.pms.*.**.controller.*.*Controller.*(..)) || "
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.controller.*.*.*Controller.*(..)) || "
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.*.controller.*.*.*Controller.*(..)) || "
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.*.controller.*.*.*.*Controller.*(..))")
+	*/
+	@Pointcut("execution(* com.qnpeople.rnd.pms..controller..*Controller.*(..))")
 	public void apiController() {}
 	
 	/**
@@ -114,10 +117,13 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 	 * @author		BeomSeok.Seo
 	 * @date 		2026.08.20
 	 */
-	@Pointcut("execution(* com.qnpeople.rnd.pmp.*.*.service.*Service.*(..)) || "
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.service.*Service.*(..)) ||"
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.*.service.*ServiceImpl.*(..)) ||"
-		+ "execution(* com.qnpeople.rnd.pmp.*.*.*.*.service.*ServiceImpl.*(..))")
+	/*
+	@Pointcut("execution(* com.qnpeople.rnd.pms.*.*.service.*Service.*(..)) || "
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.service.*Service.*(..)) ||"
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.*.service.*ServiceImpl.*(..)) ||"
+		+ "execution(* com.qnpeople.rnd.pms.*.*.*.*.service.*ServiceImpl.*(..))")	
+	*/	
+	@Pointcut("execution(* com.qnpeople.rnd.pms..service..*Service.*(..))")
 	public void apiService() {}
 	
 	/**
@@ -127,7 +133,7 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 	 * @author		BeomSeok.Seo
 	 * @date 		2026.08.20
 	 */
-	@Pointcut("execution(* com.qnpeople.rnd.pmp.*.*.repository.*Repository.*(..))")
+	@Pointcut("execution(* com.qnpeople.rnd.pms.*.*.repository.*Repository.*(..))")
 	public void apiRepository() {}
 	
 	/**
