@@ -12,14 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qnpeople.rnd.pms.apis.project.bsc.domain.request.BaseProjectMgmtRequest;
-
-import javax.sql.DataSource;
-import com.qnpeople.rnd.pms.apis.project.bsc.domain.request.ProjectRoleMgmtRequest;
+import com.qnpeople.rnd.pms.apis.project.bsc.domain.request.ProjectExecuteStepMgmtRequest;
 import com.qnpeople.rnd.pms.apis.project.bsc.domain.request.ProjectSiteMgmtRequest;
 import com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteDto;
 import com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectChannelSiteSC;
 import com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectDto;
-import com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectRoleDto;
 import com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectSC;
 import com.qnpeople.rnd.pms.apis.project.bsc.service.BaseProjectMgmtService;
 import com.qnpeople.rnd.pms.common.auth.QNPAuthData;
@@ -57,13 +54,19 @@ import lombok.extern.slf4j.Slf4j;
  *  	프로젝트_사이트 매핑 정보 관리
  *  		프로젝트_사이트 매핑 지정
  *  		프로젝트_사이트 매핑 해제
+ * 		프로젝트_수행 단계 매핑 정보 관리
+ * 			프로젝트_수행 단계 매핑 지정
+ * 			프로젝트_수행 단계 매핑 해제 
  *  [ 서비스 ]
  *  	프로젝트_프로젝트 기본 정보 코드 중복 체크 
  *  	프로젝트_프로젝트 기본 정보 목록 조회
  *  	프로젝트_프로젝트 기본 정보 상세 조회
- *  	프로젝트_사이트 매핑 정보 서비스
- *  		프로젝트-사이트 지정 목록 조회
- *  		프로젝트-사이트 지정 상세 조회
+ *  	프로젝트_사이트 매핑 정보 관리
+ *  		프로젝트_사이트 지정 목록 조회
+ *  		프로젝트_사이트 지정 상세 조회
+ *  	프로젝트_수행 단계 매핑 정보 관리
+ *  		프로젝트_수행 단계 매핑 목록 조회
+ *  		프로젝트_수행 단계 매핑 상세 조회
  * =================================================================================
  */
 @RestController
@@ -84,6 +87,9 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 	//		프로젝트_사이트 매핑 정보 관리
 	//			프로젝트_사이트 매핑 지정
 	//			프로젝트_사이트 매핑 해제
+	//		프로젝트_수행 단계 매핑 정보 관리
+	//			프로젝트_수행 단계 매핑 지정
+	//			프로젝트_수행 단계 매핑 해제 
 	/////////////////////////////////////////////////////////////////		
 	/**
 	 * [ 프로젝트_프로젝트 기본 정보 등록 ]
@@ -698,17 +704,133 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 		}
 	}	
 	
+	/**
+	 * [ 프로젝트_수행 단계 매핑 지정 ]
+	 * 전달된 클라이언트의 기본 프로젝트 수행 단계 지정 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.10
+	 * @param 	httpRequest								클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse								클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	projectExecuteStepMgmtRequest	클라이언트로부터 요청된 기본 프로젝트 수행 단계 지정 작업 수행 요청 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException						업체별 프로젝트 수행 단계 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/mgmt/assignProjectExecuteStep")
+	public ResponseEntity<?> assignProjectExecuteStep(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ProjectExecuteStepMgmtRequest projectExecuteStepMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		ProjectDto registerBaseProject = null;
+		Boolean registerResultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("assignProjectExecuteStep() projectExecuteStepMgmtRequest={}", projectExecuteStepMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(projectExecuteStepMgmtRequest.getTxId())) {
+				txId = projectExecuteStepMgmtRequest.getTxId();
+			}
+			
+			//	1. 
+			
+			//	2. 
+			
+			//	3. 
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 프로젝트_수행 단계 매핑 해제  ]
+	 * 전달된 클라이언트의 기본 프로젝트 수행 단계 지정 해제 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.10
+	 * @param 	httpRequest								클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse								클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	projectExecuteStepMgmtRequest	클라이언트로부터 요청된 기본 프로젝트 수행 단계 지정 해제 작업 수행 요청 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException						업체별 프로젝트 수행 단계 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/mgmt/releaseProjectExecuteStep")
+	public ResponseEntity<?> releaseProjectExecuteStep(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ProjectExecuteStepMgmtRequest projectExecuteStepMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		ProjectDto registerBaseProject = null;
+		Boolean registerResultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("releaseProjectExecuteStep() projectExecuteStepMgmtRequest={}", projectExecuteStepMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(projectExecuteStepMgmtRequest.getTxId())) {
+				txId = projectExecuteStepMgmtRequest.getTxId();
+			}
+			
+			//	1. 
+			
+			
+			//	2. 
+			
+			//	3. 
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
 	
 	/////////////////////////////////////////////////////////////////
 	//	서비스
 	//		프로젝트_프로젝트 기본 정보 코드 중복 체크 
 	//  	프로젝트_프로젝트 기본 정보 목록 조회
 	//  	프로젝트_프로젝트 기본 정보 상세 조회
-	//  	프로젝트_사이트 매핑 정보 서비스
+	//  	프로젝트_사이트 매핑 정보 관리
 	//	  		프로젝트_사이트 지정 목록 조회
 	//	  		프로젝트_사이트 지정 상세 조회
-	/////////////////////////////////////////////////////////////////		
-	
+	//	  	프로젝트_수행 단계 매핑 정보 관리
+	//	  		프로젝트_수행 단계 매핑 목록 조회
+	//	  		프로젝트_수행 단계 매핑 상세 조회
+	/////////////////////////////////////////////////////////////////	
 	/**
 	 * [ 프로젝트_프로젝트 기본 정보 삭제 ]
 	 * 전달된 클라이언트의 기본 프로젝트 코드에 대한 중복 여부 체크 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
@@ -806,7 +928,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException			업체별 프로젝트 기본 정보 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/srvc/selectBaseProjectList", method= {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/srvc/getBaseProjectList", method= {RequestMethod.GET, RequestMethod.POST})
 	public ResponseEntity<?> selectBaseProjectList(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody BaseProjectMgmtRequest baseProjectMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -910,7 +1032,7 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException			업체별 프로젝트 기본 정보 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@RequestMapping(value="/srvc/selectBaseProjectDetail", method= {RequestMethod.GET, RequestMethod.POST})
+	@RequestMapping(value="/srvc/getBaseProjectDetail", method= {RequestMethod.GET, RequestMethod.POST})
 	public ResponseEntity<?> selectBaseProjectDetail(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody BaseProjectMgmtRequest baseProjectMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -1182,6 +1304,120 @@ public class BaseProjectMgmtController extends SBNWebBaseController {
 				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
 			}
 			
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 프로젝트_수행 단계 매핑 목록 조회  ]
+	 * 전달된 클라이언트의 기본 프로젝트 지정 수행 단계 목록 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.10
+	 * @param 	httpRequest								클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse								클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	projectExecuteStepMgmtRequest	클라이언트로부터 요청된 기본 프로젝트 지정 수행 단계 목록 추출 작업 수행 요청 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException						업체별 프로젝트 수행 단계 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/srvc/getAssignedProjectExecuteStepList")
+	public ResponseEntity<?> getProjectExecuteStepList(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ProjectExecuteStepMgmtRequest projectExecuteStepMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		ProjectDto registerBaseProject = null;
+		Boolean registerResultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("getAssignedProjectExecuteStepList() projectExecuteStepMgmtRequest={}", projectExecuteStepMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(projectExecuteStepMgmtRequest.getTxId())) {
+				txId = projectExecuteStepMgmtRequest.getTxId();
+			}
+			
+			//	1. 
+			
+			//	2. 
+			
+			//	3. 
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 프로젝트_수행 단계 매핑 상세 조회  ]
+	 * 전달된 클라이언트의 기본 프로젝트 지정 수행 단계 상세 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.10
+	 * @param 	httpRequest								클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse								클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	projectExecuteStepMgmtRequest	클라이언트로부터 요청된 기본 프로젝트 지정 수행 단계 상세 추출 작업 수행 요청 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException						업체별 프로젝트 수행 단계 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/srvc/getAssignedProjectExecuteStepDetail")
+	public ResponseEntity<?> getProjectExecuteStepDetail(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody ProjectExecuteStepMgmtRequest projectExecuteStepMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		adminAuthData.setClientNm("통합 관리자");					//	임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		ProjectDto registerBaseProject = null;
+		Boolean registerResultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("getProjectExecuteStepDetail() projectExecuteStepMgmtRequest={}", projectExecuteStepMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(projectExecuteStepMgmtRequest.getTxId())) {
+				txId = projectExecuteStepMgmtRequest.getTxId();
+			}
+			
+			//	1. 
+			
+			//	2. 
+			
+			//	3. 
 			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
 			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
 		} catch(QNPWebException webException) {

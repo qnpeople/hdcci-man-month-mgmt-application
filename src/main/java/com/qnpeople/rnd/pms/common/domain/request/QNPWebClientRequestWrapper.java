@@ -3,6 +3,7 @@ package com.qnpeople.rnd.pms.common.domain.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qnpeople.rnd.pms.common.auth.QNPAuthData;
 
 import kr.co.sbn.platformhub.framework.core.common.base.domain.client.SBNClientRequestAdaptor;
 import kr.co.sbn.platformhub.framework.core.utils.SBNDateUtils;
@@ -33,6 +34,8 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 
 	/** 클라이언트로부터 전달된 JWT 토큰 접근 객체 */ 
 	protected SBNJwtAccessToken clientJwtAccessToken;
+	/** 클라이언트 인증 정보 객체 */
+	protected QNPAuthData<?> clientAuthData;
 	/** 목록 조회 요청 페이지 번호 정보 */
 	protected Integer pageNo;
 	
@@ -95,6 +98,30 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 	}
 	
 	/**
+	 * 	클라이언트 인증 정보 객체를 설정하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.15
+	 * @param 	clientAuthData		클라이언트 인증 정보 객체
+	 */
+	public void setClientAuthData(QNPAuthData<?> clientAuthData) {
+		if(!SBNUtils.isNull(clientAuthData)) {
+			this.clientAuthData = clientAuthData;
+		}
+	}
+	
+	/**
+	 * 클라이언트 인증 정보 객체를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.15
+	 * @return		클라이언트 인증 정보 객체
+	 */
+	public QNPAuthData<?> getClientAuthData() {
+		return clientAuthData;
+	}
+	
+	/**
 	 * 목록 조회 요청 페이지 번호 정보를 설정하는 메소드
 	 * 
 	 * @author		BeomSeok.Seo
@@ -146,6 +173,10 @@ public class QNPWebClientRequestWrapper extends SBNClientRequestAdaptor implemen
 			info.append(", ");
 			info.append("clientJwtAccessToken=").append(clientJwtAccessToken.toStringInfo());
 		}
+		if(!SBNUtils.isNull(clientAuthData)) {
+			info.append(", ");
+			info.append("clientAuthData=").append(clientAuthData.toStringInfo());
+		}		
 		if(!SBNUtils.isNull(pageNo) && (pageNo > 0)) {
 			info.append(", ");
 			info.append("pageNo=").append(pageNo);

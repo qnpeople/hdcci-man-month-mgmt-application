@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qnpeople.rnd.pms.apis.company.domain.request.CompanyEmployeeMgmtRequest;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeDto;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeSC;
 import com.qnpeople.rnd.pms.apis.company.service.CompanyEmployeeMgmtService;
@@ -48,9 +50,13 @@ import lombok.extern.slf4j.Slf4j;
  *  	업체_업체 근무자 등록
  *  	업체_업체 근무자 변경
  *  	업체_업체 근무자 삭제	=> 리팩토링 예정
+ *  	업체_업체 근무자 그룹 권한 지정
+ *  	업체_업체 근무자 그룹 권한 지정 해제
  *  [ 서비스 ]
  *  	업체_업체 근무자 목록 조회
  *  	업체_업체 근무자 상세 조회
+ *  	업체_업체 근무자 권한 그룹 목록 조회
+ *  	업체_업체 근무자 권한 그룹 상세 조회
  * =================================================================================
  */
 @RestController
@@ -66,7 +72,9 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 	//	관리
 	//		업체_업체 근무자 등록
 	//  	업체_업체 근무자 변경
-	//  	업체_업체 근무자 삭제	=> 리팩토링 예정
+	//  	업체_업체 근무자 삭제							=> 리팩토링 예정
+	//		업체_업체 근무자 그룹 권한 지정			=> 프로젝트 작업자로 리팩토링
+	//		업체_업체 근무자 그룹 권한 지정 해제		=> 프로젝트 작업자로 리팩토링
 	/////////////////////////////////////////////////////////////////		
 	/**
 	 * [ 업체_업체 근무자 등록 ]
@@ -80,7 +88,7 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
 	 * @throws 	QNPWebException							클라이언트의 업체 근무자 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
-	@PostMapping(value="/mgmt/registerCompanyEmployee")
+	@PostMapping(value="/mgmt/registerNewCompanyEmployee")
 	public ResponseEntity<?> registerCompanyEmployee(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyEmployeeMgmtRequest companyEmployeeMgmtRequest) throws QNPWebException {
 		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
 		String errorCode = reason.getReasonCode();
@@ -98,7 +106,7 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 		QNPResponseErrorData errorResponseData = null;
 		QNPResponsePacketEntityData responsePacketEntity = null;
 		try {
-			log.debug("registerCompanyEmployee() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
+			log.debug("registerNewCompanyEmployee() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
 			if(!SBNUtils.isNull(companyEmployeeMgmtRequest.getTxId())) {
 				txId = companyEmployeeMgmtRequest.getTxId();
 			}
@@ -115,7 +123,7 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 			registerEmployee = companyEmployeeMgmtRequest.getEmployee();
 			registerEmployee.setRgstSeq(adminAuthData.getClientSeq());
 			registerEmployee.setEmpleLognPwd(companyEmployeeInitLoginPwd);			
-			log.debug("registerCompanyEmployee() registerEmployee={}", registerEmployee.toStringInfo());
+			log.debug("registerNewCompanyEmployee() registerEmployee={}", registerEmployee.toStringInfo());
 						
 			//	2. 추출한 신규 등록 대상 업체 근무자 정보를 이용하여 업체 신규 근무자 등록 작업을 수행한다
 			registerResultFlag = companyEmployeeMgmtService.registerNewCompanyEmployee(registerEmployee);
@@ -324,6 +332,146 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 		}
 	}
 	
+	/**
+	 * [ 업체_업체 근무자 그룹 권한 지정 ]	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 클라이언트의 업체 근로자에 대한 시스템 권한 그룹 지정 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	httpRequest									클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse									클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	companyEmployeeMgmtRequest		클라이언트로부터 전달된 업체 근무자의 시스템 권한 그룹 지정 요청 수행을 위한 조건 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException							클라이언트의 업체 근무자 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/mgmt/registerCompanyEmpleeAuthGrp")
+	public ResponseEntity<?> registerCompanyEmpleeAuthGrp(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyEmployeeMgmtRequest companyEmployeeMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		EmployeeSC deleteEmployeeSC = null;
+		Boolean resultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("registerCompanyEmpleeAuthGrp() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(companyEmployeeMgmtRequest.getTxId())) {
+				txId = companyEmployeeMgmtRequest.getTxId();
+			}
+			
+			//	1. 전달된 업체 근무자 시스템 권한 지정 요청에 대한 작업 수행을 위한 유효성 체크 및 수행 조건 전달 객체 구축 작업을 수행한다
+
+			
+			//	2. 구축된 업체 근무자 시스템 권한 지정 요청에 대한 개별 근무자에 대한 권한 그룹 지정 처리 작업을 수행한다
+			
+			//	3. 수행 결과에 대해 클라이언트로의 응답 데이터 객체를 구축한다
+			if(!resultFlag) {
+				reason = QNPReasonCode.REGISTRATION_EXEC_FAILURE_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "업체 근무자 시스템 권한 그룹 지정 작업을 실패 했습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				//	오류 세부 상태 정보를 전달하기 위해 응답 상태를 200으로 하여 오류 메시지를 전달하는 방식으로 처리
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+			} else {
+				String resultMessage = "업체 근무자 시스템 권한 그룹 지정 작업을 정상 수행 했습니다.";
+				responseData = new QNPResponseData(resultMessage);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
+			}
+			
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 업체_업체 근무자 그룹 권한 지정 해제 ]	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 클라이언트의 업체 근로자에 대한 시스템 권한 그룹 지정 해제 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	httpRequest									클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse									클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	companyEmployeeMgmtRequest		클라이언트로부터 전달된 업체 근무자의 시스템 권한 그룹 지정 해제 요청 수행을 위한 조건 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException							클라이언트의 업체 근무자 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/mgmt/releaseCompanyEmpleeAuthGrp")
+	public ResponseEntity<?> releaseCompanyEmpleeAuthGrp(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyEmployeeMgmtRequest companyEmployeeMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		EmployeeSC deleteEmployeeSC = null;
+		Boolean resultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("releaseCompanyEmpleeAuthGrp() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(companyEmployeeMgmtRequest.getTxId())) {
+				txId = companyEmployeeMgmtRequest.getTxId();
+			}
+			
+			//	1. 전달된 업체 근무자 시스템 권한 지정 해제 요청에 대한 작업 수행을 위한 유효성 체크 및 수행 조건 전달 객체 구축 작업을 수행한다
+
+			
+			//	2. 구축된 업체 근무자 시스템 권한 지정 해제 요청에 대한 개별 근무자에 대한 권한 그룹 지정 해제 처리 작업을 수행한다
+			
+			//	3. 수행 결과에 대해 클라이언트로의 응답 데이터 객체를 구축한다
+			if(!resultFlag) {
+				reason = QNPReasonCode.REGISTRATION_EXEC_FAILURE_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "업체 근무자 시스템 권한 그룹 지정 해제 작업을 실패 했습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				//	오류 세부 상태 정보를 전달하기 위해 응답 상태를 200으로 하여 오류 메시지를 전달하는 방식으로 처리
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+			} else {
+				String resultMessage = "업체 근무자 시스템 권한 그룹 지정 해제 작업을 정상 수행 했습니다.";
+				responseData = new QNPResponseData(resultMessage);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
+			}
+			
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
 	/////////////////////////////////////////////////////////////////
 	//	서비스
 	//		업체_근무자 로그인 ID 중복 체크
@@ -331,6 +479,8 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 	//		업체_전체 근무자 목록 조회
 	//		업체_업체 근무자 목록 조회
 	//  	업체_업체 근무자 상세 조회
+	//		업체_업체 근무자 권한 그룹 목록 조회		=> 프로젝트 작업자로 리팩토링
+	//		업체_업체 근무자 권한 그룹 상세 조회		=> 프로젝트 작업자로 리팩토링
 	/////////////////////////////////////////////////////////////////		
 	/**
 	 * [ 업체_근무자 로그인 ID 중복 체크 ]
@@ -813,6 +963,176 @@ public class CompanyEmployeeMgmtController extends QNPWebBaseController {
 				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
 			}
 						
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 업체_업체 근무자 권한 그룹 목록 조회 ]	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 클라이언트의 업체 근로자에 대해 지정된 시스템 권한 그룹 목록 조회 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	httpRequest									클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse									클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	companyEmployeeMgmtRequest		클라이언트로부터 전달된 업체 근무자의 지정된 시스템 권한 그룹 목록 조회 요청 수행을 위한 조건 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException							클라이언트의 업체 근무자 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/srvc/getCompanyEmpleeAuthGrpList")
+	public ResponseEntity<?> getCompanyEmpleeAuthGrpList(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyEmployeeMgmtRequest companyEmployeeMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		EmployeeSC deleteEmployeeSC = null;
+		Boolean resultFlag = Boolean.FALSE;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("getCompanyEmpleeAuthGrpList() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(companyEmployeeMgmtRequest.getTxId())) {
+				txId = companyEmployeeMgmtRequest.getTxId();
+			}
+			
+			//	1. 전달된 업체 근무자에 지정된 시스템 권한 그룹 목록 조회 요청에 대한 작업 수행을 위한 유효성 체크 및 수행 조건 전달 객체 구축 작업을 수행한다
+
+			
+			//	2. 구축된 업체 근무자에 지정된 시스템 권한 그룹 목록 조회 요청에 대한 개별 근무자에 대한 권한 그룹 목록 조회 처리 작업을 수행한다
+			
+			//	3. 수행 결과에 대해 클라이언트로의 응답 데이터 객체를 구축한다
+			if(!resultFlag) {
+				reason = QNPReasonCode.REGISTRATION_EXEC_FAILURE_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "업체 근무자 시스템 권한 그룹 지정 해제 작업을 실패 했습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				//	오류 세부 상태 정보를 전달하기 위해 응답 상태를 200으로 하여 오류 메시지를 전달하는 방식으로 처리
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+			} else {
+				String resultMessage = "업체 근무자 시스템 권한 그룹 지정 해제 작업을 정상 수행 했습니다.";
+				responseData = new QNPResponseData(resultMessage);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
+			}
+			
+			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
+			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+		} catch(QNPWebException webException) {
+			throw webException; 
+		} catch(Exception exception) {
+			if(!SBNUtils.isNull(exception.getMessage())) {
+				errorMessage = exception.getMessage();
+			} else {
+				errorMessage = exception.toString();
+			}
+			errorResponseData = new QNPResponseErrorData();
+			errorResponseData.setCode(errorCode);
+			errorResponseData.setMessage(errorMessage);
+			throw new QNPWebException(reason, errorCode, errorMessage);
+		}
+	}
+	
+	/**
+	 * [ 업체_업체 근무자 권한 그룹 상세 조회 ]	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 클라이언트의 업체 근로자에 대해 지정된 시스템 권한 그룹 상세 조회 요청 전달 정보에 대한 작업 수행 후, 수행 결과 응답 패킷 데이터 구성 후 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	httpRequest									클라이언트의 요청에 대한 정보를 전달하는 HttpServletRequest 인터페이스 객체
+	 * @param 	httpResponse									클라이언트의 요청에 대한 수행 결과 응답을 전달하는 HttpServletResponse 인터페이스 객체
+	 * @param 	companyEmployeeMgmtRequest		클라이언트로부터 전달된 업체 근무자의 지정된 시스템 권한 그룹 상세 조회 요청 수행을 위한 조건 정보 전달 객체
+	 * @return		전달된 클라이언트의 요청 전달 정보에 대한 작업 수행 결과 응답 패킷 객체
+	 * @throws 	QNPWebException							클라이언트의 업체 근무자 관리 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	@PostMapping(value="/srvc/getCompanyEmpleeAuthGrpDetail")
+	public ResponseEntity<?> getCompanyEmpleeAuthGrpDetail(HttpServletRequest httpRequest, HttpServletResponse httpResponse, @RequestBody CompanyEmployeeMgmtRequest companyEmployeeMgmtRequest) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.FRAMEWORK_BUSINESS_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	인증 및 세션 처리 객체
+		QNPAuthData adminAuthData = new QNPAuthData();	//	세션으로부터 추출한 클라이언트 권한 정보 객체
+		adminAuthData.setClientSeq(1L);									// 임시 테스트를 위한 정보 설정
+		//	요청 수행 객체
+		String txId = SBNUtils.createSystemRandomId(true);
+		EmployeeAuthGrpSC employeeAuthGrpSC = null;
+		EmployeeAuthGrpDto employeeAuthGrpDetail = null;
+		//	응답 전달 객체
+		QNPResponseData responseData = null;
+		QNPResponseErrorData errorResponseData = null;
+		QNPResponsePacketEntityData responsePacketEntity = null;
+		try {
+			log.debug("getCompanyEmpleeAuthGrpDetail() companyEmployeeMgmtRequest={}", companyEmployeeMgmtRequest.toStringInfo());
+			if(!SBNUtils.isNull(companyEmployeeMgmtRequest.getTxId())) {
+				txId = companyEmployeeMgmtRequest.getTxId();
+			}
+			//	
+			if((SBNUtils.isNull(companyEmployeeMgmtRequest.getCompSeq()) || (companyEmployeeMgmtRequest.getCompSeq() <= 0)) &&
+			    SBNUtils.isNull(companyEmployeeMgmtRequest.getCompCd())) {
+				reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "근무자 소속 업체 키 정보가 전달되지 않았습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+				return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+			}
+			if((SBNUtils.isNull(companyEmployeeMgmtRequest.getEmpleSeq()) || (companyEmployeeMgmtRequest.getEmpleSeq() <= 0))) {
+				reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "업체 근무자 식별자 정보가 전달되지 않았습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+				return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+			}
+//			if((SBNUtils.isNull(companyEmployeeMgmtRequest.getcompOrgSeq()) || (companyEmployeeMgmtRequest.getEmpleSeq() <= 0))) {
+//				reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+//				errorCode = reason.getReasonCode();
+//				errorMessage = "업체 근무자 식별자 정보가 전달되지 않았습니다.";
+//				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+//				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+//				return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
+//			}
+			
+			
+			//	1. 전달된 업체 근무자에 지정된 시스템 권한 그룹에 대한 상세 정보 조회 요청에 대한 작업 수행을 위한 유효성 체크 및 수행 조건 전달 객체 구축 작업을 수행한다
+			employeeAuthGrpSC = new EmployeeAuthGrpSC();
+//			if() {
+//				
+//			}
+			
+			//	2. 구축된 업체 근무자에 지정된 시스템 권한 그룹에 대한 상세 정보 조회 요청에 대한 개별 근무자에 대한 권한 그룹 목록 조회 처리 작업을 수행한다
+			employeeAuthGrpDetail = companyEmployeeMgmtService.getCompanyEmployeeAuthGroupDetail(employeeAuthGrpSC);
+			
+			//	3. 수행 결과에 대해 클라이언트로의 응답 데이터 객체를 구축한다
+			if(SBNUtils.isNull(employeeAuthGrpDetail)) {
+				reason = QNPReasonCode.REGISTRATION_EXEC_FAILURE_ERROR;
+				errorCode = reason.getReasonCode();
+				errorMessage = "업체 근무자 시스템 권한 그룹 정보가 존재하지 않습니다.";
+				errorResponseData = new QNPResponseErrorData(errorCode, errorMessage);
+				//	오류 세부 상태 정보를 전달하기 위해 응답 상태를 200으로 하여 오류 메시지를 전달하는 방식으로 처리
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), errorResponseData);
+			} else {
+				responseData = new QNPResponseData(employeeAuthGrpDetail);
+				responsePacketEntity = new QNPResponsePacketEntityData(txId, HttpStatus.OK.value(), responseData);
+			}
+			
 			//	4. 최종 구성된 수행 결과 응답 객체를 ResponseEntity 객체로 구축 및 전달 후 작업을 종료한다
 			return QNPResponseEntityUtils.buildResponseEntityPacket(responsePacketEntity);
 		} catch(QNPWebException webException) {

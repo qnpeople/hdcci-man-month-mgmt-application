@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.project.bsc.mapper.ProjectCompBaseOrgMgmtMapper">
+	<!-- 프로젝트 수행 업체 기본 조직 정보 -->
+	<resultMap id="projectCompBaseOrg" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgDto">
+		<id property="compOrgSeq" column="COMP_ORG_SEQ" />
+		<result property="compSeq" column="COMP_SEQ" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="compOrgNm" column="COMP_ORG_NM" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="compOrgDesc" column="COMP_ORG_DESC" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>	
+	<!-- 프로젝트 수행 업체 기본 조직 매핑 정보 -->
+	<resultMap id="projectCompBaseOrgMap" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompExecuteOrgMapDto">
+		<id property="prjctSeq" column="PRJCT_SEQ" />
+		<id property="compOrgSeq" column="COMP_ORG_SEQ" />
+		<result property="compSeq" column="COMP_SEQ" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="prjctCd" column="PRJCT_CD" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="prjctNm" column="PRJCT_NM" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>	
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 수행 업체 기본 정보 및 매핑 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 프로젝트 수행 업체 기본 조직 정보 등록 수행 쿼리 -->
+	<insert id="insertProjectCompanyBaseOrganization" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgDto">
+		INSERT INTO PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL (
+			COMP_SEQ
+		  , 	COMP_CD
+		  , USE_YN
+		  , COMP_ORG_NM
+		  , COMP_NM
+		  , COMP_ORG_DESC
+		  , RGST_DT
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{compSeq, jdbcType=NUMERIC}
+		  , 	#{compCd, jdbcType=VARCHAR}
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE   #{useYn, jdbcType=VARCHAR}
+				END
+		   )
+		  ,  #{compOrgNm, jdbcType=VARCHAR}
+		  ,  #{compNm, jdbcType=VARCHAR}
+		  ,  #{compOrgDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , #{rgstNm, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 프로젝트 수행 업체 기본 조직 정보 수정 수행 쿼리 -->
+	<update id="updateProjectCompanyBaseOrganization" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgDto">
+		UPDATE PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL
+		SET 		USE_YN 		= 	(
+							CASE
+								WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+								ELSE   #{useYn, jdbcType=VARCHAR}
+							END
+				    )
+				  , COMP_ORG_NM 	=	(
+							CASE
+								WHEN (#{compOrgNm, jdbcType=VARCHAR} IS NULL OR #{compOrgNm, jdbcType=VARCHAR} = '') THEN COMP_ORG_NM
+								ELSE   #{compOrgNm, jdbcType=VARCHAR}
+							END
+				    )
+				  , COMP_ORG_DESC 	= 	(
+							CASE
+								WHEN (#{compOrgDesc, jdbcType=VARCHAR} IS NULL OR #{compOrgDesc, jdbcType=VARCHAR} = '') THEN COMP_ORG_DESC
+								ELSE   #{compOrgDesc, jdbcType=VARCHAR}
+							END
+				    )
+				  , UPDT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ 	=	#{deltSeq, jdbcType=NUMERIC}	
+				  , UPDT_NM 	= 	#{deltNm, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		DELT_YN = 'N'
+		AND 		(((#{compOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{compOrgSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG_SEQ = #{compOrgSeq, jdbcType=NUMERIC}))
+	</update>
+
+	<!-- 프로젝트 수행 업체 기본 조직 정보 삭제 수행 쿼리 -->
+	<delete id="deleteProjectCompanyBaseOrganization" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgSC">
+		UPDATE PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL
+		SET 		USE_YN 		= 	'N'
+				  , DELT_YN 	= 	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	#{deltSeq, jdbcType=NUMERIC}	
+				  , DELT_NM 	= 	#{deltNm, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		DELT_YN = 'N'
+		AND 		(((#{compOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{compOrgSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG_SEQ = #{compOrgSeq, jdbcType=NUMERIC}))
+	</delete>
+
+	<!-- 프로젝트 수행 업체 조직 매핑 등록 수행 쿼리 -->
+	<insert id="insertProjectCompanyOrgizationMap" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompExecuteOrgMapDto">
+		INSERT INTO PRJ_PRJCT_EXEC_COMP_ORG_MAP (
+			PRJCT_SEQ
+		  , COMP_ORG_SEQ
+		  , COMP_SEQ
+		  , USE_YN
+		  , PRJCT_CD
+		  , COMP_CD
+		  , PRJCT_NM
+		  , COMP_NM
+		  , RGST_DT	
+		  , RGST_SEQ
+		  , RGST_NM
+		)
+		VALUES (
+			#{prjctSeq, jdbcType=NUMERIC}
+		  , 	#{compOrgSeq, jdbcType=NUMERIC}
+		  , #{compSeq, jdbcType=NUMERIC}
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE    #{useYn, jdbcType=VARCHAR}
+				END	
+		    )
+		   , #{prjctCd, jdbcType=VARCHAR}
+		   , #{compCd, jdbcType=VARCHAR}
+		   , #{prjctNm, jdbcType=VARCHAR} 
+		   , #{compNm, jdbcType=VARCHAR}
+		   , CURRENT_TIMESTAMP(3)
+		   , #{rgstSeq, jdbcType=NUMERIC}
+		   , #{rgstNm, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 프로젝트 수행 업체 조직 매핑 변경 수행 쿼리 => 보류 -->
+	<update id="updateProjectCompanyOrgizationMap" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompExecuteOrgMapDto">	
+	</update>
+	
+	<!-- 프로젝트 수행 업체 조직 매핑 삭제 수행 쿼리 -->
+	<delete id="deleteProjectCompanyOrgizationMap" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgSC">
+		DELETE 
+		FROM 	PRJ_PRJCT_EXEC_COMP_ORG_MAP
+		WHERE 	1 	= 	1
+		AND 		PRJCT_SEQ 				= 	#{prjctSeq, jdbcType=NUMERIC}
+		AND 		COMP_ORG_SEQ 	= 	#{compOrgSeq, jdbcType=NUMERIC}
+	</delete>
+	
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 수행 업체 기본 정보 및 매핑 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 프로젝트 수행 업체 기본 조직 정보 목록 조회 수행 쿼리 -->
+	<select id="selectProjectCompanyBaseOrganizationList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgSC" resultMap="projectCompBaseOrg">
+		SELECT 	COMP_ORG.COMP_ORG_SEQ
+				  , COMP_ORG.COMP_SEQ
+				  , COMP_ORG.COMP_CD
+				  , COMP_ORG.COMP_ORG_NM
+				  , COMP_ORG.COMP_NM
+				  , COMP_ORG.COMP_ORG_DESC
+				  , COMP_ORG.USE_YN
+				  , COMP_ORG.DELT_YN
+    			  , TO_CHAR(COMP_ORG.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , COMP_ORG.RGST_SEQ
+    			  , COMP_ORG.RGST_NM
+    			  , TO_CHAR(COMP_ORG.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , COMP_ORG.UPDT_SEQ
+    			  , COMP_ORG.UPDT_NM
+    			  , TO_CHAR(COMP_ORG.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , COMP_ORG.DELT_SEQ
+    			  , COMP_ORG.DELT_NM
+		FROM 	PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL 	COMP_ORG
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP_ORG.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		COMP_ORG.DELT_YN = 'N'
+		AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+		AND 		(((#{compCd, jdbcType=VARCHAR} IS NULL) OR (#{compCd, jdbcType=VARCHAR} = '')) OR (COMP_ORG.COMP_CD = #{compNm, jdbcType=VARCHAR}))
+		AND 		(((#{compNm, jdbcType=VARCHAR} IS NULL) OR (#{compNm, jdbcType=VARCHAR} = '')) OR (COMP_ORG.COMP_NM LIKE '%' || #{compNm, jdbcType=VARCHAR} || '%'))
+		AND 		(((#{compOrgNm, jdbcType=VARCHAR} IS NULL) OR (#{compOrgNm, jdbcType=VARCHAR} = '')) OR (COMP_ORG.COMP_ORG_NM LIKE '%' || #{compOrgNm, jdbcType=VARCHAR} || '%'))
+	</select>
+
+	<!-- 프로젝트 수행 업체 기본 조직 정보 상세 조회 수행 쿼리 -->
+	<select id="selectProjectCompanyBaseOrganizationDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompBaseOrgSC" resultMap="projectCompBaseOrg">
+		SELECT 	COMP_ORG.COMP_ORG_SEQ
+				  , COMP_ORG.COMP_SEQ
+				  , COMP_ORG.COMP_CD
+				  , COMP_ORG.COMP_ORG_NM
+				  , COMP_ORG.COMP_NM
+				  , COMP_ORG.COMP_ORG_DESC
+				  , COMP_ORG.USE_YN
+				  , COMP_ORG.DELT_YN
+    			  , TO_CHAR(COMP_ORG.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , COMP_ORG.RGST_SEQ
+    			  , COMP_ORG.RGST_NM
+    			  , TO_CHAR(COMP_ORG.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , COMP_ORG.UPDT_SEQ
+    			  , COMP_ORG.UPDT_NM
+    			  , TO_CHAR(COMP_ORG.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , COMP_ORG.DELT_SEQ
+    			  , COMP_ORG.DELT_NM
+		FROM 	PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL 	COMP_ORG
+		WHERE 	1 	= 	1
+		AND 		COMP_ORG.DELT_YN = 'N'
+		AND 		(((#{compOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{compOrgSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG.COMP_ORG_SEQ = #{compOrgSeq, jdbcType=NUMERIC}))
+	</select>
+	
+	<!-- 프로젝트 수행 업체 조직 매핑 정보 목록 조회 수행 쿼리 -->
+	<select id="selectAssignedProjectCompanyOrganizationMapList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompExecuteOrgMapSC" resultMap="projectCompBaseOrgMap">
+		SELECT 	COMP_ORG_MAP.PRJCT_SEQ
+				  , COMP_ORG_MAP.COMP_ORG_SEQ
+				  , COMP_ORG_MAP.COMP_SEQ
+				  , COMP_ORG_MAP.USE_YN
+				  , COMP_ORG_MAP.DELT_YN
+				  , COMP_ORG_MAP.PRJCT_CD
+				  , COMP_ORG_MAP.COMP_CD
+				  , COMP_ORG_MAP.PRJCT_NM
+				  , COMP_ORG_MAP.COMP_NM
+    			  , TO_CHAR(COMP_ORG_MAP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , COMP_ORG_MAP.RGST_SEQ
+    			  , COMP_ORG_MAP.RGST_NM
+    			  , TO_CHAR(COMP_ORG_MAP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , COMP_ORG_MAP.UPDT_SEQ
+    			  , COMP_ORG_MAP.UPDT_NM
+    			  , TO_CHAR(COMP_ORG_MAP.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , COMP_ORG_MAP.DELT_SEQ
+    			  , COMP_ORG_MAP.DELT_NM
+		FROM 	PRJ_PRJCT_EXEC_COMP_ORG_MAP		COMP_ORG_MAP
+		WHERE 	1 	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (COMP_ORG_MAP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+		AND 		COMP_ORG_MAP.DELT_YN 	=	'N'
+		AND 		(((#{compOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{compOrgSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG_MAP.COMP_ORG_SEQ = #{compOrgSeq, jdbcType=NUMERIC}))
+		AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG_MAP.PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))		
+		AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (COMP_ORG_MAP.PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+		AND 		(((#{prjctNm, jdbcType=VARCHAR} IS NULL) OR (#{prjctNm, jdbcType=VARCHAR} = '')) OR (COMP_ORG_MAP.PRJCT_NM LIKE '%' || #{prjctNm, jdbcType=VARCHAR} || '%'))
+		AND 		(((#{compNm, jdbcType=VARCHAR} IS NULL) OR (#{compNm, jdbcType=VARCHAR} = '')) OR (COMP_ORG_MAP.COMP_NM LIKE '%' || #{compNm, jdbcType=VARCHAR} || '%'))
+	</select>
+	
+	<!-- 프로젝트 수행 업체 조직 매핑 정보 상세 조회 수행 쿼리 -->
+	<select id="selectAssignedProjectCompanyOrganizationMapDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectCompExecuteOrgMapSC" resultMap="projectCompBaseOrgMap">
+		SELECT 	COMP_ORG_MAP.PRJCT_SEQ
+				  , COMP_ORG_MAP.COMP_ORG_SEQ
+				  , COMP_ORG_MAP.COMP_SEQ
+				  , COMP_ORG_MAP.USE_YN
+				  , COMP_ORG_MAP.DELT_YN
+				  , COMP_ORG_MAP.PRJCT_CD
+				  , COMP_ORG_MAP.COMP_CD
+				  , COMP_ORG_MAP.PRJCT_NM
+				  , COMP_ORG_MAP.COMP_NM
+    			  , TO_CHAR(COMP_ORG_MAP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	RGST_DT
+    			  , COMP_ORG_MAP.RGST_SEQ
+    			  , COMP_ORG_MAP.RGST_NM
+    			  , TO_CHAR(COMP_ORG_MAP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	UPDT_DT
+    			  , COMP_ORG_MAP.UPDT_SEQ
+    			  , COMP_ORG_MAP.UPDT_NM
+    			  , TO_CHAR(COMP_ORG_MAP.DELT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') 	AS 	DELT_DT
+    			  , COMP_ORG_MAP.DELT_SEQ
+    			  , COMP_ORG_MAP.DELT_NM
+		FROM 	PRJ_PRJCT_EXEC_COMP_ORG_MAP		COMP_ORG_MAP
+		WHERE 	1 	= 	1
+		AND 		COMP_ORG_MAP.DELT_YN 				= 	'N'
+		AND 		COMP_ORG_MAP.COMP_ORG_SEQ 	= 	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		(((#{prjctSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG_MAP.PRJCT_SEQ = #{prjctSeq, jdbcType=NUMERIC}))		
+		AND 		(((#{prjctCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctCd, jdbcType=VARCHAR} = '')) OR (COMP_ORG_MAP.PRJCT_CD = #{prjctCd, jdbcType=VARCHAR}))
+	</select>
+</mapper>

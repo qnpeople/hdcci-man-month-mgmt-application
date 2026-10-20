@@ -33,6 +33,9 @@ server:
       directory: log/access
     basedir: C://SBN/data/hdcci-man-month-application/lcl
     additional-tld-skip-patterns: "*.jar"
+  servlet:
+    session:
+     timeout: 60m   # 10분 세션 유지 설정
 
 spring:
   config:
@@ -47,7 +50,7 @@ spring:
       prefix: /WEB-INF/view/
       suffix: .jsp
 
-   # 서블릿 업로드 파일 사이즈 설정    
+   # 서블릿 세션 및 업로드 파일 사이즈 설정    
   servlet:
     multipart:
       max-file-size: -1
@@ -55,7 +58,6 @@ spring:
 
 logging:
   config: classpath:config/logback/logback-spring-lcl.xml # src/main/resources/config/logback/logback-spring-lcl.xml :
-
 
 ---
 ################################################
@@ -71,6 +73,9 @@ server:
       directory: log/access
     basedir: /data/hdcci-man-month-application/lcl
     additional-tld-skip-patterns: "*.jar"
+  servlet:
+   session:
+     timeout: 60m   # 10m: 10분 세션 유지 설정
 
 spring:
   config:
@@ -94,15 +99,83 @@ spring:
 logging:
   config: classpath:config/logback/logback-spring-dev.xml
 
-
 ---
 ################################################
 # STG
 ################################################
+server:
+  port: 8080
+  tomcat:
+    max-connections: 100
+    accesslog:
+      pattern: '%h %l %u %t "%r" %s %b %T'
+      enabled: true
+      directory: log/access
+    basedir: /hdcci/data/hdcci-man-month-application/stg
+    additional-tld-skip-patterns: "*.jar"
+  servlet:
+    session:
+     timeout: 10m   # 10분 세션 유지 설정
 
+spring:
+  config:
+   activate:
+     on-profile: prd
+
+ # MVC 및 JSP 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+
+   # 서블릿 세션 및 업로드 파일 사이즈 설정    
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+logging:
+  config: classpath:config/logback/logback-spring-stg.xml
 
 
 ---
 ################################################
 # PRD
 ################################################
+server:
+  port: 8080
+  tomcat:
+    max-connections: 100
+    accesslog:
+      pattern: '%h %l %u %t "%r" %s %b %T'
+      enabled: true
+      directory: log/access
+    basedir: /hdcci/data/hdcci-man-month-application/prd
+    additional-tld-skip-patterns: "*.jar"
+  servlet:
+    session:
+     timeout: 10m   # 10분 세션 유지 설정
+
+spring:
+  config:
+   activate:
+     on-profile: prd
+
+ # MVC 및 JSP 설정
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+    view:
+      prefix: /WEB-INF/view/
+      suffix: .jsp
+
+   # 서블릿 세션 및 업로드 파일 사이즈 설정    
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+
+logging:
+  config: classpath:config/logback/logback-spring-prd.xml

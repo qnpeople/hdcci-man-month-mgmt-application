@@ -198,6 +198,10 @@ public enum QNPReasonCode implements QNPReasonInterface {
 	REGISTRATION_EXEC_FAILURE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20202", "등록 요청 수행 실패 오류", "등록 요청 수행 실패 오류", Boolean.TRUE),
 	MODIFICATION_EXEC_FAILURE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20203", "변경 요청 수행 실패 오류", "변경 요청 수행 실패 오류", Boolean.TRUE),
 	DELETION_EXEC_FAILURE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20204", "삭제 요청 수행 실패 오류", "삭제 요청 수행 실패 오류", Boolean.TRUE),
+	NONE_CLIENT_SESSION_ERROR(HttpStatus.NON_AUTHORITATIVE_INFORMATION, "20205", "클라이언트 세션 미 존재 오류", "클라이언트 세션 미 존재 오류", Boolean.TRUE),
+	
+	//	Business > Auth Error (20301 ~ )
+	NONE_INIT_PWD_CHANGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "20301", "초기 비밀번호 미 변경 오류", "초기 비밀번호 미 변경 오류", Boolean.TRUE),
 	
 	//	공통 오류 사유 정의 ( 99990 ~ 99999 )
 	ETC_ERROR(HttpStatus.INTERNAL_SERVER_ERROR , SBNConstant.ETC_ERR_CODE, SBNConstant.ETC_ERR__MSG, "기타 오류 사유 코드.", Boolean.TRUE),										// 99997

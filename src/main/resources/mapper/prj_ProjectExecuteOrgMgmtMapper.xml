@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qnpeople.rnd.pms.apis.project.bsc.mapper.ProjectExecuteOrgMgmtMapper">
+	
+	<!-- 프로젝트 업체별 수행 조직도 정보 -->
+	<resultMap id="projectExecuteCompOrg" type="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgDto">
+		<id property="prjctOrgSeq" column="PRJCT_ORG_SEQ" />
+		<result property="compOrgSeq" column="COMP_ORG_SEQ" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="prjctOrgCd" column="PRJCT_ORG_CD" />
+		<result property="prjctOrgLvl" column="PRJCT_ORG_LVL" />
+		<result property="prjctOrgOrd" column="PRJCT_ORG_ORD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="deltYn" column="DELT_YN" />
+		<result property="compNm" column="COMP_NM" />
+		<result property="prjctOrgNm" column="PRJCT_ORG_NM" />
+		<result property="prntPrjctOrgSeq" column="PRNT_PRJCT_ORG_SEQ" />
+		<result property="prntPrjctOrgCd" column="PRNT_PRJCT_ORG_CD" />
+		<result property="prntPrjctOrgNm" column="PRNT_PRJCT_ORG_NM" />
+		<result property="prjctOrgDesc" column="PRJCT_ORG_DESC" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+		<result property="deltDt" column="DELT_DT" />
+		<result property="deltSeq" column="DELT_SEQ" />
+		<result property="deltNm" column="DELT_NM" />
+	</resultMap>	
+
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 수행 업체의 조직도 정보 관리 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 프로젝트 수행 업체 신규 조직도 정보 등록 수행 쿼리 -->
+	<insert id="insertProjectExecuteOrganization" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgDto">
+		INSERT INTO PRJ_PRJCT_COMP_ORG_INFO_TBL (
+			COMP_ORG_SEQ
+		  , 	PRJCT_ORG_CD
+  	 	  , PRJCT_ORG_LVL
+  	 	  , 	PRJCT_ORG_ORD
+  	 	  , USE_YN
+  	 	  , PRJCT_ORG_NM
+  	 	  , PRNT_PRJCT_ORG_SEQ
+  	 	  , PRJCT_ORG_DESC
+  	 	  , RGST_DT
+  	 	  , RGST_SEQ
+  	 	  , RGST_NM
+		)
+		VALUES (
+			#{compOrgSeq, jdbcType=NUMERIC}
+		  , #{prjctOrgCd, jdbcType=VARCHAR}
+		  , 	#{prjctOrgLvl, jdbcType=NUMERIC}
+		  , (
+				CASE
+					WHEN ((#{prjctOrgOrd, jdbcType=NUMERIC} IS NULL) OR (#{prjctOrgOrd, jdbcType=NUMERIC} = 0)) THEN (
+						SELECT 	(MAX(COMP_ORG.PRJCT_ORG_ORD)+ 1) 	AS MAX_PRJCT_ORG_ORD
+						FROM 	PRJ_PRJCT_COMP_ORG_INFO_TBL	 COMP_ORG
+						WHERE 	1 	= 	1
+						AND 		COMP_ORG.DELT_YN 						=	'N'
+						AND 		COMP_ORG.COMP_ORG_SEQ 			= 	#{compOrgSeq, jdbcType=NUMERIC}
+						AND 		COMP_ORG.PRNT_PRJCT_ORG_SEQ 	= 	#{prntPrjctOrgSeq, jdbcType=NUMERIC}
+					)
+					ELSE   #{prjctOrgOrd, jdbcType=NUMERIC}
+				END
+			)
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE  #{useYn, jdbcType=VARCHAR}
+				END
+		    )
+		  , #{prjctOrgNm, jdbcType=VARCHAR}
+		  , #{prntPrjctOrgSeq, jdbcType=NUMERIC}
+		  , #{prjctOrgDesc, jdbcType=VARCHAR}
+		  , CURRENT_TIMESTAMP(3)
+		  , #{rgstSeq, jdbcType=NUMERIC}
+		  , #{rgstNm, jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<!-- 프로젝트 수행 업체 조직도 정보 변경 수행 쿼리 -->
+	<update id="updateProjectExecuteOrganization"  parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgDto">
+		UPDATE PRJ_PRJCT_COMP_ORG_INFO_TBL
+		SET 		PRJCT_ORG_LVL 				= (
+						CASE
+							WHEN (#{prjctOrgLvl, jdbcType=NUMERIC} IS NULL OR #{prjctOrgLvl, jdbcType=NUMERIC} = 0) THEN PRJCT_ORG_LVL
+							ELSE   #{prjctOrgLvl, jdbcType=NUMERIC}
+						END
+				   )
+				  , PRJCT_ORG_ORD 			= (
+						CASE
+							WHEN (#{prjctOrgOrd, jdbcType=NUMERIC} IS NULL OR #{prjctOrgOrd, jdbcType=NUMERIC} = 0) THEN PRJCT_ORG_ORD
+							ELSE   #{prjctOrgOrd, jdbcType=NUMERIC}
+						END
+				   )
+				  , USE_YN 							= (
+						CASE
+							WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN USE_YN
+							ELSE   #{useYn, jdbcType=VARCHAR}
+						END
+				   )
+				  , PRJCT_ORG_NM 				= (
+						CASE
+							WHEN (#{prjctOrgNm, jdbcType=VARCHAR} IS NULL OR #{prjctOrgNm, jdbcType=VARCHAR} = '') THEN PRJCT_ORG_NM
+							ELSE   #{prjctOrgNm, jdbcType=VARCHAR}
+						END
+				   )
+				  , PRNT_PRJCT_ORG_SEQ 	= (
+						CASE
+							WHEN (#{prntPrjctOrgSeq, jdbcType=NUMERIC} IS NULL OR #{prntPrjctOrgSeq, jdbcType=NUMERIC} = 0) THEN PRNT_PRJCT_ORG_SEQ
+							ELSE  #{prntPrjctOrgSeq, jdbcType=NUMERIC}
+						END
+				   )
+				  , PRJCT_ORG_DESC 			= (
+						CASE
+							WHEN (#{prjctOrgDesc, jdbcType=VARCHAR} IS NULL OR #{prjctOrgDesc, jdbcType=VARCHAR} = '') THEN PRJCT_ORG_DESC
+							ELSE   #{prjctOrgDesc, jdbcType=VARCHAR}
+						END
+				   )
+				  , UPDT_DT = CURRENT_TIMESTAMP(3)
+				  , UPDT_SEQ = #{updtSeq, jdbcType=NUMERIC}
+				  , UPDT_NM = #{updtNm, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		DELT_YN  = 'N'
+		AND 		COMP_ORG_SEQ =	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		(((#{prjctOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctOrgSeq, jdbcType=NUMERIC} = 0)) OR (PRJCT_ORG_SEQ  =  #{prjctOrgSeq, jdbcType=NUMERIC}))
+		AND 		(((#{prjctOrgCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctOrgCd, jdbcType=VARCHAR} = '')) OR (PRJCT_ORG_CD  =  #{prjctOrgCd, jdbcType=VARCHAR}))
+	</update>
+	
+	<!-- 프로젝트 수행 업체 조직도 정보 삭제 수행 쿼리 -->
+	<delete id="deleteProjectExecuteOrganization" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC">
+		UPDATE 	PRJ_PRJCT_COMP_ORG_INFO_TBL
+		SET 		USE_YN 		= 	'N'
+				  , DELT_YN 	=	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	#{deltSeq, jdbcType=NUMERIC}
+				  , DELT_NM 	= 	#{deltNm, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		COMP_ORG_SEQ 	=	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		PRJCT_ORG_SEQ 		= 	#{prjctOrgSeq, jdbcType=NUMERIC}
+	</delete>
+	<!-- 프로젝트 수행 업체 조직도 지정 투입자 일괄 삭제 수행 쿼리 -->
+	<delete id="deleteAllProjectExecutorOrganizationWorkers" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC">
+		UPDATE PRJ_PRJCT_WRKR_INFO_TBL
+		SET 		USE_YN 		= 	'N'
+				  , DELT_YN 	=	'Y'
+				  , DELT_DT 	= 	CURRENT_TIMESTAMP(3)
+				  , DELT_SEQ 	=	#{deltSeq, jdbcType=NUMERIC}
+				  , DELT_NM 	= 	#{deltNm, jdbcType=VARCHAR}
+		WHERE 	1 	= 	1
+		AND 		COMP_ORG_SEQ 	=	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		PRJCT_ORG_SEQ 		= 	#{prjctOrgSeq, jdbcType=NUMERIC}
+	</delete>
+
+	<!-- 
+	///////////////////////////////////////////////////////////////////////////////
+	// 프로젝트 수행 업체의 조직도 정보 서비스 쿼리 정의
+	/////////////////////////////////////////////////////////////////////////////// 
+    -->
+	<!-- 신규 등록 대상 프로젝트 수행 업체 조직도 코드 중복 여부 체크 수행 쿼리 -->
+	<select id="selectProjectExecuteOrganizationCodeDuplication" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC" resultType="java.lang.Boolean">
+		SELECT 	(
+						CASE
+							WHEN (COUNT(PRJCT_ORG_CD) <![CDATA[ > ]]> 0) THEN true
+							ELSE   false 
+						END
+					) 	AS DUP_FLAG
+		FROM 	PRJ_PRJCT_COMP_ORG_INFO_TBL
+		WHERE 	1 	= 	1
+		AND 		COMP_ORG_SEQ 	=	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		PRJCT_ORG_CD 		= 	#{prjctOrgCd, jdbcType=VARCHAR}
+	</select>
+
+	<!-- 전체 프로젝트 수행 업체 조직도 트리 목록 추출 수행 쿼리 -->
+	<select id="selectTotalProjectExecuteOrganizationTreeList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC" resultMap="projectExecuteCompOrg">
+		WITH RECURSIVE PRJ_PRJCT_COMP_ORG_TREE AS (
+			SELECT 	COMP_ORG.PRJCT_ORG_SEQ
+					  , COMP_ORG.COMP_ORG_SEQ
+					  , COMP_BSC_ORG.COMP_CD
+					  , COMP_ORG.PRJCT_ORG_CD			  
+					  , COMP_ORG.PRJCT_ORG_LVL
+					  , COMP_ORG.PRJCT_ORG_ORD
+					  , COMP_ORG.USE_YN
+					  , COMP_ORG.DELT_YN
+					  , COMP_BSC_ORG.COMP_NM
+					  , COMP_ORG.PRJCT_ORG_NM
+					  , COMP_ORG.PRJCT_ORG_NM::VARCHAR(255) 									AS PRJCT_ORG_TREE_NM
+					  , COMP_ORG.PRJCT_ORG_DESC
+					  , COMP_ORG.PRNT_PRJCT_ORG_SEQ
+					  , NULL::VARCHAR(255)																	AS PRNT_PRJCT_ORG_CD
+					  , PRNT_COMP_ORG.PRJCT_ORG_NM													AS PRNT_PRJCT_ORG_NM
+					  , COMP_ORG.PRJCT_ORG_CD::VARCHAR(255)	 									AS PRNT_PRJCT_ORG_CD_PATH
+					  , LPAD(COMP_ORG.PRJCT_ORG_ORD::TEXT, 3, '0')::VARCHAR(255) 			AS PRJCT_ORG_SORT_PATH
+			FROM 	PRJ_PRJCT_COMP_ORG_INFO_TBL					COMP_ORG
+			LEFT OUTER JOIN PRJ_PRJCT_COMP_ORG_INFO_TBL 	PRNT_COMP_ORG
+				ON 	PRNT_COMP_ORG.PRJCT_ORG_SEQ 	= 	COMP_ORG.PRNT_PRJCT_ORG_SEQ
+				AND 	COMP_ORG.DELT_YN 	=	'N'
+			LEFT JOIN 	PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL		COMP_BSC_ORG
+				ON 	COMP_ORG.COMP_ORG_SEQ 	= 	COMP_BSC_ORG.COMP_ORG_SEQ
+				AND 	COMP_BSC_ORG.USE_YN 			= 	'Y'
+				AND 	COMP_BSC_ORG.DELT_YN 		= 	'N'
+			WHERE 	1 	= 1
+			AND 		COMP_ORG.PRNT_PRJCT_ORG_SEQ IS NULL
+			AND 		COMP_ORG.DELT_YN 	= 	'N'
+		
+			UNION ALL 
+			
+			SELECT 	PRJCT_COMP_ORG.PRJCT_ORG_SEQ
+					  , PRJCT_COMP_ORG.COMP_ORG_SEQ
+					  , COMP_BSC_ORG.COMP_CD
+					  , PRJCT_COMP_ORG.PRJCT_ORG_CD
+					  , PRJCT_COMP_ORG.PRJCT_ORG_LVL
+					  , PRJCT_COMP_ORG.PRJCT_ORG_ORD
+					  , PRJCT_COMP_ORG.USE_YN
+					  , PRJCT_COMP_ORG.DELT_YN
+					  , COMP_BSC_ORG.COMP_NM
+					  , PRJCT_COMP_ORG.PRJCT_ORG_NM
+					  , (PRJCT_ORG_TREE.PRJCT_ORG_TREE_NM || ' > ' || PRJCT_COMP_ORG.PRJCT_ORG_NM)::VARCHAR(255) 								AS PRJCT_ORG_TREE_NM
+					  , PRJCT_COMP_ORG.PRJCT_ORG_DESC
+					  , PRJCT_COMP_ORG.PRNT_PRJCT_ORG_SEQ
+					  , PRNT_COMP_ORG.PRJCT_ORG_CD::VARCHAR(255)																									AS PRNT_PRJCT_ORG_CD
+					  , PRNT_COMP_ORG.PRJCT_ORG_NM 																														AS PRNT_PRJCT_ORG_NM
+					  , (PRJCT_ORG_TREE.PRNT_PRJCT_ORG_CD_PATH || ',' || PRJCT_COMP_ORG.PRJCT_ORG_CD)::VARCHAR(255) 							AS PRNT_PRJCT_ORG_CD_PATH
+					  , (PRJCT_ORG_TREE.PRJCT_ORG_SORT_PATH || '-' || LPAD(PRJCT_COMP_ORG.PRJCT_ORG_ORD::TEXT, 3, '0'))::VARCHAR(255) 	AS PRJCT_ORG_SORT_PATH
+			FROM 	PRJ_PRJCT_COMP_ORG_INFO_TBL					PRJCT_COMP_ORG
+			INNER JOIN PRJ_PRJCT_COMP_ORG_TREE					PRJCT_ORG_TREE 
+				ON PRJCT_COMP_ORG.PRNT_PRJCT_ORG_SEQ = PRJCT_ORG_TREE.PRJCT_ORG_SEQ
+			LEFT OUTER JOIN PRJ_PRJCT_COMP_ORG_INFO_TBL 	PRNT_COMP_ORG
+				ON 	PRNT_COMP_ORG.PRJCT_ORG_SEQ 	= 	PRJCT_COMP_ORG.PRNT_PRJCT_ORG_SEQ
+				AND 	PRJCT_COMP_ORG.DELT_YN 		=	'N'
+			LEFT JOIN 	PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL		COMP_BSC_ORG
+				ON 	PRJCT_COMP_ORG.COMP_ORG_SEQ 	= 	COMP_BSC_ORG.COMP_ORG_SEQ
+				AND 	COMP_BSC_ORG.USE_YN 			= 	'Y'
+				AND 	COMP_BSC_ORG.DELT_YN 		= 	'N'
+			WHERE 	1 	= 1
+			AND 		PRJCT_COMP_ORG.DELT_YN 	= 	'N'
+		)
+		SELECT 	PRJCT_ORG_SEQ	
+				  , COMP_ORG_SEQ
+				  , COMP_CD
+				  , PRJCT_ORG_CD
+				  , PRJCT_ORG_LVL
+				  , PRJCT_ORG_ORD
+				  , USE_YN
+				  , DELT_YN
+				  , COMP_NM
+				  , PRJCT_ORG_NM
+				  , PRJCT_ORG_TREE_NM
+				  , PRJCT_ORG_DESC
+				  , PRNT_PRJCT_ORG_SEQ
+				  , PRNT_PRJCT_ORG_CD
+				  , PRNT_PRJCT_ORG_NM
+				  , PRNT_PRJCT_ORG_CD_PATH
+				  , PRJCT_ORG_SORT_PATH
+		FROM 	PRJ_PRJCT_COMP_ORG_TREE		
+		WHERE 	1	= 	1
+		AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (USE_YN 	= 	#{useYn, jdbcType=VARCHAR}))
+		AND 		DELT_YN 	= 	'N'
+		AND 		COMP_ORG_SEQ 	=	#{compOrgSeq, jdbcType=NUMERIC}
+		ORDER BY PRJCT_ORG_SORT_PATH
+	</select>
+
+	<!-- 사용 가능 프로젝트 수행 업체 조직도 트리 목록 추출 수행 쿼리 -->
+	<select id="selectAvailableProjectExecuteOrganizationTreeList" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC" resultMap="projectExecuteCompOrg">
+		SELECT 	COMP_ORG_VIEW.PRJCT_ORG_SEQ
+				  , COMP_ORG_VIEW.COMP_ORG_SEQ
+				  , COMP_BSC_ORG.COMP_CD
+				  , COMP_ORG_VIEW.PRJCT_ORG_CD		  
+				  , COMP_ORG_VIEW.PRJCT_ORG_LVL
+				  , COMP_ORG_VIEW.PRJCT_ORG_ORD
+				  , COMP_ORG_VIEW.USE_YN
+				  , COMP_ORG_VIEW.DELT_YN
+				  , COMP_BSC_ORG.COMP_NM
+				  , COMP_ORG_VIEW.PRJCT_ORG_NM
+				  , COMP_ORG_VIEW.PRJCT_ORG_TREE_NM
+				  , COMP_ORG_VIEW.PRJCT_ORG_DESC
+				  , COMP_ORG_VIEW.PRNT_PRJCT_ORG_SEQ
+				  , COMP_ORG_VIEW.PRNT_PRJCT_ORG_CD
+				  , PRNT_COMP_ORG.PRJCT_ORG_NM			AS 	PRNT_PRJCT_ORG_NM
+				  , COMP_ORG_VIEW.PRNT_PRJCT_ORG_CD_PATH
+				  , COMP_ORG_VIEW.PRJCT_ORG_SORT_PATH
+		FROM 	PRJ_PRJCT_COMP_ORG_VIEW						COMP_ORG_VIEW
+		LEFT 	JOIN PRJ_PRJCT_COMP_ORG_INFO_TBL 			COMP_ORG
+		ON 	COMP_ORG_VIEW.PRJCT_ORG_SEQ 	= 	COMP_ORG.PRJCT_ORG_SEQ
+		LEFT OUTER JOIN PRJ_PRJCT_COMP_ORG_INFO_TBL PRNT_COMP_ORG
+		ON 	PRNT_COMP_ORG.PRJCT_ORG_SEQ 	= 	COMP_ORG_VIEW.PRNT_PRJCT_ORG_SEQ
+		LEFT JOIN PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL 	COMP_BSC_ORG
+		ON  	COMP_ORG_VIEW.COMP_ORG_SEQ 	= 	COMP_BSC_ORG.COMP_ORG_SEQ
+		AND 	COMP_BSC_ORG.USE_YN = 'Y' AND COMP_BSC_ORG.DELT_YN = 'N'
+		WHERE 	1	= 	1
+		AND 		COMP_ORG_VIEW.USE_YN 	= 	'Y'
+		AND 		COMP_ORG_VIEW.DELT_YN 	= 	'N'
+		AND 		COMP_ORG_VIEW.COMP_ORG_SEQ 	= 	#{compOrgSeq, jdbcType=NUMERIC}
+	</select>
+	
+	<!-- 프로젝트 수행 업체 조직도 상세 정보 추출 수행 쿼리 -->
+	<select id="selectProjectExecuteOrganizationDetail" parameterType="com.qnpeople.rnd.pms.apis.project.bsc.model.ProjectExecuteOrgSC" resultMap="projectExecuteCompOrg">
+		SELECT 	COMP_ORG.PRJCT_ORG_SEQ
+				  , COMP_ORG.COMP_ORG_SEQ
+				  , COMP_BSC_ORG.COMP_CD
+				  , COMP_ORG.PRJCT_ORG_CD
+				  , COMP_ORG.PRJCT_ORG_LVL
+				  , COMP_ORG.PRJCT_ORG_ORD
+				  , COMP_ORG.USE_YN
+				  , COMP_ORG.DELT_YN
+				  , COMP_BSC_ORG.COMP_NM
+				  , COMP_ORG.PRJCT_ORG_NM
+				  , COMP_ORG.PRNT_PRJCT_ORG_SEQ
+				  , PRNT_COMP_ORG.PRJCT_ORG_CD			AS 	PRNT_PRJCT_ORG_CD
+				  , PRNT_COMP_ORG.PRJCT_ORG_NM			AS 	PRNT_PRJCT_ORG_NM
+				  , COMP_ORG.PRJCT_ORG_DESC
+				  , COMP_ORG.RGST_DT
+				  , COMP_ORG.RGST_SEQ
+				  , COMP_ORG.RGST_NM
+				  , COMP_ORG.UPDT_DT
+				  , COMP_ORG.UPDT_SEQ
+				  , COMP_ORG.UPDT_NM
+				  , COMP_ORG.DELT_DT
+				  , COMP_ORG.DELT_SEQ
+				  , COMP_ORG.DELT_NM
+		FROM 	PRJ_PRJCT_COMP_ORG_INFO_TBL				COMP_ORG
+		LEFT OUTER JOIN PRJ_PRJCT_COMP_ORG_INFO_TBL PRNT_COMP_ORG
+			ON 	PRNT_COMP_ORG.PRJCT_ORG_SEQ 	= 	COMP_ORG.PRNT_PRJCT_ORG_SEQ
+		LEFT JOIN PRJ_PRJCT_COMP_ORG_BSC_INFO_TBL 	COMP_BSC_ORG
+			ON 	COMP_ORG.COMP_ORG_SEQ 	= 	COMP_BSC_ORG.COMP_ORG_SEQ
+			AND 	COMP_BSC_ORG.USE_YN = 'Y' 
+			AND 	COMP_BSC_ORG.DELT_YN = 'N'
+		WHERE 	1	 =	 1
+		AND 		COMP_ORG.DELT_YN 				= 	'N'
+		AND 		COMP_ORG.COMP_ORG_SEQ 	=	#{compOrgSeq, jdbcType=NUMERIC}
+		AND 		(((#{prjctOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctOrgSeq, jdbcType=NUMERIC} = 0)) OR (COMP_ORG.PRJCT_ORG_SEQ = #{prjctOrgSeq, jdbcType=NUMERIC}))
+		AND 		(((#{prjctOrgCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctOrgCd, jdbcType=VARCHAR} = '')) OR (COMP_ORG.PRJCT_ORG_CD =	#{prjctOrgCd, jdbcType=VARCHAR}))
+	</select>
+	
+</mapper>

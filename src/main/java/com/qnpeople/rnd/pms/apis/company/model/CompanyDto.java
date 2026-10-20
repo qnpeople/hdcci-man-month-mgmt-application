@@ -56,7 +56,7 @@ public class CompanyDto extends QNPWebBaseModel {
 	private String rprsntvNm;
 	/* 업체 대표자 이메일 주소(AES156 암호화) */
 	private String rprsntvEmalAddr;
-	/* 업체 대표자 휴대폰 번호(AES156 암호화)*/
+	/* 업체 대표자 휴대폰 번호(AES156 암호화) */
 	private String rprsntvMblNo;		
 	/* 업체 최초 등록 일시  */
 	private String rgstDt;

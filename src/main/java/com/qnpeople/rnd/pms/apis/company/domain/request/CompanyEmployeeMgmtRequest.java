@@ -41,11 +41,10 @@ public class CompanyEmployeeMgmtRequest extends QNPWebClientRequestWrapper {
 	/* 근무자 이전 로그인 비밀번호 */
 	private String oldEmpleLognPwd;
 	/* 근무자 변경 로그인 비밀번호 */
-	private String newEmpleLognPwd;
-	
+	private String newEmpleLognPwd;	
 	
 	/* 근무자 등록/변경 정보 전달 객체 */
-	private EmployeeDto employee;
+	private EmployeeDto employee;	
 	
 	@JsonIgnore
 	public String toStringInfo() {

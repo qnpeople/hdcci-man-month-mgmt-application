@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.qnpeople.rnd.pms.apis.company.model.CompanySC;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeDto;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeSC;
 import com.qnpeople.rnd.pms.common.domain.executor.entity.QNPWebBaseMapper;
@@ -60,10 +62,34 @@ public interface CompanyEmployeeMgmtMapper extends QNPWebBaseMapper {
 	 */
 	public Integer deleteCompanyEmployee(EmployeeSC employeeSC) throws QNPWebException;
 	
+	//	업체 근무자 프로젝트 수행 권한 그룹 관련 모듈 => 프로젝트 작업자로 리팩토링
+	/**	
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 프로젝트 수행 지정 권한 그룹 정보에 대한 DB 등록 작업 수행 후, 수행 결과 갯수를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.15
+	 * @param 	employeeAuthGropDto		업체 근무자의 프로젝트 수행 지정 권한 그룹 정보 전달 객체 
+	 * @return		전달된 업체 근무자의 프로젝트 수행 지정 권한 그룹 정보에 대한 등록 작업 수행 결과 갯수. 정상 등록 시 등록 갯수, 그렇지 않은 경우 0 전달
+	 * @throws 	QNPWebException			업체 근무자 관리를 위한 DB 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Integer insertEmployeeAuthGroup(EmployeeAuthGrpDto employeeAuthGropDto) throws QNPWebException;
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 프로젝트 수행 지정 해제 권한 그룹에 대한 삭제 작업 수행 후, 수행 결과 갯수를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.15
+	 * @param 	employeeAuthGropSC		업체 근무자의 프로젝트 수행 지정 해제 권한 그룹 키 정보 전달 객체
+	 * @return		전달된 업체 근무자의 프로젝트 수행 지정 해제 권한 그룹에 대한 삭제 작업 수행 결과 갯수. 정상 삭제 시 삭제 갯수, 그렇지 않은 경우 0 전달 
+	 * @throws 	QNPWebException			업체 근무자 관리를 위한 DB 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Integer deleteEmployeeAuthGroup(EmployeeAuthGrpSC employeeAuthGropSC) throws QNPWebException;
+	
 	/////////////////////////////////////////////////////////////////
 	//	서비스
 	/////////////////////////////////////////////////////////////////		
-
 	/**
 	 * 전달된 근무자의 비밀번호 변경 작업 수행 정보에 대한 비밀번호 DB 변경 작업 수행 후 수행 결과 갯수를 전달하는 메소드
 	 * - 비밀번호 초기 변경 작업 수행
@@ -120,4 +146,27 @@ public interface CompanyEmployeeMgmtMapper extends QNPWebBaseMapper {
 	 * @throws 	QNPWebException	업체 근무자 관리를 위한 DB 작업 수행 중 오류 발생 시 예외 처리 Exception
 	 */
 	public EmployeeDto selectCompanyEmployeeDetail(EmployeeSC employeeSC) throws QNPWebException;
+	
+	//	업체 근무자 프로젝트 수행 권한 그룹 관련 모듈	=> 프로젝트 작업자로 리팩토링
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자 프로젝트 수행 지정 권한 그룹 상세 정보 추출 조건에 대한 권한 그룹 목록 정보 객체를 DB로부터 추출하여 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.15
+	 * @param 	employeeAuthGrpSC	업체 근무자 프로젝트 수행 지정 권한 그룹 목록 정보 추출 조건 전달 객체
+	 * @return		전달된 업체 근무자 프로젝트 수행 지정 권한 그룹 상세 정보 추출 조건에 대한 권한 그룹 목록 정보 객체
+	 * @throws 	QNPWebException		업체 근무자 관리를 위한 DB 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public List<EmployeeAuthGrpDto> selectEmployeeAuthGroupList(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException;
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자 프로젝트 수행 지정 권한 그룹 상세 정보 추출 조건에 대한 권한 그룹 상세 정보 객체를 DB로부터 추출하여 전달하는 메소드
+	 * 
+	 * @param 	employeeAuthGrpSC	업체 근무자 프로젝트 수행 지정 권한 그룹 상세 정보 추출 조건 전달 객체
+	 * @return		전달된 업체 근무자 프로젝트 수행 지정 권한 그룹 상세 정보 추출 조건에 대한 권한 그룹 상세 정보 객체
+	 * @throws 	QNPWebException		업체 근무자 관리를 위한 DB 작업 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public EmployeeAuthGrpDto selectEmployeeAuthGroupDetail(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException;
 }

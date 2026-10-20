@@ -10,8 +10,10 @@ import com.qnpeople.rnd.pms.apis.company.mapper.CompanyEmployeeMgmtMapper;
 import com.qnpeople.rnd.pms.apis.company.mapper.CompanyMgmtMapper;
 import com.qnpeople.rnd.pms.apis.company.model.CompanyDto;
 import com.qnpeople.rnd.pms.apis.company.model.CompanySC;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeDto;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeSC;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto;
 import com.qnpeople.rnd.pms.common.domain.executor.service.QNPWebBaseServiceImpl;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonCode;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonInterface;
@@ -167,6 +169,7 @@ public class CompanyEmployeeMgmtServiceImpl extends QNPWebBaseServiceImpl implem
 		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
 		String errorCode = reason.getReasonCode();
 		String errorMessage = "";
+		//	
 		EmployeeDto deletableEmployDetail = null;
 		Integer employeeDeleteCount = 0;
 		Boolean resultFlag = Boolean.FALSE;
@@ -205,6 +208,55 @@ public class CompanyEmployeeMgmtServiceImpl extends QNPWebBaseServiceImpl implem
 			
 			//	4. 최종 업체 근무자 개별 삭제 수행 결과를 전달 후 작업을 종료한다
 			return resultFlag;
+		} catch(Exception exception) {
+			throw new QNPWebException(exception);
+		}
+	}
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 지정 대상 권한 그룹 목록 정보에 대한 권한 그룹 지정 작업 수행 후, 수행 결과 Flag 를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpList	업체 근무자의 지정 대상 권한 그룹 정보 목록 객체
+	 * @return		전달된 업체 근무자의 지정 대상 권한 그룹 목록 정보에 대한 권한 그룹 지정 작업 수행 결과 Flag. 정상 수행 시 true 를, 그렇지 않은 경우 false 를 전달
+	 * @throws 	QNPWebException		업체 근무자의 권한 그룹 지정 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Boolean registerCompanyEmployeeAuthGroup(List<EmployeeAuthGrpDto> employeeAuthGrpList) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	
+		Boolean registerEmployeeAuthGroupFlag = Boolean.FALSE;
+		try {
+			
+			return registerEmployeeAuthGroupFlag;
+		} catch(Exception exception) {
+			throw new QNPWebException(exception);
+		}
+	}
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 해지 대상 권한 그룹 키 목록 정보에 대한 권한 그룹 해지 작업 수행 후, 수행 결과 Flag 를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGropKeyList	업체 근무자의 해지 대상 권한 그룹 키 정보 목록 객체
+	 * @return		전달된 업체 근무자의 해지 대상 권한 그룹 키 목록 정보에 대한 권한 그룹 해지 작업 수행 결과 Flag. 정상 수행 시 true 를, 그렇지 않은 경우 false 를 전달
+	 * @throws 	QNPWebException				업체 근무자의 지정된 권한 그룹 해지 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Boolean releaseCompanyEmployeeAuthGroup(List<EmployeeAuthGrpSC> employeeAuthGropKeyList) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	
+		Boolean releaseEmployeeAuthGroupFlag = Boolean.FALSE;
+		try {
+			
+			
+			return releaseEmployeeAuthGroupFlag;
 		} catch(Exception exception) {
 			throw new QNPWebException(exception);
 		}
@@ -428,8 +480,9 @@ public class CompanyEmployeeMgmtServiceImpl extends QNPWebBaseServiceImpl implem
 				throw new QNPWebException(reason, errorCode, errorMessage);
 			}
 			//	1.2. 업체 근무자 상세 정보 추출을 위한 근무자 식별자 정보 미 전달 시, 예외 처리 후 작업을 종료한다
-			if(SBNUtils.isNull(employeeSC.getEmpleSeq()) || (employeeSC.getEmpleSeq() <= 0)) {
-				errorMessage = "업체 근무자 상세 정보 추출 업체 근무자 식별자 정보 미 전달 오류.";
+			if((SBNUtils.isNull(employeeSC.getEmpleSeq()) || (employeeSC.getEmpleSeq() <= 0)) &&
+				SBNUtils.isNull(employeeSC.getEmpleLognId())) {
+				errorMessage = "업체 근무자 상세 정보 추출 업체 근무자 키 정보 미 전달 오류.";
 				throw new QNPWebException(reason, errorCode, errorMessage);
 			}
 			//	1.3. 업체 근무자 상세 정보 추출을 위한 근무자 업체 키 정보에 대한 유효성 체크 및 추출 작업 수행 조건 정보를 재 구축한다
@@ -455,6 +508,63 @@ public class CompanyEmployeeMgmtServiceImpl extends QNPWebBaseServiceImpl implem
 
 			//	3. 최종 추출된 업체 근무자 상세 정보 객체를 전달 후 작업을 종료한다
 			return employeeDetail;
+		} catch(Exception exception) {
+			throw new QNPWebException(exception);
+		}
+	}
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 목록 정보 객체를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpSC		업체 근무자의 지정 권한 그룹 목록 정보 추출 조건 키 정보 객체
+	 * @return		전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 목록 정보 객체
+	 * @throws 	QNPWebException			업체 근무자의 지정된 권한 그룹 목록 정보 조회 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public List<EmployeeAuthGrpDto> getCompanyEmployeeAuthGroupList(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	
+		List<EmployeeAuthGrpDto> employeeAuthGroupList = new ArrayList<EmployeeAuthGrpDto>();
+		try {
+			
+			return employeeAuthGroupList;
+		} catch(Exception exception) {
+			throw new QNPWebException(exception);
+		}
+	}
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 상세 정보 객체를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpSC	업체 근무자의 지정 권한 그룹 상세 정보 추출 조건 키 정보 객체
+	 * @return		전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 상세 정보 객체
+	 * @throws 	QNPWebException		업체 근무자의 지정된 권한 그룹 상세 정보 조회 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public EmployeeAuthGrpDto getCompanyEmployeeAuthGroupDetail(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException {
+		QNPReasonInterface reason = QNPReasonCode.NONE_REQUEST_CONDITION_ERROR;
+		String errorCode = reason.getReasonCode();
+		String errorMessage = "";
+		//	
+		EmployeeAuthGrpDto employeeAuthGroupDetail = null;
+		try {
+			if(SBNUtils.isNull(employeeAuthGrpSC)) {
+				errorMessage = "업체 근무자 권한 그룹 조건 전달 정보 미 전달 오류.";
+				throw new QNPWebException(reason, errorCode, errorMessage);
+			}
+			log.debug("getCompanyEmployeeAuthGroupDetail() employeeAuthGrpSC={}",employeeAuthGrpSC.toStringInfo());
+			
+			//	
+			employeeAuthGroupDetail = companyEmployeeMgmtMapper.selectEmployeeAuthGroupDetail(employeeAuthGrpSC);
+		
+			//	
+			return employeeAuthGroupDetail;
 		} catch(Exception exception) {
 			throw new QNPWebException(exception);
 		}

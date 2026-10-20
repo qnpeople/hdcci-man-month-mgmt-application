@@ -2,8 +2,10 @@ package com.qnpeople.rnd.pms.apis.company.service;
 
 import java.util.List;
 
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeDto;
 import com.qnpeople.rnd.pms.apis.company.model.EmployeeSC;
+import com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto;
 import com.qnpeople.rnd.pms.common.domain.executor.service.QNPWebBaseService;
 import com.qnpeople.rnd.pms.exceptions.QNPWebException;
 
@@ -28,6 +30,8 @@ public interface CompanyEmployeeMgmtService extends QNPWebBaseService {
 	//		업체_업체 근무자 등록
 	//  	업체_업체 근무자 변경
 	//  	업체_업체 근무자 삭제	=> 리팩토링 예정
+	//		업체_업체 근무자 그룹 권한 지정		=> 프로젝트 작업자로 리팩토링
+	//		업체_업체 근무자 그룹 권한 지정 해제	=> 프로젝트 작업자로 리팩토링
 	/////////////////////////////////////////////////////////////////			
 	/**
 	 *	전달된 신규 등록 대상 근무자 정보에 대한 근무자 등록 작업 수행 결과 Flag 를 전달하는 메소드
@@ -62,12 +66,38 @@ public interface CompanyEmployeeMgmtService extends QNPWebBaseService {
 	 */
 	public Boolean deleteCompanyEmployee(EmployeeSC employeeSC) throws QNPWebException; 
 	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 지정 대상 권한 그룹 목록 정보에 대한 권한 그룹 지정 작업 수행 후, 수행 결과 Flag 를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpList	업체 근무자의 지정 대상 권한 그룹 정보 목록 객체
+	 * @return		전달된 업체 근무자의 지정 대상 권한 그룹 목록 정보에 대한 권한 그룹 지정 작업 수행 결과 Flag. 정상 수행 시 true 를, 그렇지 않은 경우 false 를 전달
+	 * @throws 	QNPWebException		업체 근무자의 권한 그룹 지정 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Boolean registerCompanyEmployeeAuthGroup(List<EmployeeAuthGrpDto> employeeAuthGrpList) throws QNPWebException;
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 업체 근무자의 해지 대상 권한 그룹 키 목록 정보에 대한 권한 그룹 해지 작업 수행 후, 수행 결과 Flag 를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGropKeyList	업체 근무자의 해지 대상 권한 그룹 키 정보 목록 객체
+	 * @return		전달된 업체 근무자의 해지 대상 권한 그룹 키 목록 정보에 대한 권한 그룹 해지 작업 수행 결과 Flag. 정상 수행 시 true 를, 그렇지 않은 경우 false 를 전달
+	 * @throws 	QNPWebException				업체 근무자의 지정된 권한 그룹 해지 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public Boolean releaseCompanyEmployeeAuthGroup(List<EmployeeAuthGrpSC> employeeAuthGropKeyList) throws QNPWebException;
+	
 	/////////////////////////////////////////////////////////////////
 	//	서비스
 	//		업체_업체 근무자 로그인 ID 중복 체크
 	//		업체_업체 근무자 비밀번호 변경
 	//		업체_업체 근무자 목록 조회
 	//  	업체_업체 근무자 상세 조회
+	//		업체_업체 근무자 권한 그룹 목록 조회	=> 프로젝트 작업자로 리팩토링
+	//		업체_업체 근무자 권한 그룹 상세 조회	=> 프로젝트 작업자로 리팩토링
 	/////////////////////////////////////////////////////////////////		
 	/**
 	 * 전달된 업체 근무자 로그인 ID 중복 체크 조건 정보에 대한 중복 체크 수행 작업 결과 Flag 를 전달하는 메소드
@@ -123,4 +153,28 @@ public interface CompanyEmployeeMgmtService extends QNPWebBaseService {
 	 * @throws 	QNPWebException	근무자의 목록 정보 조회 요청 작업 처리 중 오류 발생 시 예외 처리 Exception
 	 */
 	public EmployeeDto getCompanyEmployeeDetail(EmployeeSC employeeSC) throws QNPWebException;
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 목록 정보 객체를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpSC		업체 근무자의 지정 권한 그룹 목록 정보 추출 조건 키 정보 객체
+	 * @return		전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 목록 정보 객체
+	 * @throws 	QNPWebException			업체 근무자의 지정된 권한 그룹 목록 정보 조회 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public List<EmployeeAuthGrpDto> getCompanyEmployeeAuthGroupList(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException;
+	
+	/**
+	 * 	=> 프로젝트 작업자로 리팩토링
+	 * 전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 상세 정보 객체를 전달하는 메소드
+	 * 
+	 * @author		BeomSeok.Seo
+	 * @date 		2026.10.14
+	 * @param 	employeeAuthGrpSC	업체 근무자의 지정 권한 그룹 상세 정보 추출 조건 키 정보 객체
+	 * @return		전달된 조건 정보에 대한 업체 근무자 지정 권한 그룹 목록 추출 수행 조건에 대한 근무자 지정 권한 그룹 상세 정보 객체
+	 * @throws 	QNPWebException		업체 근무자의 지정된 권한 그룹 상세 정보 조회 요청 수행 중 오류 발생 시 예외 처리 Exception
+	 */
+	public EmployeeAuthGrpDto getCompanyEmployeeAuthGroupDetail(EmployeeAuthGrpSC employeeAuthGrpSC) throws QNPWebException;
 }

@@ -36,12 +36,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(value = Include.NON_NULL)
 @Data
-public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
+public class QNPAuthData<T> extends SBNAuthData implements QNPAuth<T> {
 
 	/** 클라이언트의 권한 및 인증 수행을 위한 JWT 접근 토큰 데이터 객체 */
 	protected SBNJwtAccessTokenData jwtAccessToken;
 	/** 클라이언트의 시스템 관리 및 이용 권한 그룹 유형 객체 */
-	protected AppAuthGroupType authGrpupType;
+	protected List<AppAuthGroupType> authGroupTypeList;
 	/** 시스템 접근 인증 구분 유형 */
 	protected AppAuthGubunType appAuthGubunType;
 	
@@ -88,9 +88,9 @@ public class QNPAuthData<T> extends SBNAuthData implements QNPAuth {
 			info.append(", ");
 			info.append("jwtAccessToken=").append(jwtAccessToken.toStringInfo());
 		}
-		if(!SBNUtils.isNull(authGrpupType)) {
+		if(!SBNUtils.isNull(authGroupTypeList)) {
 			info.append(", ");
-			info.append("authGrpupType=").append(authGrpupType);
+			info.append("authGroupTypeList=").append(authGroupTypeList);
 		}
 		if(!SBNUtils.isNull(appAuthGubunType)) {
 			info.append(", ");

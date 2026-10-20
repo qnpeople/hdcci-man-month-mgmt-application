@@ -260,7 +260,8 @@
 	
 	<!-- 업체 목록 정보 추출 쿼리 -->
 	<select id="selectCompanyList" parameterType="com.qnpeople.rnd.pms.apis.company.model.CompanySC" resultMap="company">
-		SELECT 	COMP.COMP_CD
+		SELECT 	COMP.COMP_SEQ
+				  , COMP.COMP_CD
 				  , COMP.COMP_TP
 				  , (
 						SELECT 	CD_NM

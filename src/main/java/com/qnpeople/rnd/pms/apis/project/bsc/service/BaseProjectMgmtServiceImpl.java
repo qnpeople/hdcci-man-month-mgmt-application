@@ -43,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BaseProjectMgmtServiceImpl extends QNPWebBaseServiceImpl implements BaseProjectMgmtService {
 
-	/** 프로젝트 기본 정보 관리를 위한 DB 처리 수행 인터페이스 객체 */
+	/* 프로젝트 기본 정보 관리를 위한 DB 처리 수행 인터페이스 객체 */
 	@Autowired
 	private BaseProjectMgmtMapper baseProjectMgmtMapper;
 	

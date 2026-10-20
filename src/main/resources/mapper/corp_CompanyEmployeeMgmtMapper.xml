@@ -35,6 +35,29 @@
 		<result property="deltNm" column="DELT_NM" />
 	</resultMap>	
 	
+	<!-- 업체 근무자 프로젝트 수행 권한 그룹 정보 	=> 프로젝트 작업자로 리팩토링-->
+	<resultMap id="employeeAuthGrp" type="com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto">
+		<id property="compSeq" column="COMP_SEQ" />
+		<result property="empleSeq" column="EMPLE_SEQ" />
+		<result property="compOrgSeq" column="COMP_ORG_SEQ" />
+		<result property="prjctOrgSeq" column="PRJCT_ORG_SEQ" />
+		<result property="prjctRoleCd" column="PRJCT_ROLE_CD" />
+		<result property="authGrpSeq" column="AUTH_GRP_SEQ" />
+		<result property="compCd" column="COMP_CD" />
+		<result property="authGrpCd" column="AUTH_GRP_CD" />
+		<result property="useYn" column="USE_YN" />
+		<result property="wrkrCompNm" column="WRKR_COMP_NM" />
+		<result property="wrkrRoleNm" column="WRKR_ROLE_NM" />
+		<result property="authGrpNm" column="AUTH_GRP_NM" />
+		<result property="wrkrNm" column="WRKR_NM" />
+		<result property="rgstDt" column="RGST_DT" />
+		<result property="rgstSeq" column="RGST_SEQ" />
+		<result property="rgstNm" column="RGST_NM" />
+		<result property="updtDt" column="UPDT_DT" />
+		<result property="updtSeq" column="UPDT_SEQ" />
+		<result property="updtNm" column="UPDT_NM" />
+	</resultMap>	
+	
 	<!-- 
 	///////////////////////////////////////////////////////////////////////////////
 	// 업체 근무자 정보 관리 쿼리 정의
@@ -204,6 +227,55 @@
 		AND 		DELT_YN 	= 	'N'
 		AND 		COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
 		AND 		EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}
+	</delete>
+	
+	<!-- 업체 근무자 프로젝트 수행 권한 그룹 지정 수행 쿼리 	=> 프로젝트 작업자로 리팩토링-->
+	<insert id="insertEmployeeAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpDto">
+		INSERT INTO PRJ_PRJCT_WKRK_AUTH_GRP_MAP (
+			COMP_SEQ
+		  , EMPLE_SEQ
+		  , COMP_ORG_SEQ
+		  , PRJCT_ORG_SEQ
+		  , PRJCT_ROLE_CD
+		  , AUTH_GRP_SEQ
+		  , USE_YN
+		  , WRKR_COMP_NM
+		  , WRKR_ROLE_NM
+		  , WRKR_NM
+		  , RGST_DT
+		  , RGST_SEQ
+		)
+		VALUES (
+			#{compSeq, jdbcType=NUMERIC}
+		  , 	#{empleSeq, jdbcType=NUMERIC}
+		  , 	#{compOrgSeq, jdbcType=NUMERIC}
+		  , 	#{prjctOrgSeq, jdbcType=NUMERIC}
+		  , 	#{prjctRoleCd, jdbcType=VARCHAR}
+		  , 	#{authGrpSeq, jdbcType=NUMERIC}
+		  , (
+				CASE
+					WHEN (#{useYn, jdbcType=VARCHAR} IS NULL OR #{useYn, jdbcType=VARCHAR} = '') THEN 'Y'
+					ELSE   #{useYn, jdbcType=VARCHAR}
+				END
+		  	)
+		   , #{wrkrCompNm, jdbcType=VARCHAR}
+		   , #{wrkrRoleNm, jdbcType=VARCHAR}
+		   , #{wrkrNm, jdbcType=VARCHAR}
+		   , CURRENT_TIMESTAMP(3)
+		   , #{rgstSeq, jdbcType=NUMERIC}
+		)
+	</insert>	
+	<!-- 업체 근무자 프로젝트 수행 권한 그룹 삭제 수행 쿼리 	=> 프로젝트 작업자로 리팩토링-->
+	<delete id="deleteEmployeeAuthGroup" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC">
+		DELETE 	
+		FROM 	PRJ_PRJCT_WKRK_AUTH_GRP_MAP
+		WHERE 	1	= 	1
+    	AND 		COMP_SEQ 		  = 	#{compSeq, jdbcType=NUMERIC}
+    	AND 		EMPLE_SEQ 		  = 	#{empleSeq, jdbcType=NUMERIC}
+    	AND 		COMP_ORG_SEQ   = 	#{compOrgSeq, jdbcType=NUMERIC}
+    	AND 		PRJCT_ORG_SEQ   = 	#{prjctOrgSeq, jdbcType=NUMERIC}
+    	AND 		PRJCT_ROLE_CD    = 	#{prjctRoleCd, jdbcType=VARCHAR}
+    	AND 		AUTH_GRP_SEQ    = 	#{authGrpSeq, jdbcType=NUMERIC}
 	</delete>
 	
 	<!-- 
@@ -452,6 +524,80 @@
     	WHERE 	1 	= 	1
     	AND 	 	COMP_EMPLE.DELT_YN 	= 'N'
     	AND 		COMP_EMPLE.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}
-    	AND 		COMP_EMPLE.EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}
+    	AND 		(((#{empleSeq, jdbcType=NUMERIC} IS NULL) OR (#{empleSeq, jdbcType=NUMERIC} = 0)) OR (COMP_EMPLE.EMPLE_SEQ = #{empleSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{empleLognId, jdbcType=VARCHAR} IS NULL) OR (#{empleLognId, jdbcType=VARCHAR} = '')) OR (COMP_EMPLE.EMPLE_LOGN_ID = #{empleLognId, jdbcType=VARCHAR}))
     </select>
+    
+    <!-- 업체 근무자 프로젝트 수행 권한 그룹 목록 조회 쿼리 	=> 프로젝트 작업자로 리팩토링 -->
+    <select id="selectEmployeeAuthGroupList" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC" resultMap="employeeAuthGrp">
+    	SELECT 	WKRK_AUTH_GRP.COMP_SEQ
+     			  , WKRK_AUTH_GRP.EMPLE_SEQ
+     			  , WKRK_AUTH_GRP.COMP_ORG_SEQ
+     			  , WKRK_AUTH_GRP.PRJCT_ORG_SEQ
+     			  , WKRK_AUTH_GRP.PRJCT_ROLE_CD
+     			  , WKRK_AUTH_GRP.AUTH_GRP_SEQ
+     			  , COMP.COMP_CD
+     			  , AUTH_GRP.AUTH_GRP_CD
+     			  , WKRK_AUTH_GRP.USE_YN
+     			  , COMP.WRKR_COMP_NM
+     			  , WKRK_AUTH_GRP.WRKR_ROLE_NM
+     			  , AUTH_GRP.AUTH_GRP_NM
+     			  , WKRK_AUTH_GRP.WRKR_NM
+     			  , TO_CHAR(WKRK_AUTH_GRP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+     			  , WKRK_AUTH_GRP.RGST_SEQ
+     			  , NULL 	AS 	RGST_NM
+     			  , TO_CHAR(WKRK_AUTH_GRP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+     			  , WKRK_AUTH_GRP.UPDT_SEQ
+     			  , NULL 	AS 	UPDT_NM
+    	FROM 	PRJ_PRJCT_WRKR_AUTH_GRP_MAP		WKRK_AUTH_GRP
+    	LEFT JOIN SYS_AUTH_GRP_INFO_TBL 				AUTH_GRP 
+    		ON WKRK_AUTH_GRP.AUTH_GRP_SEQ 	= 	AUTH_GRP.AUTH_GRP_SEQ
+    	LEFT JOIN CMP_COMP_INFO_TBL 					COMP
+    	  	ON WKRK_AUTH_GRP.COMP_SEQ 			= COMP.WKRK_AUTH_GRP
+    	WHERE 	1 	= 	1
+    	AND 		(((#{useYn, jdbcType=VARCHAR} IS NULL) OR (#{useYn, jdbcType=VARCHAR} = '')) OR (WKRK_AUTH_GRP.USE_YN = #{useYn, jdbcType=VARCHAR}))
+    	AND 		(((#{compSeq, jdbcType=NUMERIC} IS NULL) OR (#{compSeq, jdbcType=NUMERIC}= 0)) OR (WKRK_AUTH_GRP.COMP_SEQ = #{compSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{compOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{compOrgSeq, jdbcType=NUMERIC}= 0)) OR (WKRK_AUTH_GRP.COMP_ORG_SEQ = #{compOrgSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{prjctOrgSeq, jdbcType=NUMERIC} IS NULL) OR (#{prjctOrgSeq, jdbcType=NUMERIC}= 0)) OR (WKRK_AUTH_GRP.PRJCT_ORG_SEQ = #{prjctOrgSeq, jdbcType=NUMERIC}))
+    	AND 		(((#{prjctRoleCd, jdbcType=VARCHAR} IS NULL) OR (#{prjctRoleCd, jdbcType=VARCHAR}= '')) OR (WKRK_AUTH_GRP.PRJCT_ROLE_CD = #{prjctRoleCd, jdbcType=VARCHAR}))
+    	AND 		(((#{authGrpSeq, jdbcType=NUMERIC} IS NULL) OR (#{authGrpSeq, jdbcType=NUMERIC}= 0)) OR (WKRK_AUTH_GRP.AUTH_GRP_SEQ = #{authGrpSeq, jdbcType=NUMERIC}))    	    	
+    	AND 		(((#{wrkrCompNm, jdbcType=VARCHAR} IS NULL) OR (#{wrkrCompNm, jdbcType=VARCHAR} = '')) OR (WKRK_AUTH_GRP.WRKR_COMP_NM LIKE '%' || #{wrkrCompNm, jdbcType=VARCHAR} || '%'))
+    	AND 		(((#{wrkrRoleNm, jdbcType=VARCHAR} IS NULL) OR (#{wrkrRoleNm, jdbcType=VARCHAR} = '')) OR (WKRK_AUTH_GRP.WRKR_ROLE_NM LIKE '%' || #{wrkrRoleNm, jdbcType=VARCHAR} || '%'))
+    	AND 		(((#{wrkrNm, jdbcType=VARCHAR} IS NULL) OR (#{wrkrNm, jdbcType=VARCHAR} = '')) OR (WKRK_AUTH_GRP.WRKR_NM LIKE '%' || #{wrkrNm, jdbcType=VARCHAR} || '%'))
+    </select>    
+    <!-- 업체 근무자 프로젝트 수행 권한 그룹 상세 조회 쿼리	=> 프로젝트 작업자로 리팩토링 -->
+    <select id="selectEmployeeAuthGroupDetail" parameterType="com.qnpeople.rnd.pms.apis.company.model.EmployeeAuthGrpSC" resultMap="employeeAuthGrp">
+    	SELECT 	WKRK_AUTH_GRP.COMP_SEQ
+     			  , WKRK_AUTH_GRP.EMPLE_SEQ
+     			  , WKRK_AUTH_GRP.COMP_ORG_SEQ
+     			  , WKRK_AUTH_GRP.PRJCT_ORG_SEQ
+     			  , WKRK_AUTH_GRP.PRJCT_ROLE_CD
+     			  , WKRK_AUTH_GRP.AUTH_GRP_SEQ
+     			  , COMP.COMP_CD
+     			  , AUTH_GRP.AUTH_GRP_CD
+     			  , WKRK_AUTH_GRP.USE_YN
+     			  , COMP.WRKR_COMP_NM
+     			  , WKRK_AUTH_GRP.WRKR_ROLE_NM
+     			  , AUTH_GRP.AUTH_GRP_NM
+     			  , WKRK_AUTH_GRP.WRKR_NM
+     			  , TO_CHAR(WKRK_AUTH_GRP.RGST_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS RGST_DT
+     			  , WKRK_AUTH_GRP.RGST_SEQ
+     			  , NULL 	AS 	RGST_NM
+     			  , TO_CHAR(WKRK_AUTH_GRP.UPDT_DT, 'YYYY-MM-DD HH24:MI:SS.MS') AS UPDT_DT
+     			  , WKRK_AUTH_GRP.UPDT_SEQ
+     			  , NULL 	AS 	UPDT_NM
+    	FROM 	PRJ_PRJCT_WRKR_AUTH_GRP_MAP		WKRK_AUTH_GRP
+    	LEFT JOIN SYS_AUTH_GRP_INFO_TBL 				AUTH_GRP 
+    		ON WKRK_AUTH_GRP.AUTH_GRP_SEQ 	= 	AUTH_GRP.AUTH_GRP_SEQ
+    	LEFT JOIN CMP_COMP_INFO_TBL 					COMP
+    	  	ON WKRK_AUTH_GRP.COMP_SEQ 			= COMP.WKRK_AUTH_GRP
+    	WHERE 	1 	= 	1
+    	AND 		WKRK_AUTH_GRP.COMP_SEQ 		  	= 	#{compSeq, jdbcType=NUMERIC}
+    	AND 		WKRK_AUTH_GRP.EMPLE_SEQ 		  	= 	#{empleSeq, jdbcType=NUMERIC}
+    	AND 		WKRK_AUTH_GRP.COMP_ORG_SEQ 	= 	#{compOrgSeq, jdbcType=NUMERIC}
+    	AND 		WKRK_AUTH_GRP.PRJCT_ORG_SEQ   	= 	#{prjctOrgSeq, jdbcType=NUMERIC}
+    	AND 		WKRK_AUTH_GRP.PRJCT_ROLE_CD   	= 	#{prjctRoleCd, jdbcType=VARCHAR}
+    	AND 		WKRK_AUTH_GRP.AUTH_GRP_SEQ   	= 	#{authGrpSeq, jdbcType=NUMERIC}
+    </select>
+    
 </mapper>

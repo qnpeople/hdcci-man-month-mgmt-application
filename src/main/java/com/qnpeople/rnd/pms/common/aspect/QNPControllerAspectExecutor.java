@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.qnpeople.rnd.pms.common.auth.QNPAuthData;
 import com.qnpeople.rnd.pms.common.domain.request.QNPWebClientRequestWrapper;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonCode;
 
@@ -20,6 +21,8 @@ import kr.co.sbn.platformhub.framework.core.common.aspect.domains.controller.mod
 import kr.co.sbn.platformhub.framework.core.common.aspect.domains.controller.module.SBNControllerAspectExecutorAdaptor;
 import kr.co.sbn.platformhub.framework.core.common.aspect.utils.SBNAspectUtil;
 import com.qnpeople.rnd.pms.common.reason.QNPReasonInterface;
+import com.qnpeople.rnd.pms.utils.QNPWebUtils;
+
 import kr.co.sbn.platformhub.framework.core.common.base.domain.SBNRequest;
 import kr.co.sbn.platformhub.framework.core.common.base.domain.client.SBNClientRequest;
 import kr.co.sbn.platformhub.framework.core.common.base.domain.client.SBNClientRequestAdaptor;
@@ -382,6 +385,9 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 		// 클라이언트로부터 전달된 JWT 토큰 정보 추출을 위한 객체 정의
 		String authorizationHeaderValue = "";
 		SBNJwtAccessTokenData jwtAccessToken = null;
+		//	
+		QNPAuthData<?> authData = null;
+		QNPWebClientRequestWrapper webClientRequest = null;
 		try {			
 			// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//	1. 
@@ -402,25 +408,45 @@ public class QNPControllerAspectExecutor extends SBNControllerAspectExecutorAdap
 			log.debug("validateFrameworkClientAuthentication() jwtTokenAdaptFlag={}", jwtTokenAdaptFlag);
 			//	1.3. 클라이언트 Http 요청 객체로부터 클라이언트의 요청 URI 정보를 추출한다 
 			clientRequestUri = httpRequest.getRequestURI();
+			//log.debug("validateFrameworkClientAuthentication()  clientRequestUri={}", clientRequestUri);
 			
 			clientRequestJwtAuthExcludeRequestUri = jwtTokenConifg.isJwtTokenExcludeUrl(clientRequestUri);
 			
-			//	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			//	2. 클라이언트의 세션 정보 객체 추출 및 설정을 위한 객체 정의
-			//	2.1. HttpServletRequest 객체로부터 세션 객체를 추출한다
-			//	22. 세션 객체에 클라이언트 세션 키 명(USER_SESSION)에 대한 정보가 존재 시, 해당 정보가 SBNWebClientUserSession 유형 인 경우, 클라이언트 세션 객체를 추출한다
-			//	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-			//	2.1. HttpServletRequest 객체로부터 세션 객체를 추출한다
-			HttpSession clientHttpSession = httpRequest.getSession();
-			//	2.2. 세션 객체에 클라이언트 세션 키 명(USER_SESSION)에 대한 정보가 존재 시, 해당 정보가 SBNWebClientUserSession 유형 인 경우, 클라이언트 세션 객체를 추출한다
-			if(!SBNUtils.isNull(clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME))) {
-				if((clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME) instanceof SBNWebClientUserSessionData)) {
-					clientUserSession = (SBNWebClientUserSessionData)clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME);
-				} else {
-					errorMessage = "클라이언트 세션 데이터 타입 오류";
+			if(clientRequestUri.indexOf("/login") == -1) {
+				//	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				//	2. 클라이언트의 세션 정보 객체 추출 및 설정을 위한 객체 정의
+				//	2.1. HttpServletRequest 객체로부터 세션 객체를 추출한다
+				//	22. 세션 객체에 클라이언트 세션 키 명(USER_SESSION)에 대한 정보가 존재 시, 해당 정보가 SBNWebClientUserSession 유형 인 경우, 클라이언트 세션 객체를 추출한다
+				//	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+				//	2.1. HttpServletRequest 객체로부터 세션 객체를 추출한다
+				HttpSession clientHttpSession = httpRequest.getSession();
+				//	2.2. 세션 객체에 클라이언트 세션 키 명(USER_SESSION)에 대한 정보가 존재 시, 해당 정보가 SBNWebClientUserSession 유형 인 경우, 클라이언트 세션 객체를 추출한다
+				if(!SBNUtils.isNull(clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME))) {
+					if((clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME) instanceof SBNWebClientUserSessionData)) {
+						clientUserSession = (SBNWebClientUserSessionData)clientHttpSession.getAttribute(SBNWebConstant.CLIENT_SESSION_KEY_NAME);
+					} else {
+						errorMessage = "클라이언트 세션 데이터 타입 오류";
+						throw new SBNCommonException(errorReason, errorCode, errorMessage);
+					}
+				}
+				//	
+				authData = (QNPAuthData<?>)QNPWebUtils.extractQNPAuthFromClientSession(httpRequest);
+				//log.debug("validateFrameworkClientAuthentication()  authData={}", authData);
+				if(SBNUtils.isNull(authData)) {
+					errorReason = QNPReasonCode.NONE_CLIENT_SESSION_ERROR;
+					errorCode = errorReason.getReasonCode();
+					errorMessage = "세션이 존재 하지 않습니다. 로그인 후 이용해 주세요.";
 					throw new SBNCommonException(errorReason, errorCode, errorMessage);
 				}
+				
+				//log.debug("validateFrameworkClientAuthentication()  clientRequest={}", clientRequest);
+				if(!SBNUtils.isNull(clientRequest)) {
+					webClientRequest = (QNPWebClientRequestWrapper)clientRequest;
+					webClientRequest.setClientAuthData(authData);
+				}
 			}
+			//	
+			
 			
 			//	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			//	3. 클라이언트로부터 전달된 JWT 토큰 정보 추출을 위한 객체 정의

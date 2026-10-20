@@ -22,7 +22,7 @@ public class ServiceCompanyDto extends QNPWebBaseModel {
 	private Long compSeq;
 	/* 채널 식별자 */
 	private Long chnlSeq;
-	/* 채컬 코드 */
+	/* 채널 코드 */
 	private String chnlCd;
 	/* 사이트 코드 */
 	private String siteCd;
@@ -32,7 +32,7 @@ public class ServiceCompanyDto extends QNPWebBaseModel {
 	private String compCd;
 	/* 채널 명 */
 	private String chnlNm;
-	/* 서비스 명*/
+	/* 사이트 명 */
 	private String siteNm;
 	/* 서비스 명*/
 	private String srvcNm;
